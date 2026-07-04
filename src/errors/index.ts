@@ -93,6 +93,13 @@ export class MethodNotAllowedError extends FhirError {
   }
 }
 
+/** 415 — request body media type is not application/fhir+json (or json). */
+export class UnsupportedMediaTypeError extends FhirError {
+  constructor(diagnostics: string) {
+    super(415, 'error', 'structure', { diagnostics });
+  }
+}
+
 /**
  * Render an arbitrary thrown value into an OperationOutcome. Used by the HTTP
  * error boundary as the last line of defense so the API never leaks a stack

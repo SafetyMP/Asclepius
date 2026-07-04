@@ -1,0 +1,96 @@
+import type { Context } from 'hono';
+import type { FhirResource, ResourceType } from '@/domain/fhir';
+import { BadRequestError } from '@/errors';
+import type { StoredResource } from '@/port/repository';
+import type { HttpDeps } from './app';
+import { createHeaders, versionHeaders } from './headers';
+import { fhirResponse } from './json';
+import {
+  parseForWrite,
+  readJsonObject,
+  requireFhirContentType,
+  requireResourceType,
+  requireValidId,
+} from './validation';
+
+/**
+ * FHIR REST interaction handlers (Phase 1: CRUD + versioning).
+ *
+ * Each handler validates the request, calls the `ResourceRepository` port, and
+ * returns a shaped Response. Create-on-update (PUT) is orchestrated here at the
+ * HTTP boundary (the port's docstring defers it to this layer). All errors
+ * throw `FhirError`/`ZodError` and are rendered by `app.onError`.
+ */
+
+/** Read without throwing on not-found (returns undefined). Used by PUT. */
+function tryRead(deps: HttpDeps, type: ResourceType, id: string): StoredResource | undefined {
+  try {
+    return deps.repo.read(type, id);
+  } catch {
+    return undefined;
+  }
+}
+
+// POST /{Type} — create.
+export async function handleCreate(c: Context, deps: HttpDeps): Promise<Response> {
+  requireFhirContentType(c.req.header('content-type'));
+  const type = requireResourceType(c.req.param('type'));
+  const resource = parseForWrite(await readJsonObject(c));
+  if (resource.resourceType !== type) {
+    throw new BadRequestError(
+      `Resource type '${resource.resourceType}' does not match URL type '${type}'`,
+    );
+  }
+  const stored = deps.repo.create(resource);
+  return fhirResponse(stored, { status: 201, headers: createHeaders(stored) });
+}
+
+// GET /{Type}/{id} — read.
+export async function handleRead(c: Context, deps: HttpDeps): Promise<Response> {
+  const type = requireResourceType(c.req.param('type'));
+  const id = requireValidId(c.req.param('id'));
+  const stored = deps.repo.read(type, id);
+  return fhirResponse(stored, { headers: versionHeaders(stored) });
+}
+
+// GET /{Type}/{id}/_history/{vid} — vread.
+export async function handleVread(c: Context, deps: HttpDeps): Promise<Response> {
+  const type = requireResourceType(c.req.param('type'));
+  const id = requireValidId(c.req.param('id'));
+  const vid = requireValidId(c.req.param('vid'));
+  const stored = deps.repo.vread(type, id, vid);
+  return fhirResponse(stored, { headers: versionHeaders(stored) });
+}
+
+// PUT /{Type}/{id} — update, with create-on-update.
+export async function handleUpdate(c: Context, deps: HttpDeps): Promise<Response> {
+  requireFhirContentType(c.req.header('content-type'));
+  const type = requireResourceType(c.req.param('type'));
+  const id = requireValidId(c.req.param('id'));
+  const resource = parseForWrite(await readJsonObject(c));
+  if (resource.resourceType !== type) {
+    throw new BadRequestError(
+      `Resource type '${resource.resourceType}' does not match URL type '${type}'`,
+    );
+  }
+  if (resource.id !== undefined && resource.id !== id) {
+    throw new BadRequestError(`Resource id '${resource.id}' does not match URL id '${id}'`);
+  }
+  // Create-on-update: PUT to an id that may or may not exist. The resource's id
+  // is forced to the path id (FHIR PUT semantics).
+  const toStore = { ...resource, id } as FhirResource;
+  const existing = tryRead(deps, type, id);
+  const stored = existing === undefined ? deps.repo.create(toStore) : deps.repo.update(toStore);
+  return fhirResponse(stored, {
+    status: existing === undefined ? 201 : 200,
+    headers: createHeaders(stored),
+  });
+}
+
+// DELETE /{Type}/{id} — soft delete (204 No Content).
+export async function handleDelete(c: Context, deps: HttpDeps): Promise<Response> {
+  const type = requireResourceType(c.req.param('type'));
+  const id = requireValidId(c.req.param('id'));
+  deps.repo.delete(type, id);
+  return new Response(null, { status: 204 });
+}

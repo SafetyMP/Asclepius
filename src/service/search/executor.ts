@@ -1,8 +1,13 @@
 import type { ResourceType } from '@/domain/fhir';
 import type { ResourceRepository, StoredResource } from '@/port/repository';
+import type { SearchResult } from '@/port/search';
 import { compareDate, dateInterval, type Interval } from './date';
 import { getParamDefinition } from './params';
 import type { LeafExpr, PlanExpr, Prefix, SearchPlan } from './types';
+
+// Re-export so existing `import { SearchResult } from '@/service/search'` keeps
+// working; the canonical definition lives in the port.
+export type { SearchResult };
 
 /**
  * The FHIR search executor (layer 4).
@@ -25,12 +30,8 @@ import type { LeafExpr, PlanExpr, Prefix, SearchPlan } from './types';
 // Result type
 // ─────────────────────────────────────────────────────────────────────────────
 
-export interface SearchResult {
-  /** Matches after sort + pagination. */
-  readonly resources: readonly StoredResource[];
-  /** Total matches BEFORE pagination (for `Bundle.total`). */
-  readonly total: number;
-}
+// SearchResult is defined in `@/port/search` (the port the HTTP adapter depends
+// on). See the re-export above.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Path extraction — walk declarative param paths through a resource, flattening
