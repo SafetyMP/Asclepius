@@ -1,0 +1,56 @@
+{
+  "name": "asclepius",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Asclepius — a FHIR-native clinical data platform (reference implementation, NOT for clinical use)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.js",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "start": "node dist/app.js",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src tests",
+    "lint:fix": "biome check --write src tests",
+    "format": "biome format --write src tests",
+    "format:check": "biome format src tests",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "seed": "tsx src/cli.ts seed",
+    "cli": "tsx src/cli.ts",
+    "gate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@hono/node-server": "^2.0.8",
+    "better-sqlite3": "^12.11.1",
+    "hono": "^4.12.27",
+    "jose": "^6.2.3",
+    "pino": "^10.3.1",
+    "zod": "^4.4.3"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.11.1": true,
+    "esbuild@0.27.7": true,
+    "esbuild@0.28.1": true
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^26.1.0",
+    "@vitest/coverage-v8": "^4.1.9",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}

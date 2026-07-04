@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+
+    // MAX STRICT — every strict-family flag enabled. Chosen deliberately for a
+    // type-heavy FHIR codebase where nullability/optionality is clinically
+    // meaningful.
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "forceConsistentCasingInFileNames": true,
+
+    // verbatimModuleSyntax forces `import type` for type-only imports
+    // (required by isolatedModules/tsup/esbuild).
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+
+    // @ alias resolves to src (relative to this file — baseUrl is unnecessary
+    // under moduleResolution "Bundler"). Honored by tsx, vitest (via alias
+    // config), and tsup.
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    "skipLibCheck": true,
+    "noEmit": true,
+
+    // tsup's DTS pass injects `baseUrl: "."` for path resolution (see its
+    // rollup.js), which TS 6.0 flags as deprecated (TS5101). ignoreDeprecations
+    // is TypeScript's official migration switch and propagates through tsup's
+    // `...compilerOptions` spread. Remove once tsup stops injecting baseUrl.
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["src", "tests", "vitest.config.ts", "tsup.config.ts"]
+}
