@@ -5,8 +5,26 @@
   "description": "Asclepius — a FHIR-native clinical data platform (reference implementation, NOT for clinical use)",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
+  "homepage": "https://github.com/SafetyMP/FHIR",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SafetyMP/FHIR.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SafetyMP/FHIR/issues"
+  },
+  "keywords": [
+    "fhir",
+    "hl7",
+    "healthcare",
+    "clinical-data",
+    "typescript",
+    "zod",
+    "reference-implementation"
+  ],
+  "author": "SafetyMP",
   "exports": {
     ".": {
       "types": "./dist/index.js",
@@ -29,7 +47,7 @@
     "cli": "tsx src/cli.ts",
     "gate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "@hono/node-server": "^2.0.8",
     "better-sqlite3": "^12.11.1",
