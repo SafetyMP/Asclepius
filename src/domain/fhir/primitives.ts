@@ -21,8 +21,11 @@ export const id = z
 /** FHIR code: a non-whitespace token drawn from a code system. */
 export const code = z.string().regex(/^[^\s]+$/, 'invalid FHIR code (no whitespace)');
 
-/** FHIR string: length 1..1MB. */
-export const fhirString = z.string().max(1_048_576);
+/**
+ * FHIR string: length 1..1MB. FHIR requires at least 1 character (an empty
+ * string is not a valid FHIR string); we enforce the minimum here.
+ */
+export const fhirString = z.string().min(1).max(1_048_576);
 
 export const fhirBoolean = z.boolean();
 export const fhirInteger = z.number().int().min(-2147483648).max(2147483647);

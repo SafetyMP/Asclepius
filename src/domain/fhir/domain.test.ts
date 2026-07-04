@@ -10,6 +10,7 @@ import {
   fhirDate,
   fhirDateTime,
   fhirInstant,
+  fhirString,
   fhirTime,
   humanName,
   id,
@@ -65,6 +66,10 @@ describe('primitives', () => {
   it('rejects whitespace in a code', () => {
     expect(code.parse('active')).toBe('active');
     expect(() => code.parse('not allowed')).toThrow();
+  });
+  it('rejects an empty string (FHIR string is 1..1MB)', () => {
+    expect(fhirString.parse('ok')).toBe('ok');
+    expect(() => fhirString.parse('')).toThrow();
   });
 });
 
@@ -138,6 +143,15 @@ describe('resources — valid round-trips', () => {
     expect(p.id).toBe('pat-1');
     expect(p.gender).toBe('female');
     expect(p.name?.[0]?.family).toBe('Doe');
+  });
+
+  it('accepts a dateTime-valued deceasedDateTime (regression: was date-only)', () => {
+    const p = patient.parse({
+      resourceType: 'Patient',
+      id: 'pat-2',
+      deceasedDateTime: '2020-06-15T10:30:00Z',
+    });
+    expect(p.deceasedDateTime).toBe('2020-06-15T10:30:00Z');
   });
 
   it('parses a Condition with a required subject', () => {

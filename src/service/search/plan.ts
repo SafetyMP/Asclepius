@@ -7,6 +7,7 @@ import type {
   Modifier,
   PlanExpr,
   Prefix,
+  SearchParamType,
   SearchPlan,
   SearchRequest,
 } from './types';
@@ -23,9 +24,18 @@ import type {
  * Pure: takes a SearchRequest, returns serializable SearchPlan data. No storage.
  */
 
-const KNOWN_MODIFIERS = new Set<Modifier>(['exact', 'contains', 'missing', 'not', 'text']);
 const KNOWN_PREFIXES: readonly Prefix[] = ['eq', 'ne', 'gt', 'ge', 'lt', 'le', 'sa', 'eb', 'ap'];
 const PREFIXABLE_TYPES = new Set(['date', 'number', 'quantity']);
+
+/**
+ * Per-type modifier validity (FHIR). `:missing` applies to every type and is
+ * handled separately. `:exact`/`:contains` are string-only; `:not`/`:text` are
+ * token-only. Date/number/quantity/uri accept no value-modifiers (they use
+ * prefixes instead). On a reference param, any `:X` that isn't one of these is
+ * a type filter (e.g. `subject:Patient`).
+ */
+const STRING_MODIFIERS = new Set<Modifier>(['exact', 'contains']);
+const TOKEN_MODIFIERS = new Set<Modifier>(['not', 'text']);
 
 interface ResolvedModifier {
   readonly modifier?: Modifier;
@@ -33,17 +43,25 @@ interface ResolvedModifier {
 }
 
 function resolveModifier(
-  definitionType: string,
+  definitionType: SearchParamType,
   paramName: string,
   modifier: string | undefined,
 ): ResolvedModifier {
   if (!modifier) return {};
-  if (KNOWN_MODIFIERS.has(modifier as Modifier)) return { modifier: modifier as Modifier };
-  // On a reference param, an unknown `:X` is a type filter (e.g. `subject:Patient`).
+  // :missing is valid on every parameter type.
+  if (modifier === 'missing') return { modifier: 'missing' };
+  // On a reference, any other `:X` is a type filter (e.g. `subject:Patient`).
   if (definitionType === 'reference') return { typeFilter: modifier };
-  // `:above`/`:below` (token subsumption) and `:type`/`:in` are stretch — reject clearly.
+  if (definitionType === 'string' && STRING_MODIFIERS.has(modifier as Modifier)) {
+    return { modifier: modifier as Modifier };
+  }
+  if (definitionType === 'token' && TOKEN_MODIFIERS.has(modifier as Modifier)) {
+    return { modifier: modifier as Modifier };
+  }
+  // date/number/quantity/uri accept only :missing; anything else (incl. stretch
+  // subsumption `:above`/`:below`) is rejected with a clear 400.
   throw new BadRequestError(
-    `unknown modifier ':${modifier}' on ${definitionType} parameter '${paramName}'`,
+    `modifier ':${modifier}' is not valid for ${definitionType} parameter '${paramName}'`,
   );
 }
 

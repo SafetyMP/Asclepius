@@ -55,9 +55,20 @@ function parseSort(value: string): SortKey[] {
   });
 }
 
-function parsePositiveInt(raw: string): number | undefined {
-  const n = Number.parseInt(raw, 10);
-  if (!Number.isFinite(n) || n < 0) return undefined;
+/**
+ * Parse a result-operator integer (`_count` / `_page`) strictly. FHIR requires
+ * these to be integers; malformed values are a 400 BadRequest (surfaced as an
+ * OperationOutcome at the boundary), not silently dropped. `_count` may be 0
+ * (FHIR: return no resources but report total); `_page` is 1-based.
+ */
+function parseResultInt(value: string, name: string, min: number): number {
+  if (!/^\d+$/.test(value.trim())) {
+    throw new BadRequestError(`${name} must be an integer, got: ${value}`);
+  }
+  const n = Number.parseInt(value, 10);
+  if (n < min) {
+    throw new BadRequestError(`${name} must be >= ${min}, got: ${value}`);
+  }
   return n;
 }
 
@@ -98,14 +109,10 @@ function mergeResult(prev: ResultOperators, name: string, rawValue: string): Res
   switch (name) {
     case '_sort':
       return { ...prev, sort: parseSort(value) };
-    case '_count': {
-      const count = parsePositiveInt(value);
-      return count !== undefined ? { ...prev, count } : prev;
-    }
-    case '_page': {
-      const page = parsePositiveInt(value);
-      return page !== undefined ? { ...prev, page } : prev;
-    }
+    case '_count':
+      return { ...prev, count: parseResultInt(value, '_count', 0) };
+    case '_page':
+      return { ...prev, page: parseResultInt(value, '_page', 1) };
     case '_summary':
       return { ...prev, summary: value };
     case '_total':

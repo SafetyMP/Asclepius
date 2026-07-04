@@ -18,6 +18,9 @@ logs/
 # Test coverage
 coverage/
 
+# Local CI / ship-gate artifact exports (ephemeral)
+.opencode-ci/
+
 # Environment
 .env
 .env.*

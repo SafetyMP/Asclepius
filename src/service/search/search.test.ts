@@ -51,6 +51,20 @@ describe('parser', () => {
     expect(r.result.page).toBe(2);
   });
 
+  it('accepts _count=0 (FHIR: return no resources, report total)', () => {
+    expect(parseSearchQuery('Patient', '_count=0').result.count).toBe(0);
+  });
+
+  it('rejects malformed _count with BadRequestError', () => {
+    expect(() => parseSearchQuery('Patient', '_count=abc')).toThrow(BadRequestError);
+    expect(() => parseSearchQuery('Patient', '_count=-1')).toThrow(BadRequestError);
+  });
+
+  it('rejects _page < 1 with BadRequestError', () => {
+    expect(() => parseSearchQuery('Patient', '_page=0')).toThrow(BadRequestError);
+    expect(() => parseSearchQuery('Patient', '_page=abc')).toThrow(BadRequestError);
+  });
+
   it('treats repeated same-name params as separate raw params (planner ORs)', () => {
     const r = parseSearchQuery('Patient', 'name=A&name=B');
     expect(r.params).toHaveLength(2);
@@ -180,5 +194,38 @@ describe('planner / compileSearch', () => {
     const a = compilePlan('Patient', req);
     const b = compileSearch('Patient', 'name=Smith');
     expect(a.filter).toEqual(b.filter);
+  });
+});
+
+describe('modifier ↔ type compatibility', () => {
+  it(':exact and :contains are valid only on string params', () => {
+    expect(leafOf(compileSearch('Patient', 'name:exact=Smith').filter).modifier).toBe('exact');
+    expect(leafOf(compileSearch('Patient', 'name:contains=smi').filter).modifier).toBe('contains');
+    // token param does not accept :exact
+    expect(() => compileSearch('Patient', 'gender:exact=female')).toThrow(BadRequestError);
+  });
+
+  it(':not and :text are valid only on token params', () => {
+    expect(leafOf(compileSearch('Patient', 'gender:not=female').filter).modifier).toBe('not');
+    // string param does not accept :not
+    expect(() => compileSearch('Patient', 'name:not=Smith')).toThrow(BadRequestError);
+  });
+
+  it(':missing is valid on every type', () => {
+    expect(leafOf(compileSearch('Patient', 'name:missing=true').filter).modifier).toBe('missing');
+    expect(leafOf(compileSearch('Patient', 'birthdate:missing=true').filter).modifier).toBe(
+      'missing',
+    );
+    expect(leafOf(compileSearch('Patient', 'gender:missing=true').filter).modifier).toBe('missing');
+  });
+
+  it('date/quantity params reject value-modifiers (prefixes are used instead)', () => {
+    expect(() => compileSearch('Patient', 'birthdate:text=2020')).toThrow(BadRequestError);
+    expect(() => compileSearch('Patient', 'birthdate:exact=2020')).toThrow(BadRequestError);
+  });
+
+  it(':X on a reference is still treated as a type filter', () => {
+    const leaf = leafOf(compileSearch('Observation', 'subject:Patient.name=Smith').filter);
+    expect(leaf.typeFilter).toBe('Patient');
   });
 });

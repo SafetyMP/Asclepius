@@ -7,7 +7,7 @@ import {
   identifier,
   reference,
 } from '../datatypes';
-import { fhirBoolean, fhirDate } from '../primitives';
+import { fhirBoolean, fhirDate, fhirDateTime } from '../primitives';
 import { baseDomainResourceShape } from '../resource';
 
 /**
@@ -26,7 +26,7 @@ export const patient = z.object({
   gender: administrativeGender.optional(),
   birthDate: fhirDate.optional(),
   deceasedBoolean: fhirBoolean.optional(),
-  deceasedDateTime: fhirDate.optional(),
+  deceasedDateTime: fhirDateTime.optional(),
   address: z.array(address).optional(),
   maritalStatus: codeableConcept.optional(),
   multipleBirthBoolean: fhirBoolean.optional(),

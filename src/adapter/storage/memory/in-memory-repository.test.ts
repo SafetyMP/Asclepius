@@ -154,11 +154,18 @@ describe('InMemoryResourceRepository — delete (soft) / list', () => {
     expect(() => repo.delete('Patient', 'ghost')).toThrow(NotFoundError);
   });
 
-  it('re-create after delete is allowed (same id reused)', () => {
-    repo.create(patient('pat-1'));
+  it('re-create after delete continues the version chain and retains history', () => {
+    repo.create(patient('pat-1')); // v1
+    repo.update({ ...patient('pat-1'), active: true }); // v2
     repo.delete('Patient', 'pat-1');
-    expect(() => repo.create(patient('pat-1'))).not.toThrow();
-    expect(repo.read('Patient', 'pat-1').meta.versionId).toBe('1');
+    const recreated = repo.create({ ...patient('pat-1'), gender: 'male' });
+    // re-create becomes the NEXT version — it does not reset to v1 (which would
+    // discard prior history and make vread('1') ambiguous).
+    expect(recreated.meta.versionId).toBe('3');
+    expect((recreated as Patient).gender).toBe('male');
+    // prior history is retained and old versions stay addressable + unchanged
+    expect(repo.history('Patient', 'pat-1').map((r) => r.meta.versionId)).toEqual(['3', '2', '1']);
+    expect((repo.vread('Patient', 'pat-1', '1') as Patient).active).toBeUndefined();
   });
 
   it('list returns current non-deleted resources of a type', () => {
@@ -186,5 +193,52 @@ describe('InMemoryResourceRepository — delete (soft) / list', () => {
     } as FhirResource);
     expect(repo.list('Patient')).toHaveLength(1);
     expect(repo.list('Condition')).toHaveLength(1);
+  });
+});
+
+describe('InMemoryResourceRepository — immutability (deep-freeze)', () => {
+  let repo: InMemoryResourceRepository;
+  beforeEach(() => {
+    repo = new InMemoryResourceRepository();
+  });
+
+  it('read returns a frozen snapshot: caller mutation cannot corrupt the store', () => {
+    repo.create(patient('pat-1'));
+    const got = repo.read('Patient', 'pat-1') as unknown as {
+      tampered?: boolean;
+      id: string;
+    };
+    expect(Object.isFrozen(got)).toBe(true);
+    // ESM is strict-mode: assigning to a frozen object throws.
+    expect(() => {
+      got.tampered = true;
+    }).toThrow(TypeError);
+    expect(repo.read('Patient', 'pat-1')).not.toHaveProperty('tampered');
+  });
+
+  it('prior versions stay immutable snapshots after a later update', () => {
+    repo.create(patient('pat-1'));
+    const v1 = repo.read('Patient', 'pat-1');
+    repo.update({ ...patient('pat-1'), active: true });
+    expect(Object.isFrozen(v1)).toBe(true);
+    expect((repo.vread('Patient', 'pat-1', '1') as Patient).active).toBeUndefined();
+  });
+
+  it('stored snapshots are decoupled from the caller input object', () => {
+    const input = { ...patient('pat-1'), active: true } as Patient;
+    repo.create(input);
+    // mutating the original input after create must not affect the stored copy
+    (input as unknown as { active: boolean }).active = false;
+    expect((repo.read('Patient', 'pat-1') as Patient).active).toBe(true);
+  });
+
+  it('nested values are frozen too', () => {
+    repo.create({
+      ...patient('pat-1'),
+      name: [{ family: 'Smith', given: ['John'] }],
+    });
+    const got = repo.read('Patient', 'pat-1') as Patient;
+    expect(Object.isFrozen(got.name?.[0])).toBe(true);
+    expect(Object.isFrozen(got.name?.[0]?.given)).toBe(true);
   });
 });
