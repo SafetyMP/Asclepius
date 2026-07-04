@@ -35,13 +35,16 @@ export const fhirDecimal = z.number();
 /** FHIR date: YYYY, YYYY-MM, or YYYY-MM-DD. */
 export const fhirDate = z
   .string()
-  .regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'invalid FHIR date (YYYY[-MM[-DD]])');
+  .regex(
+    /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$/,
+    'invalid FHIR date (YYYY[-MM[-DD]], valid month/day)',
+  );
 
 /** FHIR dateTime: date optionally followed by time + timezone. */
 export const fhirDateTime = z
   .string()
   .regex(
-    /^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?)?)?)?$/,
+    /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01])(T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(\.\d+)?(Z|[+-]\d{2}:\d{2}))?)?)?$/,
     'invalid FHIR dateTime',
   );
 
@@ -49,7 +52,7 @@ export const fhirDateTime = z
 export const fhirInstant = z
   .string()
   .regex(
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/,
+    /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(\.\d+)?(Z|[+-]\d{2}:\d{2})$/,
     'invalid FHIR instant (requires seconds and timezone)',
   );
 
