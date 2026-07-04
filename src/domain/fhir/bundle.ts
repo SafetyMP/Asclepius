@@ -49,8 +49,8 @@ export const bundleEntryResponse = z.object({
   etag: fhirString.optional(),
   lastModified: fhirInstant.optional(),
   // Per FHIR, entry.response.outcome is an OperationOutcome (not a Bundle).
-  // Typed loosely here to avoid a Bundle↔BundleEntry cycle; validated where it
-  // matters (the HTTP boundary).
+  // Typed loosely to avoid a Bundle↔BundleEntry cycle and because OperationOutcome
+  // body isn't zod-modeled here; passthrough preserves it (ADR 0011).
   outcome: z
     .object({ resourceType: z.literal('OperationOutcome') })
     .passthrough()
@@ -75,6 +75,7 @@ export const bundle = z.object({
   total: unsignedInt.optional(),
   link: z.array(bundleLink).optional(),
   entry: z.array(bundleEntry).optional(),
+  // Signature datatype not yet modeled (ADR 0002 subset); passthrough preserves it (ADR 0011).
   signature: z.object({}).passthrough().optional(),
 });
 

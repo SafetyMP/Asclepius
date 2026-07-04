@@ -14,7 +14,11 @@ import { code, fhirString, id, uri } from './primitives';
  * inheritance hierarchy, with no class machinery.
  */
 
-/** Loose accept for `contained` resources — must carry a resourceType. */
+/**
+ * Loose accept for `contained` resources — must carry a resourceType. Body is
+ * passthrough because contained resources may be of a type we don't model;
+ * preserving fidelity beats stripping data we can't validate. See ADR 0011.
+ */
 export const containedResource = z
   .object({
     resourceType: fhirString,

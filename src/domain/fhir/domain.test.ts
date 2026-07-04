@@ -10,6 +10,7 @@ import {
   fhirDate,
   fhirDateTime,
   fhirInstant,
+  fhirTime,
   humanName,
   id,
   identifier,
@@ -47,6 +48,15 @@ describe('primitives', () => {
     expect(fhirDate.parse('1950')).toBe('1950');
     expect(fhirDate.parse('1950-06')).toBe('1950-06');
     expect(() => fhirDate.parse('1950-13')).toThrow();
+  });
+  it('validates time with HH/MM/SS range bounds', () => {
+    expect(fhirTime.parse('23:59:59')).toBe('23:59:59');
+    expect(fhirTime.parse('00:00:00')).toBe('00:00:00');
+    expect(fhirTime.parse('12:30:45.123')).toBe('12:30:45.123');
+    // out-of-range values must be rejected (previously over-accepted)
+    expect(() => fhirTime.parse('24:00:00')).toThrow();
+    expect(() => fhirTime.parse('23:60:00')).toThrow();
+    expect(() => fhirTime.parse('23:59:60')).toThrow();
   });
   it('validates a uuid urn', () => {
     expect(uuid.parse('urn:uuid:6b1b6b6e-1b1b-4b1b-8b1b-1b1b1b1b1b1b')).toMatch(/^urn:uuid:/);

@@ -22,6 +22,7 @@ export const dosage = z.object({
   text: z.string().optional(),
   additionalInstruction: z.array(codeableConcept).optional(),
   patientInstruction: z.string().optional(),
+  // Timing backbone not yet modeled (ADR 0002 subset); passthrough preserves it (ADR 0011).
   timing: z.object({}).passthrough().optional(),
   asNeededBoolean: fhirBoolean.optional(),
   asNeededCodeableConcept: codeableConcept.optional(),
@@ -111,7 +112,8 @@ export const medicationRequest = z.object({
       validityPeriod: period.optional(),
       numberOfRepeatsAllowed: z.number().int().nonnegative().optional(),
       quantity: quantity.optional(),
-      expectedSupplyDuration: z.object({}).passthrough().optional(),
+      // Duration is a Quantity constrained to UCUM time units; modeled as Quantity.
+      expectedSupplyDuration: quantity.optional(),
       performer: reference.optional(),
     })
     .optional(),
