@@ -7,13 +7,13 @@
   "engines": {
     "node": ">=22"
   },
-  "homepage": "https://github.com/SafetyMP/FHIR",
+  "homepage": "https://github.com/SafetyMP/Asclepius",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SafetyMP/FHIR.git"
+    "url": "https://github.com/SafetyMP/Asclepius.git"
   },
   "bugs": {
-    "url": "https://github.com/SafetyMP/FHIR/issues"
+    "url": "https://github.com/SafetyMP/Asclepius/issues"
   },
   "keywords": [
     "fhir",

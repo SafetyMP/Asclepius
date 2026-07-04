@@ -21,7 +21,7 @@ only; there are no backport branches.
 Instead, please report it privately:
 
 1. Open a GitHub **Security Advisory**: the
-   [**Report a vulnerability**](https://github.com/SafetyMP/FHIR/security/advisories/new)
+   [**Report a vulnerability**](https://github.com/SafetyMP/Asclepius/security/advisories/new)
    button on the **Security** tab (preferred — supports private coordination and
    CVE assignment). Use the template and include:
    - a description of the issue and its impact,

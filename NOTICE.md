@@ -2,7 +2,7 @@ Asclepius — FHIR-native Clinical Data Platform
 Copyright 2026 SafetyMP
 
 This product includes software developed as part of the Asclepius project
-(https://github.com/SafetyMP/FHIR).
+(https://github.com/SafetyMP/Asclepius).
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
