@@ -17,6 +17,7 @@ export {
   bundleEntrySearch,
   bundleLink,
   bundleType,
+  historyBundle,
   searchsetBundle,
 } from './bundle';
 export * from './datatypes';

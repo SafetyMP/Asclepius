@@ -96,3 +96,40 @@ export function searchsetBundle(resources: FhirResource[], total?: number): Bund
     })),
   };
 }
+
+/**
+ * Build a `history` Bundle from a list of versioned resource snapshots (newest
+ * first, as a repository's `history()` returns).
+ *
+ * Approximation: the in-memory version chain does not record the operation that
+ * produced each version, so the entry `request.method` / `response.status` are
+ * derived — versionId `'1'` is treated as a `POST`/201 (create), anything else
+ * as a `PUT`/200 (update). Re-create-after-delete (which continues the chain)
+ * would therefore be mislabelled as an update; a production store would record
+ * the real method per version. Soft-deleted resources produce no tombstone
+ * version, so they do not appear in history.
+ */
+export function historyBundle(versions: FhirResource[]): Bundle {
+  return {
+    resourceType: 'Bundle',
+    type: 'history',
+    total: versions.length,
+    entry: versions.map((resource) => {
+      const versionId = resource.meta?.versionId ?? '';
+      const lastUpdated = resource.meta?.lastUpdated ?? '';
+      const id = resource.id ?? '';
+      const url = `${resource.resourceType}/${id}`;
+      const method: 'POST' | 'PUT' = versionId === '1' ? 'POST' : 'PUT';
+      return {
+        fullUrl: url,
+        resource,
+        request: { method, url },
+        response: {
+          status: method === 'POST' ? '201' : '200',
+          etag: `W/"${versionId}"`,
+          lastModified: lastUpdated,
+        },
+      };
+    }),
+  };
+}

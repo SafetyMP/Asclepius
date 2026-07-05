@@ -1,5 +1,6 @@
 import type { Context } from 'hono';
 import type { FhirResource, ResourceType } from '@/domain/fhir';
+import { historyBundle } from '@/domain/fhir';
 import { BadRequestError } from '@/errors';
 import type { StoredResource } from '@/port/repository';
 import type { HttpDeps } from './app';
@@ -93,4 +94,25 @@ export async function handleDelete(c: Context, deps: HttpDeps): Promise<Response
   const id = requireValidId(c.req.param('id'));
   deps.repo.delete(type, id);
   return new Response(null, { status: 204 });
+}
+
+// GET /{Type}/{id}/_history — instance history (all versions of one resource).
+export async function handleInstanceHistory(c: Context, deps: HttpDeps): Promise<Response> {
+  const type = requireResourceType(c.req.param('type'));
+  const id = requireValidId(c.req.param('id'));
+  const versions = deps.repo.history(type, id);
+  return fhirResponse(historyBundle(versions));
+}
+
+// GET /{Type}/_history — type history (version chains of all current resources of a type).
+//
+// NOTE: the in-memory `list()` excludes soft-deleted resources, so their prior
+// versions do not appear here (same root cause as the no-tombstone delete).
+export async function handleTypeHistory(c: Context, deps: HttpDeps): Promise<Response> {
+  const type = requireResourceType(c.req.param('type'));
+  const versions = deps.repo
+    .list(type)
+    .flatMap((r) => deps.repo.history(type, r.id))
+    .sort((a, b) => b.meta.lastUpdated.localeCompare(a.meta.lastUpdated));
+  return fhirResponse(historyBundle(versions));
 }
