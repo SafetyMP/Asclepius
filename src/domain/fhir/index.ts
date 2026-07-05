@@ -9,6 +9,7 @@
 export {
   type Bundle,
   type BundleEntry,
+  type BundleLink,
   type BundleType,
   bundle,
   bundleEntry,

@@ -5,6 +5,8 @@ import {
   handleDelete,
   handleInstanceHistory,
   handleRead,
+  handleSearch,
+  handleSearchPost,
   handleTypeHistory,
   handleUpdate,
   handleVread,
@@ -14,11 +16,13 @@ import {
  * FHIR REST route registration.
  *
  * Hono's router prioritizes static segments over parametric ones, so reserved
- * paths like `/:type/_history` and `/:type/:id/_history` are never captured by
- * `/:type/:id` — and `_history`/`_search` are not valid FHIR ids anyway
- * (`[A-Za-z0-9-.]` excludes `_`).
+ * paths like `/:type/_history`, `/:type/:id/_history`, and `/:type/_search` are
+ * never captured by `/:type/:id` — and `_history`/`_search` are not valid FHIR
+ * ids anyway (`[A-Za-z0-9-.]` excludes `_`). `GET /:type` (search) is distinct
+ * from `GET /:type/:id` (read) by segment count.
  */
 export function registerRoutes(app: Hono, deps: HttpDeps): void {
+  app.post('/:type/_search', (c) => handleSearchPost(c, deps));
   app.post('/:type', (c) => handleCreate(c, deps));
   app.get('/:type/:id/_history/:vid', (c) => handleVread(c, deps));
   app.get('/:type/:id/_history', (c) => handleInstanceHistory(c, deps));
@@ -26,4 +30,5 @@ export function registerRoutes(app: Hono, deps: HttpDeps): void {
   app.put('/:type/:id', (c) => handleUpdate(c, deps));
   app.delete('/:type/:id', (c) => handleDelete(c, deps));
   app.get('/:type/:id', (c) => handleRead(c, deps));
+  app.get('/:type', (c) => handleSearch(c, deps));
 }

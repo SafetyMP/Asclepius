@@ -81,11 +81,16 @@ export const bundle = z.object({
 
 export type Bundle = z.infer<typeof bundle>;
 export type BundleEntry = z.infer<typeof bundleEntry>;
+export type BundleLink = z.infer<typeof bundleLink>;
 export type BundleType = z.infer<typeof bundleType>;
 
 /** Convenience: build a searchset Bundle from a list of resources. */
-export function searchsetBundle(resources: FhirResource[], total?: number): Bundle {
-  return {
+export function searchsetBundle(
+  resources: FhirResource[],
+  total?: number,
+  links?: BundleLink[],
+): Bundle {
+  const bundle: Bundle = {
     resourceType: 'Bundle',
     type: 'searchset',
     total: total ?? resources.length,
@@ -95,6 +100,9 @@ export function searchsetBundle(resources: FhirResource[], total?: number): Bund
       search: { mode: 'match' as const, score: 1 - i * 0.001 },
     })),
   };
+  // conditionally set so exactOptionalPropertyTypes is satisfied (no `link: undefined`)
+  if (links) bundle.link = links;
+  return bundle;
 }
 
 /**

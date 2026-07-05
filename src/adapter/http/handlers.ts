@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
 import type { FhirResource, ResourceType } from '@/domain/fhir';
-import { historyBundle } from '@/domain/fhir';
+import { type BundleLink, historyBundle, searchsetBundle } from '@/domain/fhir';
 import { BadRequestError } from '@/errors';
 import type { StoredResource } from '@/port/repository';
 import type { HttpDeps } from './app';
@@ -30,6 +30,30 @@ function tryRead(deps: HttpDeps, type: ResourceType, id: string): StoredResource
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Build self/next/previous `Bundle.link` entries for a search result, based on
+ * the `_count`/`_page` result operators in the query string. Relative URLs (FHIR
+ * clients resolve them against the service base). No next/previous when
+ * pagination is off (`_count` absent) or `_count` is 0 (return-no-resources mode).
+ */
+function paginationLinks(type: string, query: string, total: number): BundleLink[] {
+  const params = new URLSearchParams(query);
+  const links: BundleLink[] = [{ relation: 'self', url: query ? `${type}?${query}` : type }];
+  const count = Number(params.get('_count') ?? Number.NaN);
+  if (!Number.isFinite(count) || count <= 0) return links;
+  const page = Number(params.get('_page') ?? '1') || 1;
+  const lastPage = Math.ceil(total / count);
+  if (page < lastPage) {
+    params.set('_page', String(page + 1));
+    links.push({ relation: 'next', url: `${type}?${params.toString()}` });
+  }
+  if (page > 1) {
+    params.set('_page', String(page - 1));
+    links.push({ relation: 'previous', url: `${type}?${params.toString()}` });
+  }
+  return links;
 }
 
 // POST /{Type} — create.
@@ -115,4 +139,22 @@ export async function handleTypeHistory(c: Context, deps: HttpDeps): Promise<Res
     .flatMap((r) => deps.repo.history(type, r.id))
     .sort((a, b) => b.meta.lastUpdated.localeCompare(a.meta.lastUpdated));
   return fhirResponse(historyBundle(versions));
+}
+
+// GET /{Type}?{params} — search → searchset Bundle.
+export async function handleSearch(c: Context, deps: HttpDeps): Promise<Response> {
+  const type = requireResourceType(c.req.param('type'));
+  const query = new URL(c.req.url).search.slice(1);
+  const result = deps.search(type, query, deps.repo);
+  const links = paginationLinks(type, query, result.total);
+  return fhirResponse(searchsetBundle([...result.resources], result.total, links));
+}
+
+// POST /{Type}/_search — search with application/x-www-form-urlencoded body params.
+export async function handleSearchPost(c: Context, deps: HttpDeps): Promise<Response> {
+  const type = requireResourceType(c.req.param('type'));
+  const query = await c.req.text();
+  const result = deps.search(type, query, deps.repo);
+  const links = paginationLinks(type, query, result.total);
+  return fhirResponse(searchsetBundle([...result.resources], result.total, links));
 }
