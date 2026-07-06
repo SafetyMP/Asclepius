@@ -1,4 +1,4 @@
-import type { Hono } from 'hono';
+import type { Env, Hono } from 'hono';
 import type { HttpDeps } from './app';
 import {
   handleCreate,
@@ -21,7 +21,7 @@ import {
  * ids anyway (`[A-Za-z0-9-.]` excludes `_`). `GET /:type` (search) is distinct
  * from `GET /:type/:id` (read) by segment count.
  */
-export function registerRoutes(app: Hono, deps: HttpDeps): void {
+export function registerRoutes<E extends Env>(app: Hono<E>, deps: HttpDeps): void {
   app.post('/:type/_search', (c) => handleSearchPost(c, deps));
   app.post('/:type', (c) => handleCreate(c, deps));
   app.get('/:type/:id/_history/:vid', (c) => handleVread(c, deps));

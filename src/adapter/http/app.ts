@@ -1,30 +1,64 @@
 import { Hono } from 'hono';
+import type { ResourceType } from '@/domain/fhir';
 import type { Logger } from '@/logger';
+import type { AccessTokenIssuer, AccessTokenVerifier, AuthContext } from '@/port/auth';
 import type { ResourceRepository } from '@/port/repository';
 import type { SearchFn } from '@/port/search';
 import { errorResponse } from './errors';
 import { fhirResponse } from './json';
+import { authMiddleware } from './middleware/auth';
 import { registerRoutes } from './routes';
+import { registerAuthRoutes } from './routes/auth';
 
 /**
  * The FHIR REST Hono app factory.
  *
- * Pure: builds and returns a `Hono` instance with all routes + error boundary
- * attached; it does NOT start a server. The composition root (`src/app.ts`)
- * injects the concrete `ResourceRepository` and `SearchFn` (adapter depends on
- * ports + domain only — no `@/service` import). Tests compose this and drive it
+ * Pure: builds and returns a `Hono` instance with all routes + auth middleware
+ * + error boundary; it does NOT start a server. The composition root
+ * (`src/app.ts`) injects the concrete `ResourceRepository`, `SearchFn`, and
+ * (optional) `AuthDeps`. When `auth` is omitted (e.g. focused CRUD/search
+ * tests), no auth middleware is applied. Tests compose this and drive it
  * in-process via `app.request(...)`; `src/app.ts` wraps it with `serve()`.
  */
 
-export interface HttpDeps {
-  readonly repo: ResourceRepository;
-  /** Search capability (wired in Phase 3; injected here so the seam is fixed). */
-  readonly search: SearchFn;
-  readonly log?: Logger | undefined;
+export type AppVariables = { authCtx?: AuthContext };
+
+export interface AuthDeps {
+  readonly verifier: AccessTokenVerifier;
+  /** Scope/role policy — injected so the adapter imports no `@/service`. */
+  readonly can: (ctx: AuthContext, resourceType: ResourceType, action: 'read' | 'write') => boolean;
+  /** Present only in dev (enables `POST /auth/token`). Never constructed in prod. */
+  readonly issuer?: AccessTokenIssuer;
+  readonly isDev: boolean;
+  readonly accessTtlSeconds: number;
 }
 
-export function createHttpApp(deps: HttpDeps): Hono {
-  const app = new Hono();
+export interface HttpDeps {
+  readonly repo: ResourceRepository;
+  readonly search: SearchFn;
+  readonly log?: Logger | undefined;
+  readonly auth?: AuthDeps | undefined;
+}
+
+export function createHttpApp(deps: HttpDeps): Hono<{ Variables: AppVariables }> {
+  const app = new Hono<{ Variables: AppVariables }>();
+
+  // Public dev-token endpoint — registered first so the auth middleware (which
+  // also path-skips /auth/) never intercepts it.
+  if (deps.auth?.issuer) {
+    registerAuthRoutes(app, {
+      issuer: deps.auth.issuer,
+      isDev: deps.auth.isDev,
+      accessTtlSeconds: deps.auth.accessTtlSeconds,
+    });
+  }
+
+  // Auth middleware — applied only when auth deps are provided.
+  if (deps.auth) {
+    app.use('*', authMiddleware(deps.auth));
+  }
+
+  registerRoutes(app, deps);
 
   app.notFound((c) =>
     fhirResponse(
@@ -51,6 +85,5 @@ export function createHttpApp(deps: HttpDeps): Hono {
     return fhirResponse(body, { status });
   });
 
-  registerRoutes(app, deps);
   return app;
 }
