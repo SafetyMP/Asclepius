@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { FhirResource, ResourceType } from '@/domain/fhir';
+import { deepFreeze } from '@/domain/fhir/deep-freeze';
 import { BadRequestError, ConflictError, NotFoundError } from '@/errors';
 import type { ResourceRepository, StoredResource } from '@/port/repository';
 
@@ -19,20 +20,6 @@ import type { ResourceRepository, StoredResource } from '@/port/repository';
 interface Entry {
   versions: StoredResource[];
   deleted: boolean;
-}
-
-/**
- * Recursively freeze a plain JSON value. Applied to every stored version so the
- * "immutable snapshot" invariant is enforced at runtime, not just by TS `readonly`.
- */
-function deepFreeze<T>(value: T): T {
-  if (value !== null && typeof value === 'object') {
-    Object.freeze(value);
-    for (const child of Object.values(value as Record<string, unknown>)) {
-      deepFreeze(child);
-    }
-  }
-  return value;
 }
 
 export class InMemoryResourceRepository implements ResourceRepository {

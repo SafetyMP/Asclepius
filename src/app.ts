@@ -1,11 +1,14 @@
 import { serve } from '@hono/node-server';
+import Database from 'better-sqlite3';
 import { JwtAccessTokenIssuer } from '@/adapter/auth/jwt-issuer';
 import { JwtAccessTokenVerifier } from '@/adapter/auth/jwt-verifier';
 import { createHttpApp } from '@/adapter/http/app';
 import { InMemoryResourceRepository } from '@/adapter/storage/memory/in-memory-repository';
+import { SqliteResourceRepository } from '@/adapter/storage/sqlite/sqlite-repository';
 import { loadConfig } from '@/config';
 import { SAFETY_BANNER } from '@/domain/safety';
 import { getLogger } from '@/logger';
+import type { ResourceRepository } from '@/port/repository';
 import { can as policyCan } from '@/service/auth/policy';
 import { search } from '@/service/search';
 
@@ -18,7 +21,8 @@ import { search } from '@/service/search';
  * can swap adapters without touching domain logic, (3) there is no hidden
  * service-locator magic.
  *
- * Wires the in-memory ResourceRepository, the search service, and JWT auth
+ * Selects a ResourceRepository by `config.storage` (in-memory default; SQLite
+ * for real persistence — ADR 0004), then wires the search service and JWT auth
  * (HS256 verifier + a dev-only issuer that is NEVER constructed in production)
  * into the Hono HTTP adapter and starts the server.
  */
@@ -29,7 +33,11 @@ async function main(): Promise<void> {
   const log = getLogger().child({ component: 'boot' });
   log.info({ config: { ...config, jwtSecret: '[set]' } }, 'configuration loaded');
 
-  const repo = new InMemoryResourceRepository();
+  const repo: ResourceRepository =
+    config.storage === 'sqlite'
+      ? createSqliteRepo(config.sqlitePath)
+      : new InMemoryResourceRepository();
+
   const isDev = config.nodeEnv !== 'production';
   const verifier = new JwtAccessTokenVerifier(config);
   // The issuer is dev-only — never construct it in production, so the
@@ -49,8 +57,28 @@ async function main(): Promise<void> {
     },
   });
 
-  serve({ fetch: app.fetch, port: config.port });
+  const server = serve({ fetch: app.fetch, port: config.port });
   log.info(`Asclepius FHIR server listening on http://localhost:${config.port}`);
+
+  // Graceful shutdown: stop accepting requests, flush/close SQLite if in use,
+  // then exit. Registering the handler reinstates termination (otherwise Node
+  // would keep running with a closed DB and a live HTTP server).
+  const shutdown = (): void => {
+    server.close();
+    if (repo instanceof SqliteResourceRepository) {
+      repo.close();
+    }
+    process.exit(0);
+  };
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
+}
+
+/** Open a SQLite-backed repository (WAL mode). Caller owns its lifecycle. */
+function createSqliteRepo(path: string): SqliteResourceRepository {
+  const db = new Database(path);
+  db.pragma('journal_mode = WAL');
+  return new SqliteResourceRepository(db);
 }
 
 main().catch((err: unknown) => {
