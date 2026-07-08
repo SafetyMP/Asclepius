@@ -1,5 +1,7 @@
 import { serve } from '@hono/node-server';
 import Database from 'better-sqlite3';
+import { InMemoryAuditLogger } from '@/adapter/audit/memory/in-memory-audit-logger';
+import { SqliteAuditLogger } from '@/adapter/audit/sqlite/sqlite-audit-logger';
 import { JwtAccessTokenIssuer } from '@/adapter/auth/jwt-issuer';
 import { JwtAccessTokenVerifier } from '@/adapter/auth/jwt-verifier';
 import { createHttpApp } from '@/adapter/http/app';
@@ -8,6 +10,7 @@ import { SqliteResourceRepository } from '@/adapter/storage/sqlite/sqlite-reposi
 import { loadConfig } from '@/config';
 import { SAFETY_BANNER } from '@/domain/safety';
 import { getLogger } from '@/logger';
+import type { AuditLogger } from '@/port/audit';
 import type { ResourceRepository } from '@/port/repository';
 import { can as policyCan } from '@/service/auth/policy';
 import { search } from '@/service/search';
@@ -33,10 +36,10 @@ async function main(): Promise<void> {
   const log = getLogger().child({ component: 'boot' });
   log.info({ config: { ...config, jwtSecret: '[set]' } }, 'configuration loaded');
 
-  const repo: ResourceRepository =
-    config.storage === 'sqlite'
-      ? createSqliteRepo(config.sqlitePath)
-      : new InMemoryResourceRepository();
+  const isSqlite = config.storage === 'sqlite';
+  const sqlite = isSqlite ? createSqliteAdapters(config.sqlitePath) : undefined;
+  const repo: ResourceRepository = sqlite?.repo ?? new InMemoryResourceRepository();
+  const audit: AuditLogger = sqlite?.audit ?? new InMemoryAuditLogger();
 
   const isDev = config.nodeEnv !== 'production';
   const verifier = new JwtAccessTokenVerifier(config);
@@ -55,6 +58,7 @@ async function main(): Promise<void> {
       accessTtlSeconds: config.jwtAccessTtlSeconds,
       ...(issuer ? { issuer } : {}),
     },
+    audit,
   });
 
   const server = serve({ fetch: app.fetch, port: config.port });
@@ -74,11 +78,17 @@ async function main(): Promise<void> {
   process.on('SIGTERM', shutdown);
 }
 
-/** Open a SQLite-backed repository (WAL mode). Caller owns its lifecycle. */
-function createSqliteRepo(path: string): SqliteResourceRepository {
+/** Open SQLite-backed resource repo + audit logger (WAL mode, shared DB handle). */
+function createSqliteAdapters(path: string): {
+  repo: SqliteResourceRepository;
+  audit: SqliteAuditLogger;
+} {
   const db = new Database(path);
   db.pragma('journal_mode = WAL');
-  return new SqliteResourceRepository(db);
+  return {
+    repo: new SqliteResourceRepository(db),
+    audit: new SqliteAuditLogger(db),
+  };
 }
 
 main().catch((err: unknown) => {

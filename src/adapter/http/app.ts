@@ -1,11 +1,13 @@
 import { Hono } from 'hono';
 import type { ResourceType } from '@/domain/fhir';
 import type { Logger } from '@/logger';
+import type { AuditLogger } from '@/port/audit';
 import type { AccessTokenIssuer, AccessTokenVerifier, AuthContext } from '@/port/auth';
 import type { ResourceRepository } from '@/port/repository';
 import type { SearchFn } from '@/port/search';
 import { errorResponse } from './errors';
 import { fhirResponse } from './json';
+import { auditMiddleware } from './middleware/audit';
 import { authMiddleware } from './middleware/auth';
 import { registerRoutes } from './routes';
 import { registerAuthRoutes } from './routes/auth';
@@ -38,13 +40,20 @@ export interface HttpDeps {
   readonly search: SearchFn;
   readonly log?: Logger | undefined;
   readonly auth?: AuthDeps | undefined;
+  readonly audit?: AuditLogger | undefined;
 }
 
 export function createHttpApp(deps: HttpDeps): Hono<{ Variables: AppVariables }> {
   const app = new Hono<{ Variables: AppVariables }>();
 
-  // Public dev-token endpoint — registered first so the auth middleware (which
-  // also path-skips /auth/) never intercepts it.
+  // Audit middleware — registered FIRST so it wraps the entire chain (including
+  // /auth/token) with `await next()`, recording every request after completion.
+  if (deps.audit) {
+    app.use('*', auditMiddleware(deps.audit));
+  }
+
+  // Public dev-token endpoint — registered before the auth middleware (which
+  // also path-skips /auth/) so it is never intercepted.
   if (deps.auth?.issuer) {
     registerAuthRoutes(app, {
       issuer: deps.auth.issuer,
