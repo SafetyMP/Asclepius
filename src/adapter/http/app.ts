@@ -3,6 +3,7 @@ import type { ResourceType } from '@/domain/fhir';
 import type { Logger } from '@/logger';
 import type { AuditLogger } from '@/port/audit';
 import type { AccessTokenIssuer, AccessTokenVerifier, AuthContext } from '@/port/auth';
+import type { CdsService } from '@/port/cds';
 import type { ResourceRepository } from '@/port/repository';
 import type { SearchFn } from '@/port/search';
 import { errorResponse } from './errors';
@@ -11,6 +12,7 @@ import { auditMiddleware } from './middleware/audit';
 import { authMiddleware } from './middleware/auth';
 import { registerRoutes } from './routes';
 import { registerAuthRoutes } from './routes/auth';
+import { registerCdsRoutes } from './routes/cds';
 
 /**
  * The FHIR REST Hono app factory.
@@ -41,6 +43,7 @@ export interface HttpDeps {
   readonly log?: Logger | undefined;
   readonly auth?: AuthDeps | undefined;
   readonly audit?: AuditLogger | undefined;
+  readonly cds?: CdsService | undefined;
 }
 
 export function createHttpApp(deps: HttpDeps): Hono<{ Variables: AppVariables }> {
@@ -68,6 +71,11 @@ export function createHttpApp(deps: HttpDeps): Hono<{ Variables: AppVariables }>
   }
 
   registerRoutes(app, deps);
+
+  // CDS Hooks endpoint (POST /cds-services/:id).
+  if (deps.cds) {
+    registerCdsRoutes(app, deps);
+  }
 
   app.notFound((c) =>
     fhirResponse(
