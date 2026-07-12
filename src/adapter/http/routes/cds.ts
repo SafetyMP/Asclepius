@@ -1,4 +1,6 @@
 import type { Env, Hono } from 'hono';
+import { ForbiddenError } from '@/errors';
+import { canAccessPatient } from '@/service/auth/policy';
 import type { HttpDeps } from '../app';
 
 /**
@@ -16,12 +18,19 @@ export function registerCdsRoutes<E extends Env>(app: Hono<E>, deps: HttpDeps): 
     if (!deps.cds) {
       return c.json({ error: 'CDS service not configured' }, 501);
     }
+    const ctx = c.get('authCtx');
+    if (!ctx) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
     const body = (await c.req.json().catch(() => null)) as {
       context?: { patientId?: unknown };
     } | null;
     const patientId = body?.context?.patientId;
     if (typeof patientId !== 'string') {
       return c.json({ error: 'Missing or invalid context.patientId' }, 400);
+    }
+    if (!canAccessPatient(ctx, patientId)) {
+      throw new ForbiddenError('Patient compartment violation');
     }
     const result = await deps.cds.evaluate(patientId, deps.repo);
     return c.json({ cards: result.cards });

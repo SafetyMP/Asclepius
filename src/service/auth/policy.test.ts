@@ -7,6 +7,10 @@ function principal(scopes: readonly ParsedScope[]): AuthContext {
   return { sub: 's1', role: 'practitioner', scopes };
 }
 
+function patientPrincipal(scopes: readonly ParsedScope[], patientId: string): AuthContext {
+  return { sub: 's1', role: 'practitioner', scopes, patientId };
+}
+
 const rt = (t: string): ResourceType => t as ResourceType;
 
 describe('scopeMatches', () => {
@@ -64,8 +68,9 @@ describe('can', () => {
     expect(can(principal([]), rt('Patient'), 'read')).toBe(false);
   });
 
-  it('patient context grants read in the MVP (no compartment filtering)', () => {
-    const ctx = principal([{ context: 'patient', resource: 'Patient', action: 'read' }]);
-    expect(can(ctx, rt('Patient'), 'read')).toBe(true);
+  it('patient context enforces compartment filtering for Patient reads', () => {
+    const ctx = patientPrincipal([{ context: 'patient', resource: 'Patient', action: 'read' }], 'pat-1');
+    expect(can(ctx, rt('Patient'), 'read', 'pat-1')).toBe(true);
+    expect(can(ctx, rt('Patient'), 'read', 'pat-2')).toBe(false);
   });
 });

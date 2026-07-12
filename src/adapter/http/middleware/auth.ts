@@ -39,7 +39,8 @@ export function authMiddleware(auth: AuthDeps): MiddlewareHandler<{ Variables: A
       // 'read' so a read-scoped principal can use POST-search.
       const isSearch = segments[1] === '_search' && c.req.method === 'POST';
       const action = isSearch ? 'read' : methodToAction(c.req.method);
-      if (!auth.can(ctx, typeSegment as ResourceType, action)) {
+      const resourceId = segments[1] && segments[1] !== '_search' ? segments[1] : undefined;
+      if (!auth.can(ctx, typeSegment as ResourceType, action, resourceId)) {
         throw new ForbiddenError(`Insufficient scope for ${c.req.method} ${typeSegment}`);
       }
     }

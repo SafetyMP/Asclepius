@@ -32,7 +32,12 @@ export type AppVariables = { authCtx?: AuthContext };
 export interface AuthDeps {
   readonly verifier: AccessTokenVerifier;
   /** Scope/role policy — injected so the adapter imports no `@/service`. */
-  readonly can: (ctx: AuthContext, resourceType: ResourceType, action: 'read' | 'write') => boolean;
+  readonly can: (
+    ctx: AuthContext,
+    resourceType: ResourceType,
+    action: 'read' | 'write',
+    resourceId?: string,
+  ) => boolean;
   /** Present only in dev (enables `POST /auth/token`). Never constructed in prod. */
   readonly issuer?: AccessTokenIssuer;
   readonly isDev: boolean;
