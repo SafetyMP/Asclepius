@@ -21,7 +21,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<ApiResult<T
       },
     });
     const text = await res.text();
-    let body: unknown = text;
+    let body: unknown;
     try {
       body = text ? JSON.parse(text) : null;
     } catch {
