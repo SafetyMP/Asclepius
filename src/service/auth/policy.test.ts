@@ -69,7 +69,10 @@ describe('can', () => {
   });
 
   it('patient context enforces compartment filtering for Patient reads', () => {
-    const ctx = patientPrincipal([{ context: 'patient', resource: 'Patient', action: 'read' }], 'pat-1');
+    const ctx = patientPrincipal(
+      [{ context: 'patient', resource: 'Patient', action: 'read' }],
+      'pat-1',
+    );
     expect(can(ctx, rt('Patient'), 'read', 'pat-1')).toBe(true);
     expect(can(ctx, rt('Patient'), 'read', 'pat-2')).toBe(false);
   });

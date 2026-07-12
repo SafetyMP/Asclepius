@@ -1,7 +1,7 @@
-import type { Env, Hono } from 'hono';
+import type { Hono } from 'hono';
 import { ForbiddenError } from '@/errors';
 import { canAccessPatient } from '@/service/auth/policy';
-import type { HttpDeps } from '../app';
+import type { AppVariables, HttpDeps } from '../app';
 
 /**
  * CDS Hooks endpoint — `POST /cds-services/:id` (ADR 0007).
@@ -13,7 +13,7 @@ import type { HttpDeps } from '../app';
  * Response content-type is `application/json` (CDS Hooks standard, not
  * `application/fhir+json`).
  */
-export function registerCdsRoutes<E extends Env>(app: Hono<E>, deps: HttpDeps): void {
+export function registerCdsRoutes(app: Hono<{ Variables: AppVariables }>, deps: HttpDeps): void {
   app.post('/cds-services/:id', async (c) => {
     if (!deps.cds) {
       return c.json({ error: 'CDS service not configured' }, 501);

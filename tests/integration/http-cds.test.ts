@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { JwtAccessTokenIssuer } from '@/adapter/auth/jwt-issuer';
+import { JwtAccessTokenVerifier } from '@/adapter/auth/jwt-verifier';
 import { createHttpApp } from '@/adapter/http/app';
 import { InMemoryResourceRepository } from '@/adapter/storage/memory/in-memory-repository';
+import { loadConfig } from '@/config';
 import type { FhirResource } from '@/domain/fhir';
+import type { AuthContext } from '@/port/auth';
+import { parseScopes } from '@/port/auth';
+import { can as policyCan } from '@/service/auth/policy';
 import { cdsRules } from '@/service/cds/rules';
 import { createCdsService } from '@/service/cds/service';
 import { search } from '@/service/search';
@@ -9,10 +15,38 @@ import { search } from '@/service/search';
 function makeApp(): {
   app: ReturnType<typeof createHttpApp>;
   repo: InMemoryResourceRepository;
+  bearer: (scopes: string) => Promise<string>;
 } {
+  const config = loadConfig({
+    NODE_ENV: 'test',
+    JWT_SECRET: 'test-secret-min-32-chars-xxxxxxxx',
+  });
   const repo = new InMemoryResourceRepository();
   const cds = createCdsService(cdsRules, search);
-  return { app: createHttpApp({ repo, search, cds }), repo };
+  const verifier = new JwtAccessTokenVerifier(config);
+  const issuer = new JwtAccessTokenIssuer(config);
+  const app = createHttpApp({
+    repo,
+    search,
+    cds,
+    auth: {
+      verifier,
+      can: policyCan,
+      issuer,
+      isDev: true,
+      accessTtlSeconds: config.jwtAccessTtlSeconds,
+    },
+  });
+  const bearer = async (scopes: string): Promise<string> => {
+    const principal: AuthContext = {
+      sub: 'tester',
+      role: 'system',
+      scopes: parseScopes(scopes),
+    };
+    const token = await issuer.issue(principal);
+    return `Bearer ${token}`;
+  };
+  return { app, repo, bearer };
 }
 
 const CDS_REQUEST = JSON.stringify({
@@ -23,7 +57,7 @@ const CDS_REQUEST = JSON.stringify({
 
 describe('CDS Hooks HTTP endpoint', () => {
   it('returns cards for a patient with an allergy conflict', async () => {
-    const { app, repo } = makeApp();
+    const { app, repo, bearer } = makeApp();
     repo.create({
       resourceType: 'AllergyIntolerance',
       id: 'a1',
@@ -41,7 +75,10 @@ describe('CDS Hooks HTTP endpoint', () => {
 
     const res = await app.request('/cds-services/all', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: {
+        'content-type': 'application/json',
+        authorization: await bearer('system/*.read'),
+      },
       body: CDS_REQUEST,
     });
     expect(res.status).toBe(200);
@@ -50,10 +87,13 @@ describe('CDS Hooks HTTP endpoint', () => {
   });
 
   it('returns 400 when context.patientId is missing', async () => {
-    const { app } = makeApp();
+    const { app, bearer } = makeApp();
     const res = await app.request('/cds-services/all', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: {
+        'content-type': 'application/json',
+        authorization: await bearer('system/*.read'),
+      },
       body: JSON.stringify({ hook: 'patient-view', context: {} }),
     });
     expect(res.status).toBe(400);
