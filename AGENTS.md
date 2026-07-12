@@ -44,8 +44,14 @@ layer on top of the global `~/.config/opencode/AGENTS.md`.
 ## Verification
 
 - A change is not done until `npm run gate` (format → lint → typecheck → test →
-  build) is green. Run `gate_run` from the harness to confirm.
+  build) is green, or `./scripts/verify.sh` exits 0.
 - Do not claim green without observed output.
+
+## Definition of Done
+
+```bash
+./scripts/verify.sh
+```
 
 ## Commit / PR style
 

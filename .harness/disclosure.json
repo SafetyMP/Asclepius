@@ -1,0 +1,74 @@
+{
+  "schema": "harness-disclosure/v1",
+  "scope": "effective",
+  "generated_at": "2026-07-12T14:25:04.182708+00:00",
+  "global": {
+    "schema": "harness-disclosure/v1",
+    "scope": "global",
+    "preference_owner": "designer",
+    "audience": "agents",
+    "ceo_accepts": "github-products",
+    "goal": "manufacturing-truth",
+    "generated_at": "2026-07-12T14:25:03.980715+00:00",
+    "global_harness": {
+      "platform_version": "2026-07-v4",
+      "constitution_hash": "8fd4c5a4c076f3a5",
+      "disclosure_hash": "96add5a99856bf06",
+      "rules_always_on_words": 1801,
+      "global_hooks": [
+        "afterAgentResponse",
+        "afterFileEdit",
+        "beforeMCPExecution",
+        "beforeReadFile",
+        "beforeShellExecution",
+        "beforeSubmitPrompt",
+        "preCompact",
+        "stop",
+        "subagentStart",
+        "subagentStop"
+      ],
+      "inner_harness_uncontrolled": true,
+      "skills_available": 24
+    }
+  },
+  "repo": {
+    "schema": "harness-disclosure/v1",
+    "scope": "repo",
+    "preference_owner": "agent-customer",
+    "audience": "agents",
+    "ceo_accepts": "github-products",
+    "goal": "manufacturing-truth",
+    "generated_at": "2026-07-12T14:25:03.983169+00:00",
+    "repo_harness": {
+      "profile": "solo",
+      "bundles_applied": [
+        "cloud-guards",
+        "verify-on-stop"
+      ],
+      "profile_hash": "0ddf41bc0dea1557",
+      "version_hash": "a954bd8e8219d855",
+      "agents_md_lines": 60,
+      "verify": {
+        "cmd": "./scripts/verify.sh",
+        "stop_verify": "project-verify-on-stop",
+        "cloud_verify": null
+      }
+    },
+    "last_check_at": "2026-07-12T14:25:03.979129+00:00",
+    "last_verify_exit": 0
+  },
+  "effective": {
+    "global_version": "2026-07-v4",
+    "global_hash": "96add5a99856bf06",
+    "repo_hash": "0ddf41bc0dea1557",
+    "effective_hash": "152d8a789d84ffba",
+    "runtime": "ide",
+    "inner_harness_uncontrolled": true,
+    "context": {
+      "live_est_tokens": 8167,
+      "cache_worst_case_est_tokens": 36002,
+      "enabled_plugin_count": 10,
+      "skill_index_inflation_est_tokens": 28173
+    }
+  }
+}
