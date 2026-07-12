@@ -19,6 +19,7 @@ layer on top of the global `~/.config/opencode/AGENTS.md`.
   from an adapter inside `service` or `domain`.
 - **`src/app.ts` is the only composition root.** All adapter wiring happens
   there. Do not construct adapters inside services.
+- **`web/`** is the Next.js reference console (BFF → API :8787). Not for clinical use.
 - **Ports live in `src/port/`.** A new external dependency (DB, IdP, message
   bus) gets a port interface first; adapters implement it.
 - **zod is the single source of truth for FHIR types.** Author a schema, derive
@@ -47,11 +48,13 @@ layer on top of the global `~/.config/opencode/AGENTS.md`.
   build) is green. Prefer `./scripts/verify.sh` (runs `npm ci` + gate) before push.
 - Regenerate lockfiles with `npx npm@10.9.2 install` — CI uses npm 10 on Node 22.
 - Do not claim green without observed output.
+- Web console: `cd web && npm run dev` (port 3200); `cd web && npm run verify` for UI gate.
 
 ## Definition of Done
 
 ```bash
 ./scripts/verify.sh
+cd web && npm run verify   # optional: reference console (API optional for static smoke)
 ```
 
 ## Commit / PR style
