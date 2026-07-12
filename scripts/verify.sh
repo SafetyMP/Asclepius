@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
+# Definition of Done — mirrors CI gate (format, lint, typecheck, test, build).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-if [[ ! -d node_modules ]]; then
-  echo "Run npm install first" >&2
-  exit 1
+if command -v corepack >/dev/null 2>&1; then
+  corepack enable >/dev/null 2>&1 || true
+  corepack prepare npm@10.9.2 --activate >/dev/null 2>&1 || true
 fi
 
+echo "==> npm ci (expect packageManager npm@10.9.2)"
+npm ci
+
+echo "==> gate"
 npm run gate
-echo "verify: ok"
+
+echo "verify: ok (ci/web parity)"
