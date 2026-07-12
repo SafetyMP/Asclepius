@@ -13,10 +13,13 @@ import { getLogger } from '@/logger';
 import type { AuditLogger } from '@/port/audit';
 import type { CdsService } from '@/port/cds';
 import type { ResourceRepository } from '@/port/repository';
+import type { ValidationService } from '@/port/validation';
 import { can as policyCan } from '@/service/auth/policy';
 import { cdsRules } from '@/service/cds/rules';
 import { createCdsService } from '@/service/cds/service';
 import { search } from '@/service/search';
+import { validationRules } from '@/service/validation/rules';
+import { createValidationService } from '@/service/validation/service';
 
 /**
  * Composition root.
@@ -44,6 +47,7 @@ async function main(): Promise<void> {
   const repo: ResourceRepository = sqlite?.repo ?? new InMemoryResourceRepository();
   const audit: AuditLogger = sqlite?.audit ?? new InMemoryAuditLogger();
   const cds: CdsService = createCdsService(cdsRules, search);
+  const validation: ValidationService = createValidationService(validationRules);
 
   const isDev = config.nodeEnv !== 'production';
   const verifier = new JwtAccessTokenVerifier(config);
@@ -64,6 +68,7 @@ async function main(): Promise<void> {
     },
     audit,
     cds,
+    validation,
   });
 
   const server = serve({ fetch: app.fetch, port: config.port });

@@ -6,6 +6,7 @@ import type { AccessTokenIssuer, AccessTokenVerifier, AuthContext } from '@/port
 import type { CdsService } from '@/port/cds';
 import type { ResourceRepository } from '@/port/repository';
 import type { SearchFn } from '@/port/search';
+import type { ValidationService } from '@/port/validation';
 import { errorResponse } from './errors';
 import { fhirResponse } from './json';
 import { auditMiddleware } from './middleware/audit';
@@ -13,6 +14,7 @@ import { authMiddleware } from './middleware/auth';
 import { registerRoutes } from './routes';
 import { registerAuthRoutes } from './routes/auth';
 import { registerCdsRoutes } from './routes/cds';
+import { registerValidationRoutes } from './routes/validation';
 
 /**
  * The FHIR REST Hono app factory.
@@ -44,6 +46,7 @@ export interface HttpDeps {
   readonly auth?: AuthDeps | undefined;
   readonly audit?: AuditLogger | undefined;
   readonly cds?: CdsService | undefined;
+  readonly validation?: ValidationService | undefined;
 }
 
 export function createHttpApp(deps: HttpDeps): Hono<{ Variables: AppVariables }> {
@@ -75,6 +78,11 @@ export function createHttpApp(deps: HttpDeps): Hono<{ Variables: AppVariables }>
   // CDS Hooks endpoint (POST /cds-services/:id).
   if (deps.cds) {
     registerCdsRoutes(app, deps);
+  }
+
+  // FHIR $validate operation (POST /:type/$validate).
+  if (deps.validation) {
+    registerValidationRoutes(app, deps);
   }
 
   app.notFound((c) =>

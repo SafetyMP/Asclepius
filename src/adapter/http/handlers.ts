@@ -1,7 +1,7 @@
 import type { Context } from 'hono';
 import type { FhirResource, ResourceType } from '@/domain/fhir';
 import { type BundleLink, historyBundle, searchsetBundle } from '@/domain/fhir';
-import { BadRequestError } from '@/errors';
+import { BadRequestError, UnprocessableEntityError } from '@/errors';
 import type { StoredResource } from '@/port/repository';
 import type { HttpDeps } from './app';
 import { createHeaders, versionHeaders } from './headers';
@@ -29,6 +29,22 @@ function tryRead(deps: HttpDeps, type: ResourceType, id: string): StoredResource
     return deps.repo.read(type, id);
   } catch {
     return undefined;
+  }
+}
+
+/**
+ * Enforce profile validation rules on a parsed resource. If any error-severity
+ * issues are found, throw UnprocessableEntityError (422). Warnings pass silently.
+ * No-op when no validation service is configured.
+ */
+function enforceProfileRules(deps: HttpDeps, resource: FhirResource): void {
+  if (!deps.validation) return;
+  const outcome = deps.validation.validateResource(resource);
+  const blocking = outcome.issue.filter((i) => i.severity === 'error' || i.severity === 'fatal');
+  if (blocking.length > 0) {
+    throw new UnprocessableEntityError(
+      `Profile validation failed: ${blocking.map((i) => i.diagnostics).join('; ')}`,
+    );
   }
 }
 
@@ -66,6 +82,7 @@ export async function handleCreate(c: Context, deps: HttpDeps): Promise<Response
       `Resource type '${resource.resourceType}' does not match URL type '${type}'`,
     );
   }
+  enforceProfileRules(deps, resource);
   const stored = deps.repo.create(resource);
   return fhirResponse(stored, { status: 201, headers: createHeaders(stored) });
 }
@@ -101,6 +118,7 @@ export async function handleUpdate(c: Context, deps: HttpDeps): Promise<Response
   if (resource.id !== undefined && resource.id !== id) {
     throw new BadRequestError(`Resource id '${resource.id}' does not match URL id '${id}'`);
   }
+  enforceProfileRules(deps, resource);
   // Create-on-update: PUT to an id that may or may not exist. The resource's id
   // is forced to the path id (FHIR PUT semantics).
   const toStore = { ...resource, id } as FhirResource;
