@@ -70,5 +70,16 @@ introduces or reverses a decision, add or update an ADR.
 - Never commit secrets, `*.db` files, or `dist/`.
 - Open a pull request against `main`; CI must pass before merge.
 
+## OSS supply-chain health
+
+| Check | Where |
+|-------|--------|
+| **OpenSSF Scorecard** | [`.github/workflows/scorecard.yml`](.github/workflows/scorecard.yml) — weekly + push; publishes to [scorecard.dev](https://scorecard.dev) (README badge after first run on `main`) |
+| **Local scorecard report** | `./scripts/oss-scorecard.sh` (requires `brew install scorecard`) |
+| **CodeQL** | [`.github/workflows/codeql.yml`](.github/workflows/codeql.yml) |
+| **Dependabot** | [`.github/dependabot.yml`](.github/dependabot.yml) |
+
+After the first Scorecard workflow run on `main`, add **`Scorecard analysis`** as a optional branch protection check if your org uses rulesets.
+
 By contributing, you agree that your contributions are licensed under the
 [Apache-2.0 License](LICENSE).

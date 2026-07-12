@@ -1,7 +1,9 @@
 # Asclepius — FHIR-native Clinical Data Platform
 
-[![CI](https://github.com/SafetyMP/Asclepius/actions/workflows/ci.yml/badge.svg)](https://github.com/SafetyMP/Asclepius/actions/workflows/ci.yml)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/SafetyMP/Asclepius/blob/main/LICENSE)
+[![CI](https://github.com/SafetyMP/Asclepius/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/SafetyMP/Asclepius/badge)](https://scorecard.dev/viewer/?uri=github.com/SafetyMP/Asclepius)
+[![License: Apache-2.0](https://img.shields.io/github/license/SafetyMP/Asclepius)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white)](#getting-started)
 
 > ⚠️ **NOT FOR CLINICAL USE.** Asclepius is a **reference implementation** that

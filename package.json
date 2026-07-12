@@ -45,7 +45,8 @@
     "test:coverage": "vitest run --coverage",
     "seed": "tsx src/cli.ts seed",
     "cli": "tsx src/cli.ts",
-    "gate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
+    "gate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
+    "oss:scorecard": "bash scripts/oss-scorecard.sh"
   },
   "license": "Apache-2.0",
   "dependencies": {
