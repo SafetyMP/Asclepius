@@ -15,9 +15,12 @@ cd web
 npm install
 npm run dev          # http://localhost:3200
 npm run verify       # typecheck + build + @smoke Playwright + axe-core
+npm run screenshots  # capture README assets (requires running server)
 ```
 
 Start the API from repo root: `npm run dev` (port 8787). Issue a dev token at `/auth` before protected routes.
+
+Regenerate README screenshots: `npm run build && npm run start` then `npm run screenshots` (see [`docs/assets/README.md`](../docs/assets/README.md)).
 
 ## Pages
 

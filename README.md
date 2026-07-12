@@ -18,6 +18,24 @@ platform, built to be **correct and testable** rather than feature-complete.
 Every architectural choice is documented with first-principles reasoning and an
 honest "better tool for production" callout in [Architecture Decision Records](docs/adr/).
 
+<p align="center">
+  <img src="docs/assets/demo.gif" alt="Asclepius FHIR console — overview, patients, drug interactions, and clinical decision support (synthetic demo data)" width="900" />
+</p>
+
+## Screenshots
+
+| Overview | Patients | Drug interactions | Clinical decision support |
+|:--------:|:--------:|:-----------------:|:-------------------------:|
+| ![Overview](docs/assets/overview.png) | ![Patients](docs/assets/patients.png) | ![Drug interactions](docs/assets/interactions.png) | ![Clinical decision support](docs/assets/cds.png) |
+
+| Validate resource |
+|:-----------------:|
+| ![Validate resource](docs/assets/validate.png) |
+
+The **clinical reference console** in [`web/`](web/) explores the FHIR API locally. Run `npm run dev` for the API (port 8787), then `cd web && npm install && npm run dev` on port **3200**. Regenerate visuals with `cd web && npm run screenshots`; see [`docs/assets/README.md`](docs/assets/README.md).
+
+_Synthetic demo data only — NOT FOR CLINICAL USE._
+
 ## Status
 
 This is a **reference implementation** — core pillars are built and tested; see the
@@ -35,6 +53,7 @@ Status table below for what exists today.
 | Drug–drug interactions    | In-memory knowledge base (6 RxNorm interactions) + bidirectional checker; `POST /MedicationRequest/$check-interactions` endpoint + DDI CDS rule                                                                                                                               | ✅ Built                                                          |
 | AuthN/AuthZ               | JWT (HS256, jose) + SMART-style scope middleware (`system/Patient.read`, `user/*.write`); dev-only `/auth/token` issuer (prod-disabled). Patient-compartment filtering + role-based overrides deferred                                                                        | ✅ Built ([ADR 0008](docs/adr/0008-jwt-and-smart-scopes.md))      |
 | Audit                     | Hash-chained, append-only, tamper-evident log (SHA-256 chain; in-memory + SQLite adapters; every request recorded via middleware)                                                                                                                                             | ✅ Built ([ADR 0009](docs/adr/0009-hash-chained-audit.md))        |
+| Web console               | Next.js reference UI in [`web/`](web/) — patient search, DDI check, CDS, validation, dev auth (BFF → FHIR API)                                                                                                                                                                | ✅ Built                                                          |
 
 ## Architecture (ports & adapters)
 
@@ -69,9 +88,12 @@ Requires **Node.js ≥ 22** (see `.nvmrc` for the dev version).
 
 ```bash
 npm install              # dependencies (builds better-sqlite3's native module)
-npm run dev              # run via tsx (no compile step), hot reload
+npm run dev              # run via tsx (no compile step), hot reload — http://127.0.0.1:8787
 npm test                 # run the test suite
 npm run gate             # format:check → lint → typecheck → test → build
+
+# Optional: clinical reference console (requires API above)
+cd web && npm install && npm run dev   # http://localhost:3200
 ```
 
 The project is configured for **max-strict TypeScript** (`strict`,
