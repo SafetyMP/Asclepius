@@ -20,9 +20,8 @@ honest "better tool for production" callout in [Architecture Decision Records](d
 
 ## Status
 
-This is a **partial implementation** — the foundation is real and tested; most
-pillars are planned. The status column is the source of truth for what exists
-today.
+This is a **reference implementation** — core pillars are built and tested; see the
+Status table below for what exists today.
 
 | Pillar                    | Implementation                                                                                                                                                                                                                                                                | Status                                                            |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -40,7 +39,7 @@ today.
 ## Architecture (ports & adapters)
 
 ```
-        ┌─────────────────────── HTTP / CLI (entry) ────────────────────────┐
+        ┌─────────────────────── HTTP (entry) ────────────────────────────────┐
         │  adapter/http · adapter/auth · adapter/audit                       │
         └───────────────────────────────┼───────────────────────────────────┘
                                         │ depends on ports only
@@ -57,8 +56,8 @@ today.
         └───────────────────────────────────────────────────────────────────┘
 ```
 
-_Target architecture — see the [Status](#status) table above for what is
-implemented today (e.g. SQLite/HTTP/auth/audit adapters are not yet built)._
+_Target layered architecture — the [Status](#status) table is the source of truth
+for what is implemented today._
 
 Dependencies point **inward**: `domain` depends on nothing; `service` depends on
 `domain` + `port`; adapters depend on `port` + `domain`. `src/app.ts` is the
