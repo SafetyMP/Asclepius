@@ -5,8 +5,10 @@
   "description": "Asclepius — a FHIR-native clinical data platform (reference implementation, NOT for clinical use)",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22 <23",
+    "npm": ">=10.9.2 <11"
   },
+  "packageManager": "npm@10.9.2",
   "homepage": "https://github.com/SafetyMP/Asclepius",
   "repository": {
     "type": "git",
