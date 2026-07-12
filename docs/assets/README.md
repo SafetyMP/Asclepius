@@ -14,7 +14,7 @@ Visual assets for README and GitHub social preview. Synthetic demo data only —
 Regenerate when the clinical console layout changes materially:
 
 ```bash
-npm run dev                   # API on http://127.0.0.1:8787 (optional for static UI capture)
+npm run dev                   # API on port 8787 (optional for static UI capture)
 cd web && npm ci && npm run build && npm run start
 cd web && npm run screenshots # or npm run screenshots:rebuild-gif from existing PNGs
 ```

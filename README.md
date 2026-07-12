@@ -32,7 +32,7 @@ honest "better tool for production" callout in [Architecture Decision Records](d
 |:-----------------:|
 | ![Validate resource](docs/assets/validate.png) |
 
-The **clinical reference console** in [`web/`](web/) explores the FHIR API locally. Run `npm run dev` for the API (port 8787), then `cd web && npm install && npm run dev` (http://localhost:3200). Regenerate visuals with `cd web && npm run screenshots`; see [`docs/assets/README.md`](docs/assets/README.md).
+The **clinical reference console** in [`web/`](web/) explores the FHIR API locally. Run `npm run dev` for the API (port 8787), then `cd web && npm install && npm run dev` on port **3200**. Regenerate visuals with `cd web && npm run screenshots`; see [`docs/assets/README.md`](docs/assets/README.md).
 
 _Synthetic demo data only — NOT FOR CLINICAL USE._
 
