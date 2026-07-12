@@ -4,6 +4,7 @@ import type { Logger } from '@/logger';
 import type { AuditLogger } from '@/port/audit';
 import type { AccessTokenIssuer, AccessTokenVerifier, AuthContext } from '@/port/auth';
 import type { CdsService } from '@/port/cds';
+import type { DdiChecker } from '@/port/ddi';
 import type { ResourceRepository } from '@/port/repository';
 import type { SearchFn } from '@/port/search';
 import type { ValidationService } from '@/port/validation';
@@ -14,6 +15,7 @@ import { authMiddleware } from './middleware/auth';
 import { registerRoutes } from './routes';
 import { registerAuthRoutes } from './routes/auth';
 import { registerCdsRoutes } from './routes/cds';
+import { registerDdiRoutes } from './routes/ddi';
 import { registerValidationRoutes } from './routes/validation';
 
 /**
@@ -52,6 +54,7 @@ export interface HttpDeps {
   readonly audit?: AuditLogger | undefined;
   readonly cds?: CdsService | undefined;
   readonly validation?: ValidationService | undefined;
+  readonly ddi?: DdiChecker | undefined;
 }
 
 export function createHttpApp(deps: HttpDeps): Hono<{ Variables: AppVariables }> {
@@ -88,6 +91,11 @@ export function createHttpApp(deps: HttpDeps): Hono<{ Variables: AppVariables }>
   // FHIR $validate operation (POST /:type/$validate).
   if (deps.validation) {
     registerValidationRoutes(app, deps);
+  }
+
+  // DDI interaction check (POST /MedicationRequest/$check-interactions).
+  if (deps.ddi) {
+    registerDdiRoutes(app, deps);
   }
 
   app.notFound((c) =>

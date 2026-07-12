@@ -12,11 +12,13 @@ import { SAFETY_BANNER } from '@/domain/safety';
 import { getLogger } from '@/logger';
 import type { AuditLogger } from '@/port/audit';
 import type { CdsService } from '@/port/cds';
+import type { DdiChecker } from '@/port/ddi';
 import type { ResourceRepository } from '@/port/repository';
 import type { ValidationService } from '@/port/validation';
 import { can as policyCan } from '@/service/auth/policy';
 import { cdsRules } from '@/service/cds/rules';
 import { createCdsService } from '@/service/cds/service';
+import { createDdiChecker } from '@/service/ddi/checker';
 import { search } from '@/service/search';
 import { validationRules } from '@/service/validation/rules';
 import { createValidationService } from '@/service/validation/service';
@@ -48,6 +50,7 @@ async function main(): Promise<void> {
   const audit: AuditLogger = sqlite?.audit ?? new InMemoryAuditLogger();
   const cds: CdsService = createCdsService(cdsRules, search);
   const validation: ValidationService = createValidationService(validationRules);
+  const ddi: DdiChecker = createDdiChecker();
 
   const isDev = config.nodeEnv !== 'production';
   const verifier = new JwtAccessTokenVerifier(config);
@@ -69,6 +72,7 @@ async function main(): Promise<void> {
     audit,
     cds,
     validation,
+    ddi,
   });
 
   const server = serve({ fetch: app.fetch, port: config.port });
