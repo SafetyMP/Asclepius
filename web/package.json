@@ -16,7 +16,9 @@
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test --grep @smoke",
-    "verify": "npm run typecheck && npm run build && npm run test:e2e:smoke"
+    "verify": "npm run typecheck && npm run build && npm run test:e2e:smoke",
+    "screenshots": "node scripts/capture-screenshots.mjs",
+    "screenshots:rebuild-gif": "node scripts/capture-screenshots.mjs --from-existing"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -37,6 +39,8 @@
     "@types/react-dom": "^19.2.2",
     "eslint": "^9.28.0",
     "eslint-config-next": "16.2.6",
+    "gifenc": "^1.0.3",
+    "pngjs": "^7.0.0",
     "tailwindcss": "^4",
     "typescript": "^5.8.3"
   }
