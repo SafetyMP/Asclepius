@@ -27,8 +27,6 @@ Instead, please report it privately:
    - a description of the issue and its impact,
    - the commit hash or version affected,
    - steps to reproduce, and a proof of concept if you have one.
-2. Alternatively, email the maintainers at **harts@wustl.edu** with the same
-   details.
 
 Please **do not** open a pull request fixing a vulnerability until we have
 acknowledged the report and agreed on a coordinated disclosure path.
