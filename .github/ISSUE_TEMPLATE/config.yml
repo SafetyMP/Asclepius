@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/SafetyMP/Asclepius/security/advisories/new
+    about: Report privately via GitHub Security Advisories — never post undisclosed vulnerabilities as public issues.
+  - name: Contributing guide
+    url: https://github.com/SafetyMP/Asclepius/blob/main/CONTRIBUTING.md
+    about: Local setup, npm run gate / scripts/verify.sh, and pull request expectations.
+  - name: Design pivot / product intent
+    url: https://github.com/SafetyMP/Asclepius/blob/main/docs/DESIGN-PIVOT.md
+    about: Why Asclepius is a typed FHIR R4 teaching kit, not a clinical data platform or a server for PHI.

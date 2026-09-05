@@ -2,12 +2,12 @@
 
 ## Not for clinical use
 
-Asclepius is a **reference / educational implementation**, **not** a certified
+Asclepius is a **typed FHIR R4 teaching kit**, **not** a certified
 medical device and **not** compliant with HIPAA, HITRUST, or any clinical
 regulatory framework. **Do not use it to store, process, or make decisions about
 real patient data.** This policy covers the security of the **source code**; it
 does not change the project's clinical-safety posture. See the README's
-regulatory disclaimer.
+regulatory disclaimer and [docs/DESIGN-PIVOT.md](../docs/DESIGN-PIVOT.md).
 
 ## Supported versions
 
@@ -42,7 +42,7 @@ reporter (unless they prefer to remain anonymous).
 
 In scope: vulnerabilities in this repository's code that could lead to
 unexpected code execution, data corruption, or authz bypasses _within the
-reference implementation_. Examples: prototype-pollution via zod input, unsafe
+teaching kit_. Examples: prototype-pollution via zod input, unsafe
 deserialization, broken access control in a future auth adapter.
 
 Out of scope (but welcome as regular issues): the incompleteness of the DDI
@@ -51,6 +51,6 @@ follows documented limitations.
 
 ## Safe harbor
 
-Good-faith security research on this reference implementation is appreciated.
+Good-faith security research on this teaching kit is appreciated.
 Please avoid degrading service, modifying data that is not your own, or
 accessing others' data.
