@@ -10,10 +10,12 @@ on:
 
 permissions:
   contents: read
-  security-events: write
 
 jobs:
   analyze:
+    permissions:
+      contents: read
+      security-events: write
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
