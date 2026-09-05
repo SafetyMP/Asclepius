@@ -20,6 +20,8 @@ architectural choice is documented with first-principles reasoning and an
 honest "better tool for production" callout in [Architecture Decision Records](docs/adr/).
 See [docs/DESIGN-PIVOT.md](docs/DESIGN-PIVOT.md) for why this is a teaching kit.
 
+> **In the SafetyMP thesis:** Lab only — typed FHIR, not a control system and not clinical operations. See the [portfolio README](https://github.com/SafetyMP/SafetyMP).
+
 <p align="center">
   <img src="docs/assets/demo.gif" alt="Asclepius teaching console — overview, patients, drug interactions, and clinical decision support (synthetic demo data only — NOT FOR CLINICAL USE)" width="900" />
 </p>
