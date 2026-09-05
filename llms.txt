@@ -1,0 +1,23 @@
+# Asclepius
+
+> Typed FHIR R4 teaching kit. Zod is the source of truth; ports and adapters;
+> DDI is incomplete by design. **NOT FOR CLINICAL USE.** Not a server for PHI.
+> Not a substitute for Medplum, HAPI FHIR, or IBM FHIR.
+
+## Docs
+
+- [README.md](README.md): start here (disclaimer first)
+- [docs/DESIGN-PIVOT.md](docs/DESIGN-PIVOT.md): why this is a teaching kit, not a clinical data platform
+- [AGENTS.md](AGENTS.md): community contract (domain rules)
+- [Architecture Decision Records](docs/adr/): first-principles choices
+- [Copilot instructions](.github/copilot-instructions.md): never-do rules
+- [SECURITY.md](.github/SECURITY.md): private vulnerability reports
+
+## Verify
+
+- `./scripts/verify.sh`
+- `npm run gate`
+
+## Skills
+
+- [fhir-ports-adapters](.github/skills/fhir-ports-adapters/SKILL.md): inward deps, `src/app.ts` composition root, zod-as-FHIR-source-of-truth

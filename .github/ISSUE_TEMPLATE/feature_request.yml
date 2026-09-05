@@ -1,0 +1,62 @@
+name: Feature Request
+description: Propose a capability aligned with the typed FHIR R4 teaching kit
+title: "[feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Read the [design pivot](https://github.com/SafetyMP/Asclepius/blob/main/docs/DESIGN-PIVOT.md) and
+        [ADRs](https://github.com/SafetyMP/Asclepius/tree/main/docs/adr) before filing.
+        Asclepius is a typed FHIR R4 teaching kit — **NOT FOR CLINICAL USE**.
+        Proposals that imply production FHIR, PHI storage, or clinical completeness should say so explicitly.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - domain / FHIR zod schemas
+        - ports / adapters
+        - service (search, validation, CDS, DDI)
+        - adapter/http · auth · audit
+        - web/ teaching console
+        - harness / CI / supply chain
+        - docs / ADRs
+        - Unsure / needs triage
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What problem does this solve for the teaching kit or architecture story?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: High-level approach; link an ADR or issue if applicable
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope checklist
+      options:
+        - label: I understand Asclepius is a teaching kit, NOT FOR CLINICAL USE, not a production FHIR server
+          required: true
+        - label: I will not propose connecting to real EHRs or storing PHI
+          required: true
+        - label: I am willing to include validate/ports tests if applicable
+          required: false

@@ -1,7 +1,9 @@
 # AGENTS.md — Asclepius repo conventions
 
 These conventions apply to all work in this repository (human or agent) and
-layer on top of the global `~/.config/opencode/AGENTS.md`.
+layer on top of the global `~/.config/opencode/AGENTS.md`. Copilot and other
+community agents: [`.github/copilot-instructions.md`](.github/copilot-instructions.md)
+and [`.github/skills/fhir-ports-adapters`](.github/skills/fhir-ports-adapters).
 
 ## Regulatory posture (non-negotiable)
 

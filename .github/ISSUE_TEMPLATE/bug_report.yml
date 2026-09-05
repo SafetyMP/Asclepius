@@ -1,0 +1,81 @@
+name: Bug Report
+description: Report a defect, gate failure, or teaching-kit regression
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Include commands you ran and their output when possible.
+        Asclepius is a typed FHIR R4 teaching kit — **NOT FOR CLINICAL USE** — see [SECURITY.md](https://github.com/SafetyMP/Asclepius/blob/main/.github/SECURITY.md).
+        Use synthetic fixtures only. Do not include real PHI or credentials.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Clear description of the bug
+      placeholder: $validate accepts a Patient fixture that should fail identity rules...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - domain / FHIR zod schemas
+        - ports / adapters
+        - service (search, validation, CDS, DDI)
+        - adapter/http · auth · audit
+        - web/ teaching console
+        - harness / CI
+        - docs
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Commands or workflow steps
+      placeholder: |
+        1. npm install && npm run gate
+        2. npm test -- src/service/validation
+        3. …
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or output
+      description: Paste relevant stderr, CI link, or JSON result
+      render: shell
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Local (npm run dev / npm run gate)
+        - Docker
+        - GitHub Actions CI
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Branch, commit, or release tag
+      placeholder: main, abc1234
