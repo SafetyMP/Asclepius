@@ -21,3 +21,6 @@
 ## Skills
 
 - [fhir-ports-adapters](.github/skills/fhir-ports-adapters/SKILL.md): inward deps, `src/app.ts` composition root, zod-as-FHIR-source-of-truth
+- [.github/copilot-instructions.md](.github/copilot-instructions.md): repository-wide Copilot coding standards
+- [.github/instructions/](.github/instructions/): path-specific Copilot coding standards (September 2026)
+- [.github/skills/code-review/SKILL.md](.github/skills/code-review/SKILL.md): Copilot code review skill
