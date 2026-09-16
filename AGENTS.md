@@ -64,3 +64,9 @@ cd web && npm run verify   # optional: reference console (API optional for stati
 - Conventional-commit-ish: `feat(cds): warfarin bleeding-risk rule`.
 - Small, reviewable diffs. One logical change per commit.
 - Never commit secrets, `*.db` files, or `dist/`.
+
+## Coding standards (September 2026)
+
+Path-specific Copilot instructions: [`.github/instructions/`](.github/instructions/).
+Repository-wide Copilot file: [`.github/copilot-instructions.md`](.github/copilot-instructions.md).
+Copilot code review skill: [`.github/skills/code-review/SKILL.md`](.github/skills/code-review/SKILL.md).

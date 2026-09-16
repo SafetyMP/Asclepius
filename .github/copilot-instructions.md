@@ -23,3 +23,7 @@ Do not claim green without observed command output.
 - Never import an adapter from `service` or `domain`.
 - Never construct adapters outside `src/app.ts`.
 - Never hand-write a FHIR TypeScript interface that can drift from its zod schema.
+
+## Coding standards
+
+Follow path-specific files in [`.github/instructions/`](instructions/). Copilot code review loads [`.github/skills/code-review/`](skills/code-review/).
