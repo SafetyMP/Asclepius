@@ -2,7 +2,7 @@
   "name": "asclepius",
   "version": "0.1.0",
   "private": true,
-  "description": "Asclepius — a FHIR-native clinical data platform (reference implementation, NOT for clinical use)",
+  "description": "Asclepius — a teaching kit of nine FHIR R4 zod types (NOT for clinical use)",
   "type": "module",
   "engines": {
     "node": ">=22 <23",

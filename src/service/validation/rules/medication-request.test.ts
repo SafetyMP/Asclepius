@@ -30,6 +30,34 @@ describe('medication-request rule', () => {
     ).toHaveLength(0);
   });
 
+  it('passes when only medicationReference is present', () => {
+    expect(
+      medicationRequestRule.validate(
+        f({
+          resourceType: 'MedicationRequest',
+          intent: 'order',
+          subject: { reference: 'Patient/p1' },
+          medicationReference: { reference: 'Medication/m1' },
+        }),
+      ),
+    ).toHaveLength(0);
+  });
+
+  it('fires when both medication fields are present', () => {
+    const issues = medicationRequestRule.validate(
+      f({
+        resourceType: 'MedicationRequest',
+        intent: 'order',
+        subject: { reference: 'Patient/p1' },
+        medicationCodeableConcept: { coding: [{ code: 'x' }] },
+        medicationReference: { reference: 'Medication/m1' },
+      }),
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.code).toBe('invalid');
+    expect(issues[0]?.expression).toEqual(['MedicationRequest.medication[x]']);
+  });
+
   it('is a no-op for non-MedicationRequest resources', () => {
     expect(
       medicationRequestRule.validate(f({ resourceType: 'Patient', name: [{ family: 'Doe' }] })),

@@ -1,26 +1,38 @@
 import type { ValidationIssue, ValidationRule } from '../types';
 
 /**
- * MedicationRequest must have medicationCodeableConcept or medicationReference
- * (FHIR R4 requires medication[x] 1..1). Our zod schema makes both optional
- * (ADR 0002 pragmatic subset) — this profile rule enforces the cardinality.
+ * MedicationRequest.medication[x] is exactly one of medicationCodeableConcept
+ * or medicationReference (FHIR R4 medication[x] 1..1). The zod schema leaves
+ * both optional (ADR 0002 pragmatic subset); this profile rule enforces the
+ * choice. status is required on the schema.
  */
 export const medicationRequestRule: ValidationRule = {
   id: 'medication-request-medication',
-  description: 'MedicationRequest must have medicationCodeableConcept or medicationReference',
+  description:
+    'MedicationRequest.medication[x] must be exactly one of medicationCodeableConcept or medicationReference',
   appliesTo: ['MedicationRequest'],
   validate(resource): readonly ValidationIssue[] {
     if (resource.resourceType !== 'MedicationRequest') return [];
-    if (
-      resource.medicationCodeableConcept === undefined &&
-      resource.medicationReference === undefined
-    ) {
+    const hasConcept = resource.medicationCodeableConcept !== undefined;
+    const hasReference = resource.medicationReference !== undefined;
+    if (!hasConcept && !hasReference) {
       return [
         {
           severity: 'error',
           code: 'required',
           diagnostics:
             'MedicationRequest must have medicationCodeableConcept or medicationReference',
+          expression: ['MedicationRequest.medication[x]'],
+        },
+      ];
+    }
+    if (hasConcept && hasReference) {
+      return [
+        {
+          severity: 'error',
+          code: 'invalid',
+          diagnostics:
+            'MedicationRequest.medication[x] must be exactly one of medicationCodeableConcept or medicationReference',
           expression: ['MedicationRequest.medication[x]'],
         },
       ];

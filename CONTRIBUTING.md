@@ -1,8 +1,10 @@
 # Contributing to Asclepius
 
-Thanks for your interest in improving Asclepius — a reference implementation of a
-FHIR-native clinical data platform. This document explains how to set up the
-project and what's expected of a contribution.
+Thanks for your interest in improving Asclepius — a teaching kit of nine FHIR R4
+zod types (Patient, Practitioner, Organization, Encounter, Condition,
+Observation, MedicationRequest, AllergyIntolerance, DiagnosticReport). This
+document explains how to set up the project and what's expected of a
+contribution.
 
 ## Regulatory posture (read first)
 

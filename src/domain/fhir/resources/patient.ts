@@ -16,22 +16,33 @@ import { baseDomainResourceShape } from '../resource';
  */
 export const administrativeGender = z.enum(['male', 'female', 'other', 'unknown']);
 
-export const patient = z.object({
-  resourceType: z.literal('Patient'),
-  ...baseDomainResourceShape,
-  identifier: z.array(identifier).optional(),
-  active: fhirBoolean.optional(),
-  name: z.array(humanName).optional(),
-  telecom: z.array(contactPoint).optional(),
-  gender: administrativeGender.optional(),
-  birthDate: fhirDate.optional(),
-  deceasedBoolean: fhirBoolean.optional(),
-  deceasedDateTime: fhirDateTime.optional(),
-  address: z.array(address).optional(),
-  maritalStatus: codeableConcept.optional(),
-  multipleBirthBoolean: fhirBoolean.optional(),
-  multipleBirthInteger: z.number().int().optional(),
-  generalPractitioner: z.array(reference).optional(),
-  managingOrganization: reference.optional(),
-});
+export const patient = z
+  .object({
+    resourceType: z.literal('Patient'),
+    ...baseDomainResourceShape,
+    identifier: z.array(identifier).optional(),
+    active: fhirBoolean.optional(),
+    name: z.array(humanName).optional(),
+    telecom: z.array(contactPoint).optional(),
+    gender: administrativeGender.optional(),
+    birthDate: fhirDate.optional(),
+    // deceased[x]: FHIR choice type — at most one of these two fields.
+    deceasedBoolean: fhirBoolean.optional(),
+    deceasedDateTime: fhirDateTime.optional(),
+    address: z.array(address).optional(),
+    maritalStatus: codeableConcept.optional(),
+    multipleBirthBoolean: fhirBoolean.optional(),
+    multipleBirthInteger: z.number().int().optional(),
+    generalPractitioner: z.array(reference).optional(),
+    managingOrganization: reference.optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.deceasedBoolean !== undefined && value.deceasedDateTime !== undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Patient.deceased[x] must be deceasedBoolean or deceasedDateTime, not both',
+        path: ['deceasedBoolean'],
+      });
+    }
+  });
 export type Patient = z.infer<typeof patient>;

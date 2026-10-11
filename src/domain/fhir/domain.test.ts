@@ -18,6 +18,7 @@ import {
   isSupportedResourceType,
   medicationRequest,
   observation,
+  organization,
   parseResource,
   patient,
   practitioner,
@@ -256,6 +257,20 @@ describe('resources — valid round-trips', () => {
     expect(pr.qualification?.[0]?.code.text).toBe('MD');
   });
 
+  it('parses an Organization', () => {
+    const org = organization.parse({
+      resourceType: 'Organization',
+      id: 'org-1',
+      active: true,
+      name: 'General Hospital',
+      type: [{ text: 'Healthcare Provider' }],
+    });
+    expect(org.id).toBe('org-1');
+    expect(org.name).toBe('General Hospital');
+    expect(org.active).toBe(true);
+    expect(org.type?.[0]?.text).toBe('Healthcare Provider');
+  });
+
   it('parses a DiagnosticReport referencing Observations', () => {
     const d = diagnosticReport.parse({
       resourceType: 'DiagnosticReport',
@@ -279,6 +294,15 @@ describe('resources — invalid inputs rejected', () => {
   it('rejects a Patient with an invalid gender', () => {
     expect(() => patient.parse({ resourceType: 'Patient', gender: 'martian' })).toThrow();
   });
+  it('rejects a Patient with both deceasedBoolean and deceasedDateTime', () => {
+    expect(() =>
+      patient.parse({
+        resourceType: 'Patient',
+        deceasedBoolean: true,
+        deceasedDateTime: '2020-06-15T10:30:00Z',
+      }),
+    ).toThrow();
+  });
   it('rejects a Condition missing the required subject', () => {
     expect(() => condition.parse({ resourceType: 'Condition', code: { text: 'x' } })).toThrow();
   });
@@ -286,6 +310,17 @@ describe('resources — invalid inputs rejected', () => {
     expect(() =>
       medicationRequest.parse({
         resourceType: 'MedicationRequest',
+        status: 'active',
+        subject: { reference: 'Patient/1' },
+      }),
+    ).toThrow();
+  });
+  it('rejects a MedicationRequest missing the required status', () => {
+    expect(() =>
+      medicationRequest.parse({
+        resourceType: 'MedicationRequest',
+        intent: 'order',
+        medicationCodeableConcept: { text: 'Warfarin' },
         subject: { reference: 'Patient/1' },
       }),
     ).toThrow();

@@ -34,8 +34,8 @@ describe('DdiChecker', () => {
   });
 
   it('treats absent status as active', () => {
-    const m1 = { ...med('11289'), status: undefined } as MedicationRequest;
-    const m2 = { ...med('36567'), status: undefined } as MedicationRequest;
+    const m1 = { ...med('11289'), status: undefined } as unknown as MedicationRequest;
+    const m2 = { ...med('36567'), status: undefined } as unknown as MedicationRequest;
     expect(checker.check([m1, m2])).toHaveLength(1);
   });
 
