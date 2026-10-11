@@ -6,12 +6,14 @@
 [![License: Apache-2.0](https://img.shields.io/github/license/SafetyMP/Asclepius)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white)](#getting-started)
 
-> ⚠️ **NOT FOR CLINICAL USE.** Asclepius is a **typed FHIR R4 teaching kit**,
-> not a clinical data platform and **not** a server for PHI. It is
-> **not** HIPAA-certified, **not** a regulated medical device, and its
-> drug-interaction knowledge base is intentionally **incomplete**. Do **not**
-> store, process, or base clinical decisions on real patient data with this
-> software. See the [regulatory disclaimer](#regulatory-disclaimer) below.
+> ⚠️ **NOT FOR CLINICAL USE.** Asclepius is a teaching kit of nine FHIR R4 zod
+> types — Patient, Practitioner, Organization, Encounter, Condition, Observation,
+> MedicationRequest, AllergyIntolerance, and DiagnosticReport. It is **not a
+> FHIR server** and **not** for clinical use: **not** a clinical data platform,
+> **not** a server for PHI, **not** HIPAA-certified, **not** a regulated medical
+> device, and its drug-interaction knowledge base is intentionally
+> **incomplete**. Do **not** store, process, or base clinical decisions on real
+> patient data with this software. See the [regulatory disclaimer](#regulatory-disclaimer) below.
 
 A from-scratch, layered FHIR R4 subset you can read in one sitting: **zod** as
 the source of truth, **ports and adapters**, and DDI that is incomplete by

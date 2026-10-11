@@ -76,7 +76,8 @@ export const medicationRequest = z.object({
   resourceType: z.literal('MedicationRequest'),
   ...baseDomainResourceShape,
   identifier: z.array(identifier).optional(),
-  status: medicationRequestStatus.optional(),
+  // R4 MedicationRequest.status is 1..1.
+  status: medicationRequestStatus,
   statusReason: codeableConcept.optional(),
   intent: medicationRequestIntent,
   category: z.array(codeableConcept).optional(),
