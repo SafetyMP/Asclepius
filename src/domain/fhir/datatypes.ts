@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { atMostOne } from './choice';
 import {
   canonical,
   code,
@@ -211,12 +212,16 @@ export const attachment = z.object({
 });
 export type Attachment = z.infer<typeof attachment>;
 
-export const annotation = z.object({
-  authorReference: reference.optional(),
-  authorString: fhirString.optional(),
-  time: fhirDateTime.optional(),
-  text: fhirString,
-});
+export const annotation = z
+  .object({
+    authorReference: reference.optional(),
+    authorString: fhirString.optional(),
+    time: fhirDateTime.optional(),
+    text: fhirString,
+  })
+  .superRefine((value, ctx) => {
+    atMostOne(value, ctx, 'Annotation.author[x]', ['authorReference', 'authorString']);
+  });
 export type Annotation = z.infer<typeof annotation>;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -237,20 +242,36 @@ export interface Extension {
   valueCodeableConcept?: CodeableConcept | undefined;
   extension?: Extension[] | undefined;
 }
+const EXTENSION_VALUE_KEYS = [
+  'valueString',
+  'valueBoolean',
+  'valueInteger',
+  'valueDecimal',
+  'valueDateTime',
+  'valueDate',
+  'valueCode',
+  'valueQuantity',
+  'valueCodeableConcept',
+] as const;
+
 export const extension: z.ZodType<Extension> = z.lazy(() =>
-  z.object({
-    url: uri,
-    valueString: fhirString.optional(),
-    valueBoolean: fhirBoolean.optional(),
-    valueInteger: fhirInteger.optional(),
-    valueDecimal: fhirDecimal.optional(),
-    valueDateTime: fhirDateTime.optional(),
-    valueDate: fhirDate.optional(),
-    valueCode: code.optional(),
-    valueQuantity: quantity.optional(),
-    valueCodeableConcept: codeableConcept.optional(),
-    extension: z.array(extension).optional(),
-  }),
+  z
+    .object({
+      url: uri,
+      valueString: fhirString.optional(),
+      valueBoolean: fhirBoolean.optional(),
+      valueInteger: fhirInteger.optional(),
+      valueDecimal: fhirDecimal.optional(),
+      valueDateTime: fhirDateTime.optional(),
+      valueDate: fhirDate.optional(),
+      valueCode: code.optional(),
+      valueQuantity: quantity.optional(),
+      valueCodeableConcept: codeableConcept.optional(),
+      extension: z.array(extension).optional(),
+    })
+    .superRefine((value, ctx) => {
+      atMostOne(value, ctx, 'Extension.value[x]', EXTENSION_VALUE_KEYS);
+    }),
 );
 
 // ─────────────────────────────────────────────────────────────────────────────

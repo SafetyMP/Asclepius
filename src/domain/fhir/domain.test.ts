@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   allergyIntolerance,
+  annotation,
   code,
   codeableConcept,
   condition,
   diagnosticReport,
   encounter,
+  extension,
   type FhirResource,
   fhirDate,
   fhirDateTime,
@@ -28,6 +30,9 @@ import {
   resourceUnion,
   schemaForResourceType,
   searchsetBundle,
+  uri,
+  url,
+  canonical,
   uuid,
 } from '@/domain/fhir';
 
@@ -71,6 +76,16 @@ describe('primitives', () => {
   it('rejects an empty string (FHIR string is 1..1MB)', () => {
     expect(fhirString.parse('ok')).toBe('ok');
     expect(() => fhirString.parse('')).toThrow();
+  });
+  it('rejects an empty uri, url, or canonical', () => {
+    expect(uri.parse('http://hl7.org/fhir/Patient')).toBe('http://hl7.org/fhir/Patient');
+    expect(url.parse('http://example.org/fhir')).toBe('http://example.org/fhir');
+    expect(canonical.parse('http://example.org/StructureDefinition/demo')).toBe(
+      'http://example.org/StructureDefinition/demo',
+    );
+    expect(() => uri.parse('')).toThrow();
+    expect(() => url.parse('')).toThrow();
+    expect(() => canonical.parse('')).toThrow();
   });
 });
 
@@ -194,6 +209,52 @@ describe('resources — valid round-trips', () => {
     expect(o.valueQuantity?.value).toBe(140);
   });
 
+  it('rejects a final Observation with valueQuantity and dataAbsentReason (obs-6)', () => {
+    expect(() =>
+      observation.parse({
+        resourceType: 'Observation',
+        status: 'final',
+        code: {
+          coding: [{ system: 'http://loinc.org', code: '2951-2' }],
+          text: 'Sodium',
+        },
+        valueQuantity: { value: 140, unit: 'mmol/L' },
+        dataAbsentReason: { text: 'unknown' },
+      }),
+    ).toThrow(/obs-6/);
+  });
+
+  it('parses an Observation with dataAbsentReason and no value[x]', () => {
+    const o = observation.parse({
+      resourceType: 'Observation',
+      status: 'final',
+      code: {
+        coding: [{ system: 'http://loinc.org', code: '2951-2' }],
+        text: 'Sodium',
+      },
+      dataAbsentReason: { text: 'unknown' },
+    });
+    expect(o.dataAbsentReason?.text).toBe('unknown');
+    expect(o.valueQuantity).toBeUndefined();
+  });
+
+  it('rejects a component with both valueQuantity and dataAbsentReason', () => {
+    expect(() =>
+      observation.parse({
+        resourceType: 'Observation',
+        status: 'final',
+        code: { text: 'Electrolytes' },
+        component: [
+          {
+            code: { text: 'Sodium' },
+            valueQuantity: { value: 140, unit: 'mmol/L' },
+            dataAbsentReason: { text: 'unknown' },
+          },
+        ],
+      }),
+    ).toThrow(/obs-6/);
+  });
+
   it('parses a MedicationRequest with a coded medication + intent', () => {
     const m = medicationRequest.parse({
       resourceType: 'MedicationRequest',
@@ -214,6 +275,18 @@ describe('resources — valid round-trips', () => {
     });
     expect(m.intent).toBe('order');
     expect(m.medicationCodeableConcept?.text).toBe('Warfarin');
+  });
+
+  it('parses a MedicationRequest with only medicationReference', () => {
+    const m = medicationRequest.parse({
+      resourceType: 'MedicationRequest',
+      status: 'active',
+      intent: 'order',
+      medicationReference: { reference: 'Medication/m1' },
+      subject: { reference: 'Patient/pat-1' },
+    });
+    expect(m.medicationReference?.reference).toBe('Medication/m1');
+    expect(m.medicationCodeableConcept).toBeUndefined();
   });
 
   it('parses an AllergyIntolerance with a reaction', () => {
@@ -245,6 +318,20 @@ describe('resources — valid round-trips', () => {
       subject: { reference: 'Patient/pat-1' },
     });
     expect(e.class.code).toBe('AMB');
+  });
+
+  it('parses an Organization', () => {
+    const o = organization.parse({
+      resourceType: 'Organization',
+      id: 'org-1',
+      active: true,
+      name: 'General Hospital',
+      type: [{ text: 'Healthcare Provider' }],
+    });
+    expect(o.id).toBe('org-1');
+    expect(o.name).toBe('General Hospital');
+    expect(o.active).toBe(true);
+    expect(o.type?.[0]?.text).toBe('Healthcare Provider');
   });
 
   it('parses a Practitioner', () => {
@@ -303,6 +390,11 @@ describe('resources — invalid inputs rejected', () => {
       }),
     ).toThrow();
   });
+  it('accepts a Patient with only deceasedBoolean', () => {
+    const p = patient.parse({ resourceType: 'Patient', deceasedBoolean: false });
+    expect(p.deceasedBoolean).toBe(false);
+    expect(p.deceasedDateTime).toBeUndefined();
+  });
   it('rejects a Condition missing the required subject', () => {
     expect(() => condition.parse({ resourceType: 'Condition', code: { text: 'x' } })).toThrow();
   });
@@ -311,6 +403,7 @@ describe('resources — invalid inputs rejected', () => {
       medicationRequest.parse({
         resourceType: 'MedicationRequest',
         status: 'active',
+        medicationCodeableConcept: { text: 'Warfarin' },
         subject: { reference: 'Patient/1' },
       }),
     ).toThrow();
@@ -322,6 +415,97 @@ describe('resources — invalid inputs rejected', () => {
         intent: 'order',
         medicationCodeableConcept: { text: 'Warfarin' },
         subject: { reference: 'Patient/1' },
+      }),
+    ).toThrow();
+  });
+  it('rejects a MedicationRequest with both medication fields', () => {
+    expect(() =>
+      medicationRequest.parse({
+        resourceType: 'MedicationRequest',
+        status: 'active',
+        intent: 'order',
+        medicationCodeableConcept: { text: 'Warfarin' },
+        medicationReference: { reference: 'Medication/m1' },
+        subject: { reference: 'Patient/1' },
+      }),
+    ).toThrow();
+  });
+  it('rejects a MedicationRequest with neither medication field', () => {
+    expect(() =>
+      medicationRequest.parse({
+        resourceType: 'MedicationRequest',
+        status: 'active',
+        intent: 'order',
+        subject: { reference: 'Patient/1' },
+      }),
+    ).toThrow();
+  });
+  it('rejects an Observation with two value[x] choices', () => {
+    expect(() =>
+      observation.parse({
+        resourceType: 'Observation',
+        status: 'final',
+        code: { text: 'Sodium' },
+        valueQuantity: { value: 140, unit: 'mmol/L' },
+        valueString: '140',
+      }),
+    ).toThrow();
+  });
+  it('rejects a Condition with two onset[x] choices', () => {
+    expect(() =>
+      condition.parse({
+        resourceType: 'Condition',
+        subject: { reference: 'Patient/1' },
+        onsetDateTime: '2010-01-01',
+        onsetString: 'childhood',
+      }),
+    ).toThrow();
+  });
+  it('rejects an AllergyIntolerance with two onset[x] choices', () => {
+    expect(() =>
+      allergyIntolerance.parse({
+        resourceType: 'AllergyIntolerance',
+        patient: { reference: 'Patient/1' },
+        onsetDateTime: '2010-01-01',
+        onsetString: 'childhood',
+      }),
+    ).toThrow();
+  });
+  it('rejects a DiagnosticReport with two effective[x] choices', () => {
+    expect(() =>
+      diagnosticReport.parse({
+        resourceType: 'DiagnosticReport',
+        status: 'final',
+        code: { text: 'Panel' },
+        effectiveDateTime: '2020-01-02T08:30:00Z',
+        effectivePeriod: { start: '2020-01-02' },
+      }),
+    ).toThrow();
+  });
+  it('rejects a Patient with both multipleBirth choices', () => {
+    expect(() =>
+      patient.parse({
+        resourceType: 'Patient',
+        multipleBirthBoolean: true,
+        multipleBirthInteger: 2,
+      }),
+    ).toThrow();
+  });
+  it('rejects an Annotation with two author[x] choices', () => {
+    expect(() =>
+      annotation.parse({
+        text: 'note',
+        authorString: 'Ada',
+        authorReference: { reference: 'Practitioner/1' },
+      }),
+    ).toThrow();
+  });
+  it('rejects an Extension with two value[x] choices', () => {
+    expect(() =>
+      extension.parse({
+        url: 'http://example.org/ext',
+        valueString: 'a',
+        valueBoolean: true,
       }),
     ).toThrow();
   });

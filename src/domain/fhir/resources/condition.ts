@@ -8,6 +8,7 @@ import {
   range,
   reference,
 } from '../datatypes';
+import { atMostOne } from '../choice';
 import { fhirDateTime, fhirString } from '../primitives';
 import { baseDomainResourceShape } from '../resource';
 
@@ -73,5 +74,20 @@ export const condition = z.object({
     )
     .optional(),
   note: z.array(annotation).optional(),
+}).superRefine((value, ctx) => {
+  atMostOne(value, ctx, 'Condition.onset[x]', [
+    'onsetDateTime',
+    'onsetAge',
+    'onsetPeriod',
+    'onsetRange',
+    'onsetString',
+  ]);
+  atMostOne(value, ctx, 'Condition.abatement[x]', [
+    'abatementDateTime',
+    'abatementAge',
+    'abatementPeriod',
+    'abatementRange',
+    'abatementString',
+  ]);
 });
 export type Condition = z.infer<typeof condition>;

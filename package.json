@@ -29,7 +29,7 @@
   "author": "SafetyMP",
   "exports": {
     ".": {
-      "types": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
@@ -37,6 +37,7 @@
     "dev": "tsx watch src/app.ts",
     "start": "node dist/app.js",
     "build": "tsup",
+    "prepare": "npm run build",
     "typecheck": "tsc --noEmit",
     "lint": "biome check src tests",
     "lint:fix": "biome check --write src tests",

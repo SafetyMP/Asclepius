@@ -7,6 +7,7 @@ import {
   identifier,
   reference,
 } from '../datatypes';
+import { atMostOne } from '../choice';
 import { fhirBoolean, fhirDate, fhirDateTime } from '../primitives';
 import { baseDomainResourceShape } from '../resource';
 
@@ -26,7 +27,7 @@ export const patient = z
     telecom: z.array(contactPoint).optional(),
     gender: administrativeGender.optional(),
     birthDate: fhirDate.optional(),
-    // deceased[x]: FHIR choice type — at most one of these two fields.
+    // deceased[x] and multipleBirth[x]: at most one field in each choice.
     deceasedBoolean: fhirBoolean.optional(),
     deceasedDateTime: fhirDateTime.optional(),
     address: z.array(address).optional(),
@@ -37,12 +38,10 @@ export const patient = z
     managingOrganization: reference.optional(),
   })
   .superRefine((value, ctx) => {
-    if (value.deceasedBoolean !== undefined && value.deceasedDateTime !== undefined) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Patient.deceased[x] must be deceasedBoolean or deceasedDateTime, not both',
-        path: ['deceasedBoolean'],
-      });
-    }
+    atMostOne(value, ctx, 'Patient.deceased[x]', ['deceasedBoolean', 'deceasedDateTime']);
+    atMostOne(value, ctx, 'Patient.multipleBirth[x]', [
+      'multipleBirthBoolean',
+      'multipleBirthInteger',
+    ]);
   });
 export type Patient = z.infer<typeof patient>;

@@ -27,10 +27,12 @@ export const warfarinNsaidRule: CdsRule = {
   title: 'Warfarin + NSAID Bleeding Risk',
   hook: 'patient-view',
   evaluate(ctx: PatientContext): readonly CdsCard[] {
-    // Treat absent status as active (conservative for safety alerts)
-    const activeMeds = ctx.medicationRequests.filter(
-      (m) => m.status === 'active' || m.status === undefined,
-    );
+    // Treat absent status as active (conservative for safety alerts).
+    // Status is required on the schema; a value that skipped parse may still omit it.
+    const activeMeds = ctx.medicationRequests.filter((m) => {
+      const status = (m as { status?: typeof m.status }).status;
+      return status === 'active' || status === undefined;
+    });
     const allCodes = activeMeds.flatMap((m) => codesOf(m.medicationCodeableConcept));
     const hasWarfarin = allCodes.some((c) => WARFARIN_CODES.has(c));
     const hasNsaid = allCodes.some((c) => NSAID_CODES.has(c));

@@ -124,6 +124,8 @@ The project is configured for **max-strict TypeScript** (`strict`,
 `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`).
 A change is not done until `npm run gate` is green.
 
+`npm run build` writes the library entry. It exports the nine FHIR R4 schemas and `parseResource`. HL7 FHIR R4 choice elements are exactly one: a medication request with both medication fields, or a patient with both deceased fields, does not parse. Not for clinical use.
+
 ## Why these tools (and where there's a better one)
 
 Every component choice is documented with its first-principles rationale and an
