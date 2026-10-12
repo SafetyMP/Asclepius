@@ -17,7 +17,7 @@ Asclepius is a **reference / educational implementation**, **not** certified and
 
 ## Prerequisites
 
-- **Node.js 22, 24, or 26.** `.nvmrc` is 26. CI runs `22.x`, `24.x`, and `26.x`. `package.json` `engines.node` is `>=22 <23`, which is narrower than that matrix.
+- **Node.js 22, 24, or 26.** `.nvmrc` is 26. CI runs `22.x`, `24.x`, and `26.x`. `package.json` `engines.node` is `>=22`.
 - A C++ toolchain (for `better-sqlite3`'s native build) — present by default on
   macOS/Linux dev machines and GitHub runners.
 
