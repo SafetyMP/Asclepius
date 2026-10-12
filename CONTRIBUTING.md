@@ -17,7 +17,7 @@ Asclepius is a **reference / educational implementation**, **not** certified and
 
 ## Prerequisites
 
-- **Node.js ≥ 22** (see `.nvmrc` for the dev version; the CI matrix covers 22 and 24).
+- **Node.js 22, 24, or 26.** `.nvmrc` is 26. CI runs `22.x`, `24.x`, and `26.x`. `package.json` `engines.node` is `>=22 <23`, which is narrower than that matrix.
 - A C++ toolchain (for `better-sqlite3`'s native build) — present by default on
   macOS/Linux dev machines and GitHub runners.
 
@@ -57,7 +57,7 @@ The project runs with `strict`, `noUncheckedIndexedAccess`,
 - Unit tests are **co-located** (`*.test.ts` next to the module).
 - Integration tests live in `tests/integration/`.
 - Every new behavior ships with a test.
-- FHIR fixtures go in `tests/fixtures/` as JSON.
+- There is no `tests/fixtures/` directory. Keep example JSON next to the test that uses it.
 
 ## Decisions
 
