@@ -17,6 +17,7 @@ an honest "better tool for production" callout.
 | [0008](0008-jwt-and-smart-scopes.md)          | JWT + RBAC + SMART-style scopes                                                       | Accepted |
 | [0009](0009-hash-chained-audit.md)            | Hash-chained append-only audit log                                                    | Accepted |
 | [0011](0011-validation-strictness-posture.md) | Strip at validated boundaries, passthrough for unmodeled backbones                    | Accepted |
+| [0012](0012-in-memory-ddi.md)                 | In-memory drug–drug interaction sample behind the `DdiChecker` port                   | Accepted |
 
 Future decisions (storage indexing, transactions, bundle handling) land here as
 they're made.
