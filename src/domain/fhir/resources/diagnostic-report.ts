@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { attachment, codeableConcept, identifier, period, reference } from '../datatypes';
 import { atMostOne } from '../choice';
+import { attachment, codeableConcept, identifier, period, reference } from '../datatypes';
 import { fhirDateTime, fhirInstant, fhirString } from '../primitives';
 import { baseDomainResourceShape } from '../resource';
 

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { atMostOne } from '../choice';
 import {
   annotation,
   codeableConcept,
@@ -17,7 +18,6 @@ import {
   fhirString,
   fhirTime,
 } from '../primitives';
-import { atMostOne } from '../choice';
 import { baseDomainResourceShape } from '../resource';
 
 const OBSERVATION_VALUE_KEYS = [

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { atMostOne } from '../choice';
 import {
   address,
   codeableConcept,
@@ -7,7 +8,6 @@ import {
   identifier,
   reference,
 } from '../datatypes';
-import { atMostOne } from '../choice';
 import { fhirBoolean, fhirDate, fhirDateTime } from '../primitives';
 import { baseDomainResourceShape } from '../resource';
 
