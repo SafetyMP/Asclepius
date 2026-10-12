@@ -11,7 +11,7 @@
 - [AGENTS.md](AGENTS.md): community contract (domain rules)
 - [Architecture Decision Records](docs/adr/): first-principles choices
 - [Copilot instructions](.github/copilot-instructions.md): never-do rules
-- [SECURITY.md](.github/SECURITY.md): private vulnerability reports
+- [SECURITY.md](SECURITY.md): private vulnerability reports
 
 ## Verify
 
