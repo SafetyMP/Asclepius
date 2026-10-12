@@ -7,13 +7,6 @@
  */
 
 export { type AppConfig, loadConfig } from '@/config';
-export type {
-  IssueSeverity,
-  IssueType,
-  OperationOutcome,
-  OperationOutcomeIssue,
-} from '@/domain/fhir/operation-outcome';
-export { NOT_FOR_CLINICAL_USE, SAFETY_BANNER } from '@/domain/safety';
 export {
   allergyIntolerance,
   condition,
@@ -27,6 +20,13 @@ export {
   patient,
   practitioner,
 } from '@/domain/fhir';
+export type {
+  IssueSeverity,
+  IssueType,
+  OperationOutcome,
+  OperationOutcomeIssue,
+} from '@/domain/fhir/operation-outcome';
+export { NOT_FOR_CLINICAL_USE, SAFETY_BANNER } from '@/domain/safety';
 export {
   BadRequestError,
   ConflictError,

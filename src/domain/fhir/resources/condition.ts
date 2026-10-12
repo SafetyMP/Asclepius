@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { atMostOne } from '../choice';
 import {
   annotation,
   codeableConcept,
@@ -8,7 +9,6 @@ import {
   range,
   reference,
 } from '../datatypes';
-import { atMostOne } from '../choice';
 import { fhirDateTime, fhirString } from '../primitives';
 import { baseDomainResourceShape } from '../resource';
 
@@ -39,55 +39,57 @@ const abatementChoice = {
   abatementString: fhirString.optional(),
 } as const;
 
-export const condition = z.object({
-  resourceType: z.literal('Condition'),
-  ...baseDomainResourceShape,
-  identifier: z.array(identifier).optional(),
-  clinicalStatus: conditionClinicalStatus.optional(),
-  verificationStatus: conditionVerificationStatus.optional(),
-  category: z.array(codeableConcept).optional(),
-  severity: codeableConcept.optional(),
-  code: codeableConcept.optional(),
-  bodySite: z.array(codeableConcept).optional(),
-  subject: reference,
-  encounter: reference.optional(),
-  ...onsetChoice,
-  ...abatementChoice,
-  recordedDate: fhirDateTime.optional(),
-  recorder: reference.optional(),
-  asserter: reference.optional(),
-  stage: z
-    .array(
-      z.object({
-        summary: codeableConcept.optional(),
-        assessment: z.array(reference).optional(),
-        type: codeableConcept.optional(),
-      }),
-    )
-    .optional(),
-  evidence: z
-    .array(
-      z.object({
-        code: z.array(codeableConcept).optional(),
-        detail: z.array(reference).optional(),
-      }),
-    )
-    .optional(),
-  note: z.array(annotation).optional(),
-}).superRefine((value, ctx) => {
-  atMostOne(value, ctx, 'Condition.onset[x]', [
-    'onsetDateTime',
-    'onsetAge',
-    'onsetPeriod',
-    'onsetRange',
-    'onsetString',
-  ]);
-  atMostOne(value, ctx, 'Condition.abatement[x]', [
-    'abatementDateTime',
-    'abatementAge',
-    'abatementPeriod',
-    'abatementRange',
-    'abatementString',
-  ]);
-});
+export const condition = z
+  .object({
+    resourceType: z.literal('Condition'),
+    ...baseDomainResourceShape,
+    identifier: z.array(identifier).optional(),
+    clinicalStatus: conditionClinicalStatus.optional(),
+    verificationStatus: conditionVerificationStatus.optional(),
+    category: z.array(codeableConcept).optional(),
+    severity: codeableConcept.optional(),
+    code: codeableConcept.optional(),
+    bodySite: z.array(codeableConcept).optional(),
+    subject: reference,
+    encounter: reference.optional(),
+    ...onsetChoice,
+    ...abatementChoice,
+    recordedDate: fhirDateTime.optional(),
+    recorder: reference.optional(),
+    asserter: reference.optional(),
+    stage: z
+      .array(
+        z.object({
+          summary: codeableConcept.optional(),
+          assessment: z.array(reference).optional(),
+          type: codeableConcept.optional(),
+        }),
+      )
+      .optional(),
+    evidence: z
+      .array(
+        z.object({
+          code: z.array(codeableConcept).optional(),
+          detail: z.array(reference).optional(),
+        }),
+      )
+      .optional(),
+    note: z.array(annotation).optional(),
+  })
+  .superRefine((value, ctx) => {
+    atMostOne(value, ctx, 'Condition.onset[x]', [
+      'onsetDateTime',
+      'onsetAge',
+      'onsetPeriod',
+      'onsetRange',
+      'onsetString',
+    ]);
+    atMostOne(value, ctx, 'Condition.abatement[x]', [
+      'abatementDateTime',
+      'abatementAge',
+      'abatementPeriod',
+      'abatementRange',
+      'abatementString',
+    ]);
+  });
 export type Condition = z.infer<typeof condition>;

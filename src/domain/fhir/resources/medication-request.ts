@@ -18,45 +18,47 @@ import { baseDomainResourceShape } from '../resource';
  */
 
 /** Dosage backbone (pragmatic subset). */
-export const dosage = z.object({
-  sequence: z.number().int().positive().optional(),
-  text: z.string().optional(),
-  additionalInstruction: z.array(codeableConcept).optional(),
-  patientInstruction: z.string().optional(),
-  // Timing backbone not yet modeled (ADR 0002 subset); passthrough preserves it (ADR 0011).
-  timing: z.object({}).passthrough().optional(),
-  asNeededBoolean: fhirBoolean.optional(),
-  asNeededCodeableConcept: codeableConcept.optional(),
-  site: codeableConcept.optional(),
-  route: codeableConcept.optional(),
-  method: codeableConcept.optional(),
-  doseAndRate: z
-    .array(
-      z
-        .object({
-          type: codeableConcept.optional(),
-          doseQuantity: quantity.optional(),
-          doseRange: z.object({ low: quantity.optional(), high: quantity.optional() }).optional(),
-          rateQuantity: quantity.optional(),
-          rateRatio: ratio.optional(),
-        })
-        .superRefine((value, ctx) => {
-          atMostOne(value, ctx, 'Dosage.doseAndRate.dose[x]', ['doseQuantity', 'doseRange']);
-          atMostOne(value, ctx, 'Dosage.doseAndRate.rate[x]', ['rateQuantity', 'rateRatio']);
+export const dosage = z
+  .object({
+    sequence: z.number().int().positive().optional(),
+    text: z.string().optional(),
+    additionalInstruction: z.array(codeableConcept).optional(),
+    patientInstruction: z.string().optional(),
+    // Timing backbone not yet modeled (ADR 0002 subset); passthrough preserves it (ADR 0011).
+    timing: z.object({}).passthrough().optional(),
+    asNeededBoolean: fhirBoolean.optional(),
+    asNeededCodeableConcept: codeableConcept.optional(),
+    site: codeableConcept.optional(),
+    route: codeableConcept.optional(),
+    method: codeableConcept.optional(),
+    doseAndRate: z
+      .array(
+        z
+          .object({
+            type: codeableConcept.optional(),
+            doseQuantity: quantity.optional(),
+            doseRange: z.object({ low: quantity.optional(), high: quantity.optional() }).optional(),
+            rateQuantity: quantity.optional(),
+            rateRatio: ratio.optional(),
+          })
+          .superRefine((value, ctx) => {
+            atMostOne(value, ctx, 'Dosage.doseAndRate.dose[x]', ['doseQuantity', 'doseRange']);
+            atMostOne(value, ctx, 'Dosage.doseAndRate.rate[x]', ['rateQuantity', 'rateRatio']);
+          }),
+      )
+      .optional(),
+    maxDosePerPeriod: z
+      .array(
+        z.object({
+          numerator: quantity.optional(),
+          denominator: quantity.optional(),
         }),
-    )
-    .optional(),
-  maxDosePerPeriod: z
-    .array(
-      z.object({
-        numerator: quantity.optional(),
-        denominator: quantity.optional(),
-      }),
-    )
-    .optional(),
-}).superRefine((value, ctx) => {
-  atMostOne(value, ctx, 'Dosage.asNeeded[x]', ['asNeededBoolean', 'asNeededCodeableConcept']);
-});
+      )
+      .optional(),
+  })
+  .superRefine((value, ctx) => {
+    atMostOne(value, ctx, 'Dosage.asNeeded[x]', ['asNeededBoolean', 'asNeededCodeableConcept']);
+  });
 
 export const medicationRequestStatus = z.enum([
   'active',

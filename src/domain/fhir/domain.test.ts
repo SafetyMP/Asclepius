@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   allergyIntolerance,
   annotation,
+  canonical,
   code,
   codeableConcept,
   condition,
@@ -32,7 +33,6 @@ import {
   searchsetBundle,
   uri,
   url,
-  canonical,
   uuid,
 } from '@/domain/fhir';
 
