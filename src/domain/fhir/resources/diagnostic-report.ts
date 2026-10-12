@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { attachment, codeableConcept, identifier, period, reference } from '../datatypes';
+import { atMostOne } from '../choice';
 import { fhirDateTime, fhirInstant, fhirString } from '../primitives';
 import { baseDomainResourceShape } from '../resource';
 
@@ -43,5 +44,7 @@ export const diagnosticReport = z.object({
   conclusion: fhirString.optional(),
   conclusionCode: z.array(codeableConcept).optional(),
   presentedForm: z.array(attachment).optional(),
+}).superRefine((value, ctx) => {
+  atMostOne(value, ctx, 'DiagnosticReport.effective[x]', ['effectiveDateTime', 'effectivePeriod']);
 });
 export type DiagnosticReport = z.infer<typeof diagnosticReport>;

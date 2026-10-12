@@ -17,7 +17,21 @@ import {
   fhirString,
   fhirTime,
 } from '../primitives';
+import { atMostOne } from '../choice';
 import { baseDomainResourceShape } from '../resource';
+
+const OBSERVATION_VALUE_KEYS = [
+  'valueQuantity',
+  'valueCodeableConcept',
+  'valueString',
+  'valueBoolean',
+  'valueInteger',
+  'valueRange',
+  'valueRatio',
+  'valueTime',
+  'valueDateTime',
+  'valuePeriod',
+] as const;
 
 /**
  * Observation — measurements and simple assertions about a patient.
@@ -62,6 +76,19 @@ export const observationComponent = z.object({
   dataAbsentReason: codeableConcept.optional(),
   interpretation: z.array(codeableConcept).optional(),
   referenceRange: z.array(observationReferenceRange).optional(),
+}).superRefine((value, ctx) => {
+  atMostOne(value, ctx, 'Observation.component.value[x]', OBSERVATION_VALUE_KEYS);
+  if (
+    value.dataAbsentReason !== undefined &&
+    OBSERVATION_VALUE_KEYS.some((key) => value[key] !== undefined)
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      message:
+        'obs-6: dataAbsentReason SHALL only be present if Observation.component.value[x] is not present',
+      path: ['dataAbsentReason'],
+    });
+  }
 });
 
 export const observation = z.object({
@@ -103,5 +130,23 @@ export const observation = z.object({
   hasMember: z.array(reference).optional(),
   derivedFrom: z.array(reference).optional(),
   component: z.array(observationComponent).optional(),
+}).superRefine((value, ctx) => {
+  atMostOne(value, ctx, 'Observation.value[x]', OBSERVATION_VALUE_KEYS);
+  atMostOne(value, ctx, 'Observation.effective[x]', [
+    'effectiveDateTime',
+    'effectivePeriod',
+    'effectiveInstant',
+  ]);
+  if (
+    value.dataAbsentReason !== undefined &&
+    OBSERVATION_VALUE_KEYS.some((key) => value[key] !== undefined)
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      message:
+        'obs-6: dataAbsentReason SHALL only be present if Observation.value[x] is not present',
+      path: ['dataAbsentReason'],
+    });
+  }
 });
 export type Observation = z.infer<typeof observation>;

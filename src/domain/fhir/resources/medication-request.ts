@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { atMostOne } from '../choice';
 import {
   annotation,
   codeableConcept,
@@ -31,13 +32,18 @@ export const dosage = z.object({
   method: codeableConcept.optional(),
   doseAndRate: z
     .array(
-      z.object({
-        type: codeableConcept.optional(),
-        doseQuantity: quantity.optional(),
-        doseRange: z.object({ low: quantity.optional(), high: quantity.optional() }).optional(),
-        rateQuantity: quantity.optional(),
-        rateRatio: ratio.optional(),
-      }),
+      z
+        .object({
+          type: codeableConcept.optional(),
+          doseQuantity: quantity.optional(),
+          doseRange: z.object({ low: quantity.optional(), high: quantity.optional() }).optional(),
+          rateQuantity: quantity.optional(),
+          rateRatio: ratio.optional(),
+        })
+        .superRefine((value, ctx) => {
+          atMostOne(value, ctx, 'Dosage.doseAndRate.dose[x]', ['doseQuantity', 'doseRange']);
+          atMostOne(value, ctx, 'Dosage.doseAndRate.rate[x]', ['rateQuantity', 'rateRatio']);
+        }),
     )
     .optional(),
   maxDosePerPeriod: z
@@ -48,6 +54,8 @@ export const dosage = z.object({
       }),
     )
     .optional(),
+}).superRefine((value, ctx) => {
+  atMostOne(value, ctx, 'Dosage.asNeeded[x]', ['asNeededBoolean', 'asNeededCodeableConcept']);
 });
 
 export const medicationRequestStatus = z.enum([
@@ -72,61 +80,81 @@ export const medicationRequestIntent = z.enum([
   'option',
 ]);
 
-export const medicationRequest = z.object({
-  resourceType: z.literal('MedicationRequest'),
-  ...baseDomainResourceShape,
-  identifier: z.array(identifier).optional(),
-  // R4 MedicationRequest.status is 1..1.
-  status: medicationRequestStatus,
-  statusReason: codeableConcept.optional(),
-  intent: medicationRequestIntent,
-  category: z.array(codeableConcept).optional(),
-  priority: code.optional(),
-  doNotPerform: fhirBoolean.optional(),
-  // medication[x]: CodeableConcept (coded med) OR Reference (contained med)
-  medicationCodeableConcept: codeableConcept.optional(),
-  medicationReference: reference.optional(),
-  subject: reference,
-  encounter: reference.optional(),
-  supportingInformation: z.array(reference).optional(),
-  authoredOn: fhirDateTime.optional(),
-  requester: reference.optional(),
-  performer: reference.optional(),
-  performerType: codeableConcept.optional(),
-  recorder: reference.optional(),
-  reasonCode: z.array(codeableConcept).optional(),
-  reasonReference: z.array(reference).optional(),
-  instantiatesCanonical: z.array(z.string()).optional(),
-  instantiatesUri: z.array(z.string()).optional(),
-  basedOn: z.array(reference).optional(),
-  groupIdentifier: identifier.optional(),
-  courseOfTherapyType: codeableConcept.optional(),
-  insurance: z.array(reference).optional(),
-  note: z.array(annotation).optional(),
-  dosageInstruction: z.array(dosage).optional(),
-  dispenseRequest: z
-    .object({
-      initialFill: z
-        .object({ quantity: quantity.optional(), duration: period.optional() })
-        .optional(),
-      dispenseInterval: period.optional(),
-      validityPeriod: period.optional(),
-      numberOfRepeatsAllowed: z.number().int().nonnegative().optional(),
-      quantity: quantity.optional(),
-      // Duration is a Quantity constrained to UCUM time units; modeled as Quantity.
-      expectedSupplyDuration: quantity.optional(),
-      performer: reference.optional(),
-    })
-    .optional(),
-  substitution: z
-    .object({
-      allowedBoolean: fhirBoolean.optional(),
-      allowedCodeableConcept: codeableConcept.optional(),
-      reason: codeableConcept.optional(),
-    })
-    .optional(),
-  priorPrescription: reference.optional(),
-  detectedIssue: z.array(reference).optional(),
-  eventHistory: z.array(reference).optional(),
-});
+export const medicationRequest = z
+  .object({
+    resourceType: z.literal('MedicationRequest'),
+    ...baseDomainResourceShape,
+    identifier: z.array(identifier).optional(),
+    // R4 MedicationRequest.status is 1..1.
+    status: medicationRequestStatus,
+    statusReason: codeableConcept.optional(),
+    intent: medicationRequestIntent,
+    category: z.array(codeableConcept).optional(),
+    priority: code.optional(),
+    doNotPerform: fhirBoolean.optional(),
+    // medication[x] 1..1: exactly one of CodeableConcept or Reference (refined below).
+    medicationCodeableConcept: codeableConcept.optional(),
+    medicationReference: reference.optional(),
+    subject: reference,
+    encounter: reference.optional(),
+    supportingInformation: z.array(reference).optional(),
+    authoredOn: fhirDateTime.optional(),
+    requester: reference.optional(),
+    performer: reference.optional(),
+    performerType: codeableConcept.optional(),
+    recorder: reference.optional(),
+    reasonCode: z.array(codeableConcept).optional(),
+    reasonReference: z.array(reference).optional(),
+    instantiatesCanonical: z.array(z.string()).optional(),
+    instantiatesUri: z.array(z.string()).optional(),
+    basedOn: z.array(reference).optional(),
+    groupIdentifier: identifier.optional(),
+    courseOfTherapyType: codeableConcept.optional(),
+    insurance: z.array(reference).optional(),
+    note: z.array(annotation).optional(),
+    dosageInstruction: z.array(dosage).optional(),
+    dispenseRequest: z
+      .object({
+        initialFill: z
+          .object({ quantity: quantity.optional(), duration: period.optional() })
+          .optional(),
+        dispenseInterval: period.optional(),
+        validityPeriod: period.optional(),
+        numberOfRepeatsAllowed: z.number().int().nonnegative().optional(),
+        quantity: quantity.optional(),
+        // Duration is a Quantity constrained to UCUM time units; modeled as Quantity.
+        expectedSupplyDuration: quantity.optional(),
+        performer: reference.optional(),
+      })
+      .optional(),
+    substitution: z
+      .object({
+        allowedBoolean: fhirBoolean.optional(),
+        allowedCodeableConcept: codeableConcept.optional(),
+        reason: codeableConcept.optional(),
+      })
+      .superRefine((value, ctx) => {
+        atMostOne(value, ctx, 'MedicationRequest.substitution.allowed[x]', [
+          'allowedBoolean',
+          'allowedCodeableConcept',
+        ]);
+      })
+      .optional(),
+    priorPrescription: reference.optional(),
+    detectedIssue: z.array(reference).optional(),
+    eventHistory: z.array(reference).optional(),
+  })
+  .superRefine((value, ctx) => {
+    const present = [value.medicationCodeableConcept, value.medicationReference].filter(
+      (choice) => choice !== undefined,
+    ).length;
+    if (present !== 1) {
+      ctx.addIssue({
+        code: 'custom',
+        message:
+          'MedicationRequest.medication[x] must be exactly one of medicationCodeableConcept or medicationReference',
+        path: ['medication[x]'],
+      });
+    }
+  });
 export type MedicationRequest = z.infer<typeof medicationRequest>;

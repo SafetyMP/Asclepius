@@ -67,14 +67,17 @@ export const fhirTime = z
     'invalid FHIR time (HH:MM:SS with valid ranges)',
   );
 
-/** FHIR uri. */
-export const uri = z.string().regex(/^\S*$/, 'invalid FHIR uri');
+/**
+ * FHIR uri. The published R4 regex is `\S*`, which also matches the empty
+ * string. RFC 3986 requires a URI-reference, so an empty value is rejected.
+ */
+export const uri = z.string().regex(/^\S+$/, 'invalid FHIR uri');
 
-/** FHIR url. */
-export const url = z.string().regex(/^\S*$/, 'invalid FHIR url');
+/** FHIR url. An empty string is not a URL. */
+export const url = z.string().regex(/^\S+$/, 'invalid FHIR url');
 
-/** FHIR canonical: a reference by canonical URL. */
-export const canonical = z.string().regex(/^\S*$/, 'invalid FHIR canonical');
+/** FHIR canonical: a reference by canonical URL. An empty string is not one. */
+export const canonical = z.string().regex(/^\S+$/, 'invalid FHIR canonical');
 
 /** FHIR uuid: urn:uuid: followed by the canonical UUID form. */
 export const uuid = z

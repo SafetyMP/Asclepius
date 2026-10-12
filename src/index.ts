@@ -15,6 +15,19 @@ export type {
 } from '@/domain/fhir/operation-outcome';
 export { NOT_FOR_CLINICAL_USE, SAFETY_BANNER } from '@/domain/safety';
 export {
+  allergyIntolerance,
+  condition,
+  diagnosticReport,
+  encounter,
+  isSupportedResourceType,
+  medicationRequest,
+  observation,
+  organization,
+  parseResource,
+  patient,
+  practitioner,
+} from '@/domain/fhir';
+export {
   BadRequestError,
   ConflictError,
   FhirError,

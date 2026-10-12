@@ -8,6 +8,7 @@ import {
   range,
   reference,
 } from '../datatypes';
+import { atMostOne } from '../choice';
 import { fhirDateTime, fhirString } from '../primitives';
 import { baseDomainResourceShape } from '../resource';
 
@@ -52,5 +53,13 @@ export const allergyIntolerance = z.object({
   lastOccurrence: fhirDateTime.optional(),
   note: z.array(annotation).optional(),
   reaction: z.array(allergyReaction).optional(),
+}).superRefine((value, ctx) => {
+  atMostOne(value, ctx, 'AllergyIntolerance.onset[x]', [
+    'onsetDateTime',
+    'onsetAge',
+    'onsetPeriod',
+    'onsetRange',
+    'onsetString',
+  ]);
 });
 export type AllergyIntolerance = z.infer<typeof allergyIntolerance>;

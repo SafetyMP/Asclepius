@@ -16,7 +16,11 @@ export function createDdiChecker(
   return {
     check(medications: readonly MedicationRequest[]): readonly DrugInteractionAlert[] {
       // Filter to active meds (absent status = active, conservative for safety).
-      const active = medications.filter((m) => m.status === 'active' || m.status === undefined);
+      // Status is required on the schema; a value that skipped parse may still omit it.
+      const active = medications.filter((m) => {
+        const status = (m as { status?: typeof m.status }).status;
+        return status === 'active' || status === undefined;
+      });
 
       // Collect all codes + their display names from active meds.
       const codeToDisplay = new Map<string, string>();
