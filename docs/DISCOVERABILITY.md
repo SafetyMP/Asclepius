@@ -72,6 +72,20 @@ steps, not outcomes established by a successful deployment.
   runtime instructions. Optional `npm run oss:scorecard` reports local security
   checks; it does not measure usability, clinical safety, or monetary value.
 
+## Dependency override rationale
+
+The root pins transitive Vite to `8.1.6`, a security-fixed version within Vitest 4’s
+supported range. This also avoids an npm 10 optional-devtools peer-resolution
+failure encountered when regenerating the lockfile. The web package scopes
+`minimatch@11.0.8` to `@typescript-eslint/typescript-estree`: its installed consumer
+uses the retained named `minimatch(path, pattern, { dot: true })` API. ESLint’s
+separate minimatch 3 dependency remains unchanged. See the
+[minimatch advisory](https://github.com/isaacs/minimatch/security/advisories/GHSA-g3hv-75wg-m249).
+
+These are bounded compatibility choices, not permanent security guarantees.
+Reassess the overrides as upstream ranges change; regenerate with npm 10.9.2,
+run both package audits, and verify the core and browser gates before publishing.
+
 ## Primary guidance
 
 - [GitHub repository best practices](https://docs.github.com/en/repositories/creating-and-managing-repositories/best-practices-for-repositories): clear community documentation and repository security.
