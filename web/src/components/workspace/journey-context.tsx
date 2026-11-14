@@ -21,6 +21,7 @@ const JourneyContext = createContext<{
   journeyId: JourneyId;
   setJourneyId: Dispatch<SetStateAction<JourneyId>>;
   state: JourneyState;
+  journeyStates: Record<JourneyId, JourneyState>;
   setState: Dispatch<SetStateAction<JourneyState>>;
   setJourneyState: (id: JourneyId, action: SetStateAction<JourneyState>) => void;
 } | null>(null);
@@ -40,7 +41,14 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
   }
   return (
     <JourneyContext.Provider
-      value={{ journeyId, setJourneyId, state: states[journeyId], setState, setJourneyState }}
+      value={{
+        journeyId,
+        setJourneyId,
+        state: states[journeyId],
+        journeyStates: states,
+        setState,
+        setJourneyState,
+      }}
     >
       {children}
     </JourneyContext.Provider>

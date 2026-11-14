@@ -252,3 +252,30 @@ export function recordConnections(
   }
   return [...result.values()];
 }
+
+/** Priority links from the actual one-hop graph, never a second handoff model. */
+export function recordHandoffLinks(
+  example: ResourceExample,
+  records: ResourceExample[] = examples,
+): { example: ResourceExample; label: string }[] {
+  if (
+    example.type !== 'ServiceRequest' &&
+    example.type !== 'Task' &&
+    !(example.type === 'Encounter' && example.resource.status === 'planned')
+  )
+    return [];
+  const priorities = [
+    { type: 'ServiceRequest', label: 'Open referral request' },
+    { type: 'Task', label: 'Open handoff record' },
+    { type: 'Encounter', label: 'Open planned receiving visit' },
+  ];
+  const connections = recordConnections(example, records);
+  return priorities.flatMap(({ type, label }) =>
+    connections
+      .filter(
+        ({ example: linked }) =>
+          linked.type === type && (type !== 'Encounter' || linked.resource.status === 'planned'),
+      )
+      .map(({ example: linked }) => ({ example: linked, label })),
+  );
+}

@@ -26,6 +26,7 @@ The demo runs in the browser, with no account, API server, or token required.
   to Cedar. Inspect the records that give each step its context.
 - **Resource explorer:** read key facts, follow incoming and outgoing
   connections, and retrace your steps through nine fictional records in each journey.
+  “View all” clears prior filters; sidebar navigation resumes the saved search.
 - **Validation lab:** check a sample and repair a missing identity without
   coding. JSON editing is available under advanced details. Checks run locally
   in the browser and do not change the fictional case.
@@ -48,7 +49,8 @@ Choose **A referral and handoff** for Maya Chen’s fictional Willow → Cedar j
 The referral remains active, Cedar’s coordination task is completed, and the
 receiving visit is planned. Stage navigation explores a fixed teaching snapshot;
 it does not change statuses or send a referral. Full record identities keep the
-two practitioners, organizations, and visits distinct.
+two practitioners, organizations, and visits distinct. The final stage opens the
+handoff record, with prominent links to the request and planned receiving visit.
 
 ![Maya’s synthetic referral and handoff between Willow and Cedar](docs/assets/referral-handoff.jpg)
 

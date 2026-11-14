@@ -90,7 +90,7 @@ export const journeys: [Journey, Journey] = [
       },
     ],
     finalRecordKey: 'DiagnosticReport/demo-report',
-    finalActionLabel: 'Check the report’s structure',
+    finalActionLabel: 'Explore the report',
   },
   {
     id: 'referral',
@@ -162,7 +162,7 @@ export const journeys: [Journey, Journey] = [
       },
     ],
     finalRecordKey: 'Task/referral-handoff',
-    finalActionLabel: 'Check the handoff’s structure',
+    finalActionLabel: 'Explore the handoff',
   },
 ];
 

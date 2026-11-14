@@ -64,6 +64,27 @@ test.describe('Synthetic care journey @smoke', () => {
     );
   });
 
+  test('keyboard Next keeps focus on the new stage, including the final transition', async ({
+    page,
+  }) => {
+    await page.goto(`${base}/`);
+    await page.getByRole('button', { name: 'Next: Assessment' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('tabpanel')).toBeFocused();
+    await expect(page.getByRole('tabpanel')).toContainText(
+      'A measurement means more with context.',
+    );
+    await page.getByRole('button', { name: 'Next: Follow-up' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('tabpanel')).toBeFocused();
+    await expect(page.getByRole('tabpanel')).toContainText('Follow the record back to its source.');
+    await page.getByRole('button', { name: 'Explore the report', exact: true }).click();
+    await expect(page.getByRole('region', { name: 'DiagnosticReport details' })).toBeFocused();
+    // Reopening the same selected record is still a deliberate focus action.
+    await page.getByRole('button', { name: 'Explore the report', exact: true }).click();
+    await expect(page.getByRole('region', { name: 'DiagnosticReport details' })).toBeFocused();
+  });
+
   test('inspect a report, follow its measurement, and open the matching validator', async ({
     page,
   }) => {
@@ -283,7 +304,11 @@ test.describe('Synthetic care journey @smoke', () => {
     );
     await expect(page.getByRole('region', { name: 'Observation details' })).toBeVisible();
     await page.getByRole('tab', { name: /Follow-up/ }).click();
-    await page.getByRole('link', { name: 'Check the report’s structure' }).click();
+    await page.getByRole('button', { name: 'Explore the report', exact: true }).click();
+    const report = page.getByRole('region', { name: 'DiagnosticReport details' });
+    await expect(report).toBeFocused();
+    await expect(page).toHaveURL(new RegExp(`${base}/$`));
+    await report.getByRole('link', { name: 'Check record structure', exact: true }).click();
     await expect(page.getByLabel('Sample record')).toHaveValue('DiagnosticReport/demo-report');
     await page.getByRole('link', { name: 'Back to care journey' }).click();
     await expect(page.getByRole('tab', { name: /Follow-up/ })).toHaveAttribute(

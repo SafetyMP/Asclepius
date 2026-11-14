@@ -88,16 +88,24 @@ test.describe('Referral and handoff journey @smoke', () => {
       'true',
     );
     await expect(page.locator('.handoff-context')).toContainText('Willow');
-    await page.getByRole('button', { name: 'Next: Team review' }).click();
+    await page.getByRole('button', { name: 'Next: Team review' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('tabpanel')).toBeFocused();
     await expect(page.getByRole('tab', { name: /Team review/ })).toHaveAttribute(
       'aria-selected',
       'true',
     );
     await expect(page.locator('.handoff-context')).toContainText('Cedar');
-    await page.getByRole('button', { name: 'Next: Handoff' }).click();
+    await page.getByRole('button', { name: 'Next: Handoff' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('tabpanel')).toBeFocused();
     await expect(page.getByText('3 of 3 stages')).toBeVisible();
     await expect(page.locator('.handoff-context')).toContainText('Cedar');
     const handoff = referral.records.find((sample) => sample.type === 'Task')!;
+    await expect(page.getByRole('button', { name: /^Inspect / }).first()).toHaveAttribute(
+      'aria-label',
+      `Inspect Task: ${handoff.title}`,
+    );
     await page.getByRole('button', { name: `Inspect Task: ${handoff.title}` }).click();
     const task = page.getByRole('region', { name: 'Task details' });
     await expect(task).toContainText('Coordination completed');
@@ -174,7 +182,13 @@ test.describe('Referral and handoff journey @smoke', () => {
       .click();
     await selectReferral(page);
     await page.getByRole('tab', { name: /Handoff/ }).click();
-    await page.getByRole('link', { name: referral.finalActionLabel, exact: true }).click();
+    await page.getByRole('button', { name: 'Explore the handoff', exact: true }).click();
+    await expect(page.getByRole('region', { name: 'Task details' })).toBeFocused();
+    await expect(page).toHaveURL(new RegExp(`${base}/$`));
+    await page
+      .getByRole('region', { name: 'Task details' })
+      .getByRole('link', { name: 'Check record structure', exact: true })
+      .click();
     await expect(page.getByLabel('Sample record')).toHaveValue('Task/referral-handoff');
     await page.getByRole('link', { name: 'Back to care journey' }).click();
     await expect(page.getByRole('tab', { name: /Handoff/ })).toHaveAttribute(
@@ -188,6 +202,8 @@ test.describe('Referral and handoff journey @smoke', () => {
       'true',
     );
     await expect(page.getByRole('region', { name: 'Observation details' })).toBeVisible();
+    await expect(page.getByRole('button', { name: routine.label, exact: true })).toBeFocused();
+    await expect(page.getByRole('button', { name: routine.label, exact: true })).toBeInViewport();
     await expect(page.getByRole('region', { name: 'Task details' })).toHaveCount(0);
     await selectReferral(page);
     await expect(page.getByRole('tab', { name: /Handoff/ })).toHaveAttribute(
@@ -195,6 +211,8 @@ test.describe('Referral and handoff journey @smoke', () => {
       'true',
     );
     await expect(page.getByRole('region', { name: 'Task details' })).toBeVisible();
+    await expect(page.getByRole('button', { name: referral.label, exact: true })).toBeFocused();
+    await expect(page.getByRole('button', { name: referral.label, exact: true })).toBeInViewport();
   });
 
   test('keep explorer searches separate and return to the correct record after a direct-link reload', async ({
@@ -233,6 +251,101 @@ test.describe('Referral and handoff journey @smoke', () => {
         .getByRole('heading', { name: receivingPractitioner.title }),
     ).toBeVisible();
     await expect(page.getByRole('button', { name: 'Inspect Patient: Alex Morgan' })).toHaveCount(0);
+  });
+
+  test('View all clears old explorer filters while ordinary navigation resumes them', async ({
+    page,
+  }) => {
+    await page.goto(`${base}/resources/`);
+    await selectReferral(page);
+    const search = page.getByRole('textbox', { name: 'Search resources' });
+    const navigation = page.getByRole('navigation', { name: 'Primary' });
+    await search.fill('Taylor');
+    await page
+      .getByRole('button', { name: `Inspect Practitioner: ${receivingPractitioner.title}` })
+      .click();
+    await navigation.getByRole('link', { name: 'Care journey', exact: true }).click();
+    await navigation.getByRole('link', { name: 'Resource explorer' }).click();
+    await expect(search).toHaveValue('Taylor');
+    await expect(page.getByRole('button', { name: /^Inspect / })).toHaveCount(1);
+    await expect(page.getByRole('region', { name: 'Practitioner details' })).toBeVisible();
+    await navigation.getByRole('link', { name: 'Care journey', exact: true }).click();
+    await page.getByRole('link', { name: 'View all', exact: true }).click();
+    await expect(search).toHaveValue('');
+    await expect(page.getByRole('button', { name: /^Inspect / })).toHaveCount(9);
+    await expect(page.getByRole('region', { name: / details$/ })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: referral.label, exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  test('follow the prominent handoff path and retrace request and planned-visit context', async ({
+    page,
+  }) => {
+    await page.goto(`${base}/`);
+    await selectReferral(page);
+    await page.getByRole('tab', { name: /Handoff/ }).click();
+    await page.getByRole('button', { name: 'Explore the handoff', exact: true }).click();
+    const task = page.getByRole('region', { name: 'Task details' });
+    await task.getByRole('button', { name: 'Open referral request', exact: true }).click();
+    const request = page.getByRole('region', { name: 'ServiceRequest details' });
+    await expect(request).toBeFocused();
+    await expect(request).toContainText('Active');
+    await request
+      .getByRole('button', { name: 'Open planned receiving visit', exact: true })
+      .click();
+    const visit = page.getByRole('region', { name: 'Encounter details' });
+    await expect(visit).toBeFocused();
+    await expect(
+      visit.getByRole('heading', { name: 'Planned receiving visit at Cedar', exact: true }),
+    ).toBeVisible();
+    await expect(visit).toContainText('Planned visit');
+    await visit.getByRole('button', { name: 'Back to Referral to Cedar', exact: true }).click();
+    await expect(request).toBeFocused();
+    await request
+      .getByRole('button', { name: 'Back to Coordination handoff to Cedar', exact: true })
+      .click();
+    await expect(task).toBeFocused();
+    await task.getByRole('button', { name: 'Open planned receiving visit', exact: true }).click();
+    await visit.getByRole('button', { name: 'Open handoff record', exact: true }).click();
+    await expect(task).toBeFocused();
+    await expect(task).toContainText('Coordination completed');
+    await checkAccessibility(page);
+  });
+
+  test('mobile switching keeps the picker in focus and handoff shortcuts within reach', async ({
+    page,
+  }) => {
+    test.setTimeout(60_000);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${base}/`);
+    await page.getByRole('button', { name: 'Inspect Patient: Alex Morgan', exact: true }).click();
+    await selectReferral(page);
+    await page.getByRole('tab', { name: /Handoff/ }).click();
+    await page.getByRole('button', { name: 'Explore the handoff', exact: true }).click();
+    await page.getByRole('button', { name: routine.label, exact: true }).click();
+    await expect(page.getByRole('button', { name: routine.label, exact: true })).toBeFocused();
+    await expect(page.getByRole('button', { name: routine.label, exact: true })).toBeInViewport();
+    await expect(page.getByRole('region', { name: 'Patient details' })).toBeVisible();
+    await selectReferral(page);
+    await expect(page.getByRole('button', { name: referral.label, exact: true })).toBeFocused();
+    await expect(page.getByRole('button', { name: referral.label, exact: true })).toBeInViewport();
+    await expect(page.getByRole('region', { name: 'Task details' })).toBeVisible();
+    await checkAccessibility(page);
+    await page.getByRole('button', { name: 'Explore the handoff', exact: true }).click();
+    const task = page.getByRole('region', { name: 'Task details' });
+    await expect(task).toBeFocused();
+    await expect(
+      task.getByRole('button', { name: 'Open referral request', exact: true }),
+    ).toBeInViewport();
+    await expect(
+      task.getByRole('button', { name: 'Open planned receiving visit', exact: true }),
+    ).toBeInViewport();
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    await checkAccessibility(page);
   });
 
   test('sidebar navigation keeps referral context after opening or reloading a lab deep link', async ({
