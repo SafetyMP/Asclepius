@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { examples, type ResourceExample } from '@/lib/examples';
 import { recordConnections, recordFacts } from '@/lib/record-context';
+import { recordKey, type JourneyId } from '@/lib/journeys';
 import { useHydrated } from '@/lib/use-hydrated';
 
 type ExplorerContext = 'journey' | 'explorer';
@@ -26,6 +27,9 @@ export function ResourceDetail({
   onPrevious,
   context = 'explorer',
   stage,
+  records = examples,
+  journeyId = 'routine',
+  person = 'Alex Morgan',
 }: {
   example: ResourceExample;
   onClose: () => void;
@@ -34,6 +38,9 @@ export function ResourceDetail({
   onPrevious?: () => void;
   context?: ExplorerContext;
   stage?: number;
+  records?: ResourceExample[];
+  journeyId?: JourneyId;
+  person?: string;
 }) {
   const [json, setJson] = useState(false);
   const panelRef = useRef<HTMLElement>(null);
@@ -41,9 +48,9 @@ export function ResourceDetail({
     panelRef.current?.focus({ preventScroll: true });
     panelRef.current?.scrollIntoView({ block: 'nearest' });
   }, []);
-  const facts = recordFacts(example);
-  const connections = recordConnections(example);
-  const validationHref = `/validate?resource=${example.type}&from=${context}${context === 'journey' && stage !== undefined ? `&stage=${stage}` : ''}`;
+  const facts = recordFacts(example, records);
+  const connections = recordConnections(example, records);
+  const validationHref = `/validate?journey=${journeyId}&record=${encodeURIComponent(recordKey(example))}&resource=${example.type}&from=${context}${context === 'journey' && stage !== undefined ? `&stage=${stage}` : ''}`;
   return (
     <section
       id="resource-detail"
@@ -73,7 +80,7 @@ export function ResourceDetail({
       <span className="resource-type">{example.type}</span>
       <h3>{example.title}</h3>
       <p className="text-muted">{example.description}</p>
-      <div className="record-status">Fictional record · Alex’s teaching scenario</div>
+      <div className="record-status">{person} · Fictional teaching record</div>
       <h4>At a glance</h4>
       <dl className="record-facts">
         {facts.map((fact) => (
@@ -95,7 +102,7 @@ export function ResourceDetail({
           </p>
           {connections.map(({ example: related, relationship }) => (
             <button
-              key={related.type}
+              key={recordKey(related)}
               aria-label={`${related.type} ${related.title}`}
               onClick={() => onSelect(related)}
             >
@@ -133,6 +140,11 @@ export function ResourceExplorer({
   compact = false,
   context,
   initialType,
+  initialRecord,
+  records = examples,
+  recordKeys,
+  journeyId = 'routine',
+  person = 'Alex Morgan',
   onSelectionChange,
   initialQuery = '',
   onQueryChange,
@@ -142,7 +154,12 @@ export function ResourceExplorer({
   compact?: boolean;
   context?: ExplorerContext;
   initialType?: string;
-  onSelectionChange?: (type: string | null) => void;
+  initialRecord?: string;
+  records?: ResourceExample[];
+  recordKeys?: string[];
+  journeyId?: JourneyId;
+  person?: string;
+  onSelectionChange?: (record: string | null) => void;
   initialQuery?: string;
   onQueryChange?: (query: string) => void;
   stage?: number;
@@ -154,13 +171,17 @@ export function ResourceExplorer({
   const rowRefs = useRef(new Map<string, HTMLButtonElement>());
   const [query, setQuery] = useState(initialQuery);
   const [selected, setSelected] = useState<ResourceExample | null>(
-    () => examples.find((example) => example.type === initialType) ?? null,
+    () =>
+      records.find((example) =>
+        initialRecord ? recordKey(example) === initialRecord : example.type === initialType,
+      ) ?? null,
   );
   const [history, setHistory] = useState<ResourceExample[]>([]);
   const effectiveContext = context ?? (compact ? 'journey' : 'explorer');
-  const filtered = examples.filter(
+  const filtered = records.filter(
     (example) =>
       (!types || types.includes(example.type)) &&
+      (!recordKeys || recordKeys.includes(recordKey(example))) &&
       `${example.type} ${example.title} ${example.description}`
         .toLowerCase()
         .includes(query.toLowerCase()),
@@ -172,17 +193,17 @@ export function ResourceExplorer({
   function select(example: ResourceExample, followReference: boolean) {
     setHistory((previous) => (followReference && selected ? [...previous, selected] : []));
     setSelected(example);
-    onSelectionChange?.(example.type);
+    onSelectionChange?.(recordKey(example));
   }
   function goBack() {
     const previous = history[history.length - 1];
     if (!previous) return;
     setHistory(history.slice(0, -1));
     setSelected(previous);
-    onSelectionChange?.(previous.type);
+    onSelectionChange?.(recordKey(previous));
   }
   function close() {
-    const fallback = selected ? rowRefs.current.get(selected.type) : undefined;
+    const fallback = selected ? rowRefs.current.get(recordKey(selected)) : undefined;
     const target = triggerRef.current?.isConnected
       ? triggerRef.current
       : (fallback ?? searchRef.current ?? listRef.current);
@@ -199,8 +220,8 @@ export function ResourceExplorer({
             <h2>{compact ? 'The records behind the story' : 'Explore the connected records'}</h2>
             <p className="text-muted">
               {compact
-                ? 'Select a record to understand its role in this visit.'
-                : 'Nine resource types. One fictional episode of care.'}
+                ? 'Select a record to understand its role in this journey.'
+                : `${records.length} fictional records connected to ${person}.`}
             </p>
           </div>
           {compact && (
@@ -229,22 +250,26 @@ export function ResourceExplorer({
             <span />
           </div>
           {filtered.map((example) => (
-            <div key={example.type} role="listitem">
+            <div key={recordKey(example)} role="listitem">
               <button
                 disabled={!hydrated}
                 ref={(node) => {
-                  if (node) rowRefs.current.set(example.type, node);
-                  else rowRefs.current.delete(example.type);
+                  if (node) rowRefs.current.set(recordKey(example), node);
+                  else rowRefs.current.delete(recordKey(example));
                 }}
-                className={`resource-row ${selected?.type === example.type ? 'selected' : ''}`}
+                className={`resource-row ${selected !== null && recordKey(selected) === recordKey(example) ? 'selected' : ''}`}
                 onClick={(event) => {
                   triggerRef.current = event.currentTarget;
                   select(example, false);
                 }}
-                aria-controls={selected?.type === example.type ? 'resource-detail' : undefined}
-                aria-expanded={selected?.type === example.type}
+                aria-controls={
+                  selected !== null && recordKey(selected) === recordKey(example)
+                    ? 'resource-detail'
+                    : undefined
+                }
+                aria-expanded={selected !== null && recordKey(selected) === recordKey(example)}
                 aria-label={`Inspect ${example.type}: ${example.title}`}
-                aria-pressed={selected?.type === example.type}
+                aria-pressed={selected !== null && recordKey(selected) === recordKey(example)}
               >
                 <span className="resource-name">
                   <span className="file-icon">
@@ -264,7 +289,7 @@ export function ResourceExplorer({
             <div className="empty-state" role="listitem">
               <Search size={24} />
               <h3>No matching records</h3>
-              <p>Try “Patient”, “visit”, or “measurement”.</p>
+              <p>Try a person’s name, record type, or “visit”.</p>
               <button className="button secondary" onClick={() => changeQuery('')}>
                 Clear search
               </button>
@@ -278,7 +303,7 @@ export function ResourceExplorer({
       </section>
       {selected && (
         <ResourceDetail
-          key={selected.type}
+          key={recordKey(selected)}
           example={selected}
           onClose={close}
           onSelect={(example) => select(example, true)}
@@ -286,6 +311,9 @@ export function ResourceExplorer({
           onPrevious={goBack}
           context={effectiveContext}
           stage={stage}
+          records={records}
+          journeyId={journeyId}
+          person={person}
         />
       )}
     </div>

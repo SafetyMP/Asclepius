@@ -37,3 +37,11 @@ export {
 export { type Organization, organization } from './organization';
 export { administrativeGender, type Patient, patient } from './patient';
 export { type Practitioner, practitioner, qualification } from './practitioner';
+
+export {
+  type ServiceRequest,
+  serviceRequest,
+  serviceRequestIntent,
+  serviceRequestStatus,
+} from './service-request';
+export { type Task, task, taskIntent, taskParameter, taskStatus } from './task';

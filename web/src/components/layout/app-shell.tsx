@@ -1,5 +1,7 @@
 'use client';
 import Link from 'next/link';
+import { useJourney } from '@/components/workspace/journey-context';
+import { getJourney } from '@/lib/journeys';
 import { useHydrated } from '@/lib/use-hydrated';
 import { usePathname } from 'next/navigation';
 import {
@@ -29,6 +31,7 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   const hydrated = useHydrated();
+  const { journeyId } = useJourney();
   const pathname = usePathname().replace(/\/$/, '') || '/';
   const [open, setOpen] = useState(false);
   return (
@@ -70,7 +73,9 @@ export function AppShell({
                 >
                   <Icon size={18} />
                   <span>{item.label}</span>
-                  {index === 1 && <span className="nav-count">9</span>}
+                  {index === 1 && (
+                    <span className="nav-count">{getJourney(journeyId).records.length}</span>
+                  )}
                 </Link>
               );
             })}

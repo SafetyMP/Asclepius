@@ -1,0 +1,14 @@
+{
+  "resourceType": "ServiceRequest",
+  "id": "synthetic-referral",
+  "status": "active",
+  "intent": "order",
+  "code": { "text": "Fictional referral for a teaching scenario" },
+  "subject": { "reference": "Patient/synthetic-person" },
+  "encounter": { "reference": "Encounter/synthetic-referring-visit" },
+  "authoredOn": "2026-11-13T09:00:00-06:00",
+  "requester": { "reference": "Practitioner/synthetic-referrer" },
+  "performer": [{ "reference": "Organization/synthetic-receiving-team" }],
+  "supportingInfo": [{ "reference": "Encounter/synthetic-referring-visit" }],
+  "note": [{ "text": "NOT_FOR_CLINICAL_USE. Fictional coordination example only." }]
+}

@@ -1,19 +1,9 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { examples } from '../../src/lib/examples';
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 const apiRequests = new WeakMap<Page, string[]>();
-const resourceTypes = [
-  'Patient',
-  'Practitioner',
-  'Organization',
-  'Encounter',
-  'Condition',
-  'Observation',
-  'MedicationRequest',
-  'AllergyIntolerance',
-  'DiagnosticReport',
-];
 
 async function checkAccessibility(page: Page) {
   const results = await new AxeBuilder({ page })
@@ -93,11 +83,11 @@ test.describe('Synthetic care journey @smoke', () => {
     ).toBeVisible();
     await expect(measurement.getByLabel('Resource JSON')).toHaveCount(0);
     await measurement.getByRole('link', { name: 'Check record structure', exact: true }).click();
-    await expect(page.getByLabel('Record type')).toHaveValue('Observation');
+    await expect(page.getByLabel('Sample record')).toHaveValue('Observation/demo-observation');
     await page.getByText('View or edit JSON (advanced)', { exact: true }).click();
     await expect(page.getByLabel('FHIR resource JSON')).toHaveValue(/"id": "demo-observation"/);
     await page.reload();
-    await expect(page.getByLabel('Record type')).toHaveValue('Observation');
+    await expect(page.getByLabel('Sample record')).toHaveValue('Observation/demo-observation');
     await page.getByRole('button', { name: 'Check record structure', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Passes this teaching subset' })).toBeVisible();
   });
@@ -121,8 +111,8 @@ test.describe('Synthetic care journey @smoke', () => {
   test('all nine synthetic samples pass the shared teaching validator', async ({ page }) => {
     await page.goto(`${base}/validate/`);
     await page.getByText('View or edit JSON (advanced)', { exact: true }).click();
-    for (const type of resourceTypes) {
-      await page.getByLabel('Record type').selectOption(type);
+    for (const { type, resource } of examples) {
+      await page.getByLabel('Sample record').selectOption(`${type}/${resource.id}`);
       await expect(page.getByLabel('FHIR resource JSON')).toHaveValue(
         new RegExp(`"resourceType": "${type}"`),
       );
@@ -285,7 +275,7 @@ test.describe('Synthetic care journey @smoke', () => {
       .getByRole('region', { name: 'Observation details' })
       .getByRole('link', { name: 'Check record structure' })
       .click();
-    await expect(page.getByLabel('Record type')).toHaveValue('Observation');
+    await expect(page.getByLabel('Sample record')).toHaveValue('Observation/demo-observation');
     await page.getByRole('link', { name: 'Back to care journey' }).click();
     await expect(page.getByRole('tab', { name: /Assessment/ })).toHaveAttribute(
       'aria-selected',
@@ -294,7 +284,7 @@ test.describe('Synthetic care journey @smoke', () => {
     await expect(page.getByRole('region', { name: 'Observation details' })).toBeVisible();
     await page.getByRole('tab', { name: /Follow-up/ }).click();
     await page.getByRole('link', { name: 'Check the report’s structure' }).click();
-    await expect(page.getByLabel('Record type')).toHaveValue('DiagnosticReport');
+    await expect(page.getByLabel('Sample record')).toHaveValue('DiagnosticReport/demo-report');
     await page.getByRole('link', { name: 'Back to care journey' }).click();
     await expect(page.getByRole('tab', { name: /Follow-up/ })).toHaveAttribute(
       'aria-selected',
@@ -333,14 +323,14 @@ test.describe('Synthetic care journey @smoke', () => {
     page,
   }) => {
     await page.goto(`${base}/validate/?resource=Observation&from=explorer`);
-    await expect(page.getByLabel('Record type')).toHaveValue('Observation');
+    await expect(page.getByLabel('Sample record')).toHaveValue('Observation/demo-observation');
     await page.getByRole('button', { name: 'Check record structure', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Passes this teaching subset' })).toBeVisible();
     await page
       .getByRole('navigation', { name: 'Primary' })
       .getByRole('link', { name: 'Validation lab' })
       .click();
-    await expect(page.getByLabel('Record type')).toHaveValue('Patient');
+    await expect(page.getByLabel('Sample record')).toHaveValue('Patient/demo-alex');
     await expect(page.getByRole('heading', { name: 'Ready when you are.' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Passes this teaching subset' })).toHaveCount(0);
     await expect(

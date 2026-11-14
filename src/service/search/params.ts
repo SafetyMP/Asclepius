@@ -441,6 +441,9 @@ const REGISTRY: Record<ResourceType, Record<string, ParamDefinition>> = {
   MedicationRequest: { ...COMMON, ...MEDICATION_REQUEST },
   AllergyIntolerance: { ...COMMON, ...ALLERGY_INTOLERANCE },
   DiagnosticReport: { ...COMMON, ...DIAGNOSTIC_REPORT },
+  // Referral teaching resources initially expose only the shared search subset.
+  ServiceRequest: { ...COMMON },
+  Task: { ...COMMON },
 };
 
 /** Resolve a search parameter name for a resource type, or undefined if unknown. */

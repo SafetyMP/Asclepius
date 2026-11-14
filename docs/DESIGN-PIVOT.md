@@ -33,7 +33,7 @@ platform claim. The backend remains a local teaching harness.
 | Equal-weight clinical-console tool grid | Synthetic case as the primary entry point |
 | Server and token setup before interaction | Static browser demo with no account or API requirement |
 | Raw payloads without much context | Case context, resource explanations, and inspectable JSON |
-| Single validation sample and raw outcome | Nine examples, field-level feedback, reset, and a repair exercise |
+| Single validation sample and raw outcome | Two journeys of nine examples each, field-level feedback, reset, and a repair exercise |
 | Clinical endpoint controls in the public UI | Source-linked explanations of local auth, CDS, and DDI examples |
 | Local-only web console | Static export prepared for GitHub Pages at `/Asclepius` |
 
@@ -77,3 +77,19 @@ reachable site; preparing the export alone does not establish either.
 - Do not connect to real clinical systems, pharmacies, or EHRs.
 - Do not present this teaching subset as a production FHIR platform.
 - Preserve the [repository conventions](../AGENTS.md) and existing stack.
+
+## Referral and handoff extension
+
+The second journey follows Maya Chen from Willow’s referring team to Cedar’s
+receiving team. Its nine synthetic records include a ServiceRequest, a Task, and
+distinct referring/receiving practitioners, organizations, and encounters. Record
+identity uses resource type plus ID; references resolve within the chosen journey.
+
+The request is active, coordination is completed, and the receiving visit is
+planned. Stage navigation presents a fixed snapshot, not a live referral process.
+Both journeys retain independent navigation context. The validation lab shares
+the core’s eleven limited schemas; new Task values support references and strings.
+
+Acceptance covers isolated record graphs, duplicate-type navigation, all samples
+passing the shared validator, correct lab reload/return context, independent
+journey progress, and desktop/mobile accessibility at the Pages subpath.
