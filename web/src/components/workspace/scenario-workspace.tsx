@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useHydrated } from '@/lib/use-hydrated';
 import { useState } from 'react';
+import { useJourney } from './journey-context';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -53,12 +54,16 @@ const stages = [
 export function ScenarioWorkspace() {
   const hydrated = useHydrated();
   const [resetId, setResetId] = useState(0);
-  const [step, setStep] = useState(0);
-  const [visited, setVisited] = useState<number[]>([0]);
+  const { state, setState } = useJourney();
+  const { step, visited } = state;
   const stage = stages[step];
   function changeStep(index: number) {
-    setStep(index);
-    setVisited((old) => Array.from(new Set([...old, index])));
+    setState((old) => ({
+      ...old,
+      step: index,
+      visited: Array.from(new Set([...old.visited, index])),
+      journeySelection: null,
+    }));
   }
   return (
     <div className="workspace-page">
@@ -130,9 +135,15 @@ export function ScenarioWorkspace() {
           <div className="progress-track" aria-hidden="true">
             <span style={{ width: `${(visited.length / 3) * 100}%` }} />
           </div>
-          <p className="session-note">Progress is just for this visit to the demo.</p>
+          <p className="session-note">
+            Your place is kept as you explore. Refresh starts a new visit.
+          </p>
         </aside>
       </div>
+      <p className="journey-help">
+        Start with a stage below, then open a record to see its details and connections. No
+        technical knowledge is needed.
+      </p>
       <section className="journey-section" aria-labelledby="journey-title">
         <div className="section-heading">
           <div className="title-inline">
@@ -143,8 +154,7 @@ export function ScenarioWorkspace() {
             disabled={!hydrated}
             className="text-link"
             onClick={() => {
-              setStep(0);
-              setVisited([0]);
+              setState((old) => ({ ...old, step: 0, visited: [0], journeySelection: null }));
               setResetId((id) => id + 1);
             }}
           >
@@ -219,15 +229,29 @@ export function ScenarioWorkspace() {
                 <ArrowRight size={15} />
               </button>
             ) : (
-              <Link className="text-link" href="/validate">
-                Try the validation lab
+              <Link
+                className="text-link"
+                href="/validate?resource=DiagnosticReport&from=journey&stage=2"
+                onClick={() =>
+                  setState((old) => ({ ...old, journeySelection: 'DiagnosticReport' }))
+                }
+              >
+                Check the report’s structure
                 <ArrowRight size={15} />
               </Link>
             )}
           </div>
         </div>
       </section>
-      <ResourceExplorer key={`${step}-${resetId}`} types={stage.types} compact />
+      <ResourceExplorer
+        key={`${step}-${resetId}`}
+        types={stage.types}
+        compact
+        context="journey"
+        stage={step}
+        initialType={state.journeySelection ?? undefined}
+        onSelectionChange={(type) => setState((old) => ({ ...old, journeySelection: type }))}
+      />
       <div className="bottom-note">
         <Info size={15} />
         <p>

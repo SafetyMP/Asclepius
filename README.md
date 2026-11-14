@@ -24,13 +24,17 @@ The demo runs in the browser, with no account, API server, or token required.
 
 - **Care journey:** follow a fictional case and inspect the records that give
   each step its context.
-- **Resource library:** explore nine supported resource types, their roles,
-  and synthetic JSON examples.
-- **Validation lab:** edit an example, run the kit’s structural and teaching
-  profile checks, inspect field-level issues, and try repairing a missing
-  identity. Validation runs locally in the browser.
-- **Architecture:** follow schemas, services, ports, and adapters back to
-  their source files.
+- **Resource explorer:** read key facts, follow incoming and outgoing
+  connections, and retrace your steps through nine fictional records.
+- **Validation lab:** check a sample and repair a missing identity without
+  coding. JSON editing is available under advanced details. Checks run locally
+  in the browser and do not change the fictional case.
+- **How it works:** start with stakeholder questions and a plain-language
+  glossary; expand developer architecture and source links when needed.
+
+Journey progress, the open record, and explorer search stay in place while
+navigating within the demo. Refresh starts a new session; practice drafts are
+discarded when leaving the lab.
 
 The interface is designed around a calm workspace and a contextual first
 interaction. It replaces the former clinical-console tool grid and setup-first

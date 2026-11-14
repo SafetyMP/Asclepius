@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { JourneyProvider } from '@/components/workspace/journey-context';
 import { AppShell } from '@/components/layout/app-shell';
 import { asclepiusNav } from '@/lib/navigation';
 import './globals.css';
@@ -15,9 +16,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
-        <AppShell productName="Asclepius" eyebrow="THE CONNECTED CARE LAB" nav={asclepiusNav}>
-          {children}
-        </AppShell>
+        <JourneyProvider>
+          <AppShell productName="Asclepius" eyebrow="THE CONNECTED CARE LAB" nav={asclepiusNav}>
+            {children}
+          </AppShell>
+        </JourneyProvider>
       </body>
     </html>
   );
