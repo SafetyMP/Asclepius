@@ -1,87 +1,107 @@
 # Contributing to Asclepius
 
-Thanks for your interest in improving Asclepius — a teaching kit of nine FHIR R4
-zod types (Patient, Practitioner, Organization, Encounter, Condition,
-Observation, MedicationRequest, AllergyIntolerance, DiagnosticReport). This
-document explains how to set up the project and what's expected of a
-contribution.
+Asclepius helps healthcare stakeholders understand connected care through two
+synthetic journeys: a routine follow-up and a referral between care teams. It
+also includes a local TypeScript teaching core with eleven FHIR R4 resource
+schemas. Contributions to workflow clarity, language, accessibility,
+documentation, and the teaching implementation are welcome.
 
-## Regulatory posture (read first)
+**NOT_FOR_CLINICAL_USE.** Use synthetic data only. Never include real patient
+data or credentials, weaken the safety markers, imply the incomplete DDI
+knowledge base is comprehensive, or add real clinical-system connections.
+Read the [product rationale](docs/DESIGN-PIVOT.md) for scope and limitations.
 
-Asclepius is a **reference / educational implementation**, **not** certified and
-**not** for real patient data. Contributions must not:
+## Contribute without writing code
 
-- Soften or remove the `NOT_FOR_CLINICAL_USE` markers or disclaimers.
-- Imply the DDI knowledge base is comprehensive.
-- Add code that connects to real clinical systems, pharmacies, or EHRs.
+Try the [live demo](https://safetymp.github.io/Asclepius/) and use an
+[issue form](https://github.com/SafetyMP/Asclepius/issues/new/choose) to describe a
+confusing step, missing explanation, accessibility problem, or proposed workflow.
+Include the journey, stage, expected outcome, and browser or device when relevant.
+Screenshots must contain only synthetic examples. No local setup is needed to
+report feedback. See [SUPPORT.md](SUPPORT.md) for questions and reporting routes.
 
-## Prerequisites
+For larger features, explain the stakeholder need and a concrete success check
+in an issue before investing in implementation. Small fixes can go straight to
+a pull request. Security vulnerabilities follow [SECURITY.md](SECURITY.md), not
+public issues or pull requests.
 
-- **Node.js 22, 24, or 26.** `.nvmrc` is 26. CI runs `22.x`, `24.x`, and `26.x`. `package.json` `engines.node` is `>=22`.
-- A C++ toolchain (for `better-sqlite3`'s native build) — present by default on
-  macOS/Linux dev machines and GitHub runners.
+## Local setup
 
-## Setup
+Use **Node.js 22**, **npm 10.9.2**, and **Python 3** when working across both
+packages. The root core also supports Node 24 and 26 and CI tests all three;
+`.nvmrc` selects 22 for the shared workflow. The web package specifies Node 22.
+A C++ toolchain may be required to build `better-sqlite3` during root installation.
 
 ```bash
-npm install
-npm run gate   # format:check → lint → typecheck → test → build
+npm ci
+npm ci --prefix web
+npm run dev --prefix web          # browser workspace at http://localhost:3200
 ```
 
-A contribution is not finished until `npm run gate` is green locally. CI runs the
-same gate on every pull request.
+The browser demo works without the API. To work on the separate local teaching
+API, run `npm run dev` from the repository root (port 8787). See
+[web/README.md](web/README.md) for static preview, routes, and Pages deployment.
 
-## Architecture rules (must respect)
+## Architecture and product checks
 
-- **Dependencies point inward.** `domain` depends on nothing. `service` depends
-  on `domain` + `port`. `adapter` depends on `port` + `domain`. Never import
-  from an adapter inside `service` or `domain`.
-- **`src/app.ts` is the only composition root.** Adapters are wired there.
-- **Ports first.** A new external dependency (DB, IdP, message bus) gets a port
-  interface in `src/port/` before any adapter implements it.
-- **zod is the single source of truth for FHIR types.** Author a schema, derive
-  the TS type with `z.infer`. Do not hand-write a parallel interface.
+Follow [AGENTS.md](AGENTS.md), which applies to human and agent contributions:
 
-## TypeScript (max-strict)
+- Keep the browser workspace stakeholder-first: clear context and ownership,
+  calm visual hierarchy, keyboard access, responsive layout, and optional
+  technical detail. Preserve independent journey progress and record identities.
+- Keep referral statuses honest: completed coordination does not mean completed
+  care, and selecting a stage does not execute a workflow.
+- Preserve the static browser/local API separation and shared validation logic.
+- Dependencies point inward. Services use ports and domain types; adapters
+  implement ports. Do not import adapters into domain code or services.
+- Wire local API adapters in `src/app.ts`. Define new infrastructure ports in
+  `src/port/` before implementing adapters.
+- Define FHIR types with Zod and infer TypeScript types. Do not duplicate schemas.
+- Preserve strict TypeScript options, type-only imports, and explicit handling
+  of undefined values. Use `unknown` plus narrowing rather than `any` in `src/`.
 
-The project runs with `strict`, `noUncheckedIndexedAccess`,
-`exactOptionalPropertyTypes`, and `verbatimModuleSyntax`:
+## Verification
 
-- Use `import type` / `export type` for type-only imports.
-- When `noUncheckedIndexedAccess` flags an index access, handle the `undefined`
-  case explicitly — do not silence it with `!`.
-- No `any` in `src/` (tests may use it); reach for `unknown` + narrowing.
+```bash
+npm run gate                     # root format, lint, typecheck, tests, build
+npm run docs:check               # local Markdown file links
+npm run verify --prefix web      # web typecheck, build, browser smoke and axe
+npm run test:e2e --prefix web     # full browser suite against the built export
+```
 
-## Testing
+`./scripts/verify.sh` is the root install-and-gate helper. For web changes, run
+both the root and web gates; the Pages workflow additionally checks the actual
+`/Asclepius` subpath. See the [web guide](web/README.md) for local parity commands.
+For prose-only changes, check relative links and factual claims and include the
+root gate result required by this repository. State checks not run and why.
 
-- Unit tests are **co-located** (`*.test.ts` next to the module).
-- Integration tests live in `tests/integration/`.
-- Every new behavior ships with a test.
-- There is no `tests/fixtures/` directory. Keep example JSON next to the test that uses it.
+Unit tests are co-located (`*.test.ts`); integration tests live in
+`tests/integration/`; shared synthetic JSON fixtures are in `tests/fixtures/`.
+Browser tests live in `web/tests/e2e/`. Cover changed behavior with meaningful
+regressions. Do not treat tests as clinical validation, user research, or proof
+of improved engagement.
 
-## Decisions
+## Pull requests and decisions
 
-Non-trivial architectural decisions are recorded as ADRs in
-[`docs/adr/`](docs/adr/) (see the README there for the format). If your change
-introduces or reverses a decision, add or update an ADR.
+- Fork the repository or use an authorized branch, then target `main`.
+- Describe the user-visible problem, resulting behavior, and observed checks.
+  Include before/after images for visual changes and use synthetic data only.
+- Use a conventional title, such as `fix(web): clarify referral ownership`.
+  Keep diffs reviewable and avoid unrelated formatting or dependency changes.
+- Add or update an [ADR](docs/adr/) when introducing or reversing an architectural
+  decision. Preserve the historical decision and explain the change.
+- Never commit secrets, `*.db`, dependency directories, or generated builds.
+- Required CI must pass before merge. A successful local build is not proof of
+  deployment; publishing changes is a separate maintainer action.
 
-## Commits & pull requests
+## Supply-chain checks
 
-- Conventional-commit-ish titles: `feat(search): warfarin bleeding-risk rule`.
-- Small, reviewable diffs — one logical change per commit.
-- Never commit secrets, `*.db` files, or `dist/`.
-- Open a pull request against `main`; CI must pass before merge.
+[CI](.github/workflows/ci.yml), [CodeQL](.github/workflows/codeql.yml),
+[OpenSSF Scorecard](.github/workflows/scorecard.yml), and
+[Dependabot](.github/dependabot.yml) are configured in the repository. Review
+current Actions results rather than assuming configuration means checks passed.
+The optional `./scripts/oss-scorecard.sh` produces a local Scorecard report when
+the Scorecard tool is installed.
 
-## OSS supply-chain health
-
-| Check | Where |
-|-------|--------|
-| **OpenSSF Scorecard** | [`.github/workflows/scorecard.yml`](.github/workflows/scorecard.yml) — weekly + push; publishes to [scorecard.dev](https://scorecard.dev) (README badge after first run on `main`) |
-| **Local scorecard report** | `./scripts/oss-scorecard.sh` (requires `brew install scorecard`) |
-| **CodeQL** | [`.github/workflows/codeql.yml`](.github/workflows/codeql.yml) |
-| **Dependabot** | [`.github/dependabot.yml`](.github/dependabot.yml) |
-
-After the first Scorecard workflow run on `main`, add **`Scorecard analysis`** as a optional branch protection check if your org uses rulesets.
-
-By contributing, you agree that your contributions are licensed under the
-[Apache-2.0 License](LICENSE).
+Follow the [Code of Conduct](CODE_OF_CONDUCT.md). Contributions are licensed
+under the [Apache License, Version 2.0](LICENSE).

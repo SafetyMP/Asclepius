@@ -3,6 +3,17 @@
 - **Status:** Accepted
 - **Date:** 2026-07-04
 
+> **Current scope (November 2026):** This dated decision describes the local
+> synthetic teaching core. Its original platform framing and production
+> comparisons are historical rationale, not current deployment guidance or
+> claims of clinical capability. The stakeholder-facing browser demo is defined
+> in [ADR 0013](0013-browser-teaching-demo.md); [project scope](../PROJECT.md)
+> governs current work. **NOT_FOR_CLINICAL_USE.**
+>
+> Unknown-key stripping can discard valid FHIR elements outside this authored
+> subset. Do not treat a successful parse as full FHIR validation or promise
+> round-trip fidelity; passthrough fields are not deeply validated.
+
 ## Context
 
 zod objects default to **stripping** unknown keys. Surfaces in the domain layer

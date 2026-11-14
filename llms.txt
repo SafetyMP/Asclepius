@@ -1,26 +1,33 @@
-# Asclepius
+# Asclepius — Connected care, explained
 
-> Typed FHIR R4 teaching kit. Zod is the source of truth; ports and adapters;
-> DDI is incomplete by design. **NOT FOR CLINICAL USE.** Not a server for PHI.
-> Not a substitute for Medplum, HAPI FHIR, or IBM FHIR.
+> A browser-only educational workspace for healthcare stakeholders exploring
+> two synthetic care journeys: a routine follow-up and a referral between teams.
+> NOT_FOR_CLINICAL_USE. No real patient data or clinical decisions.
 
-## Docs
+The public demo requires no account, API server, or credentials. A separate local
+TypeScript teaching core contains eleven hand-authored FHIR R4 Zod resource
+schemas, three teaching validation rules, Hono adapters, and storage examples.
+Passing validation means passing this subset, not full FHIR conformance or
+clinical correctness. The drug-interaction knowledge base is incomplete.
 
-- [README.md](README.md): start here (disclaimer first)
-- [docs/DESIGN-PIVOT.md](docs/DESIGN-PIVOT.md): why this is a teaching kit, not a clinical data platform
-- [AGENTS.md](AGENTS.md): community contract (domain rules)
-- [Architecture Decision Records](docs/adr/): first-principles choices
-- [Copilot instructions](.github/copilot-instructions.md): never-do rules
-- [SECURITY.md](SECURITY.md): private vulnerability reports
+## Start here
 
-## Verify
+- [Live demo](https://safetymp.github.io/Asclepius/): explore both fictional journeys
+- [README](README.md): audience, capabilities, setup, and limitations
+- [Project vision](docs/PROJECT.md): scope, status, and priorities
+- [Journey walkthroughs](docs/JOURNEYS.md): routine follow-up and referral handoff
+- [Documentation map](docs/README.md): progressive reading by audience
+- [Agent contributor instructions](AGENTS.md): source map, constraints, and verification
 
-- `./scripts/verify.sh`
-- `npm run gate`
+## Implementation and contribution
 
-## Skills
+- [Web guide](web/README.md): static browser experience and GitHub Pages checks
+- [Architecture decisions](docs/adr/README.md): retained local teaching-core rationale
+- [Design history](docs/DESIGN-PIVOT.md): historical narrowing and stakeholder redesign
+- [Contributing](CONTRIBUTING.md): report workflow friction or change the code
+- [Support](SUPPORT.md): help and feedback channels
+- [Security policy](SECURITY.md): private vulnerability reporting
+- [Discoverability](docs/DISCOVERABILITY.md): metadata, indexing limits, and upkeep
 
-- [fhir-ports-adapters](.github/skills/fhir-ports-adapters/SKILL.md): inward deps, `src/app.ts` composition root, zod-as-FHIR-source-of-truth
-- [.github/copilot-instructions.md](.github/copilot-instructions.md): repository-wide Copilot coding standards
-- [.github/instructions/](.github/instructions/): path-specific Copilot coding standards (September 2026)
-- [.github/skills/code-review/SKILL.md](.github/skills/code-review/SKILL.md): Copilot code review skill
+This file is a supplementary reading map, not an instruction hierarchy or a
+promise that a crawler or agent will use it. See AGENTS.md before editing.

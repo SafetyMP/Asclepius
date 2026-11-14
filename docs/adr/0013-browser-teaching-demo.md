@@ -61,3 +61,17 @@ public demo is not a clinical workstation or a substitute for those systems.
 - [Next.js static exports](https://nextjs.org/docs/app/guides/static-exports)
 - [Next.js basePath](https://nextjs.org/docs/app/api-reference/config/next-config-js/basePath)
 - [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+
+
+## November 2026 journey extension
+
+The browser now presents two independent fictional journeys: Alex’s routine
+follow-up and Maya’s referral from Willow to Cedar. Each has nine records, with
+identity based on resource type plus ID and references resolved within its case.
+The referral adds limited ServiceRequest and Task schemas to the shared core.
+Its active request, completed coordination task, and planned receiving visit
+remain distinct statuses; exploring stages never executes a workflow.
+
+The [written journey guide](../JOURNEYS.md) explains this behavior without requiring
+an interactive session. [Project scope](../PROJECT.md) and the
+[documentation map](../README.md) are the maintained entry points for contributors.

@@ -3,6 +3,17 @@
 - **Status:** Accepted
 - **Date:** 2026-07-03
 
+> **Current scope (November 2026):** This dated decision describes the local
+> synthetic teaching core. Its original platform framing and production
+> comparisons are historical rationale, not current deployment guidance or
+> claims of clinical capability. The stakeholder-facing browser demo is defined
+> in [ADR 0013](0013-browser-teaching-demo.md); [project scope](../PROJECT.md)
+> governs current work. **NOT_FOR_CLINICAL_USE.**
+>
+> Correction to the historical example below: `undefined` is not `null`.
+> With `exactOptionalPropertyTypes`, an optional property can be absent, while
+> `x: T | undefined` requires the property but permits an undefined value.
+
 ## Context
 
 FHIR optionality is clinically meaningful: a missing `birthDate`, a present-but-

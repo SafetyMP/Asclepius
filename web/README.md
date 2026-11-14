@@ -1,8 +1,11 @@
-# Asclepius — synthetic care journey
+# Asclepius web — Connected care, explained
 
 A browser-based educational experience for healthcare stakeholders exploring a
 routine visit or referral handoff and its connected FHIR records. Developers can inspect the
 underlying examples, validation results, and architecture.
+
+[Live demo](https://safetymp.github.io/Asclepius/) ·
+[Written journey guide](../docs/JOURNEYS.md) · [Project scope](../docs/PROJECT.md)
 
 **NOT_FOR_CLINICAL_USE. Synthetic data only.** Do not enter real patient data.
 The intentionally incomplete DDI examples are not a basis for safety judgments.
@@ -95,3 +98,22 @@ A normal local build omits `NEXT_PUBLIC_BASE_PATH`; rebuild when changing the
 base path. Do not commit `out/` or preview output. See
 [the asset inventory](../docs/assets/README.md) for current and historical
 screenshots.
+
+
+## Discovery and documentation
+
+The public demo and repository share the same stakeholder-first description.
+See [discoverability guidance](../docs/DISCOVERABILITY.md) for canonical URLs,
+search metadata, and machine-readable reading aids. Public metadata describes
+an educational application; it must not imply clinical capability or certification.
+
+Journey text and stage ordering live in `src/lib/journeys.ts`; synthetic records
+live in `src/lib/examples.ts` and `src/lib/referral-examples.ts`. The
+[documentation source map](../docs/README.md#source-map) links these to the shared
+validator and tests. Keep the [written walkthrough](../docs/JOURNEYS.md) aligned
+when changing either case.
+
+Use `npm run screenshots` against a running static preview to capture the two
+current README images. See [the asset guide](../docs/assets/README.md#refresh-current-screenshots)
+for review output and Pages-subpath options. Historical console images remain
+preserved separately.

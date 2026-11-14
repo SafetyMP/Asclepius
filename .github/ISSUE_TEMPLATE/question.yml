@@ -1,0 +1,24 @@
+name: Usage or setup question
+description: Ask about a synthetic journey, record explanation, local setup, or project contribution
+title: "[question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check [support resources](https://github.com/SafetyMP/Asclepius/blob/main/SUPPORT.md)
+        and existing issues first. Questions here are public.
+        **NOT FOR CLINICAL USE**: do not request medical advice or include real patient data,
+        credentials, or undisclosed vulnerabilities.
+  - type: textarea
+    id: question
+    attributes:
+      label: What would you like to understand?
+      description: Include the journey, stage, documentation page, or local command if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried or read? (optional)
+      description: Include synthetic examples and redacted output only.

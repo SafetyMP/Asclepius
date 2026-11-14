@@ -1,4 +1,4 @@
-# Asclepius — a synthetic care journey, made understandable
+# Asclepius — Connected care, explained
 
 [![CI](https://github.com/SafetyMP/Asclepius/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml)
@@ -6,10 +6,13 @@
 
 Explore how a fictional visit or referral becomes connected health records. Asclepius gives
 healthcare stakeholders a guided view of two synthetic cases, their context, and the
-FHIR resources behind it. Developers can look deeper in the validation lab and
+FHIR (Fast Healthcare Interoperability Resources) records behind each story. Developers can look deeper in the validation lab and
 ports-and-adapters teaching kit.
 
-**[GitHub Pages demo](https://safetymp.github.io/Asclepius/)**
+**[Explore the live demo](https://safetymp.github.io/Asclepius/)** ·
+[Read both journeys](docs/JOURNEYS.md) · [Project vision](docs/PROJECT.md) ·
+[Documentation map](docs/README.md)
+
 The demo runs in the browser, with no account, API server, or token required.
 
 > **NOT_FOR_CLINICAL_USE — NOT FOR CLINICAL USE.** Synthetic examples only.
@@ -19,6 +22,15 @@ The demo runs in the browser, with no account, API server, or token required.
 > incomplete. Never connect it to real clinical systems, pharmacies, or EHRs.
 
 ![Asclepius synthetic care journey — fictional case and linked records](docs/assets/care-journey.jpg)
+
+## Start with your question
+
+| Your goal | Start here |
+| --- | --- |
+| Understand how a visit becomes connected records | [Live care journeys](https://safetymp.github.io/Asclepius/) or the [written walkthrough](docs/JOURNEYS.md) |
+| Follow a referral between care teams | [Maya’s handoff guide](docs/JOURNEYS.md#maya-a-referral-and-handoff) |
+| Explore the code or contribute | [Local setup](#run-the-browser-demo-locally), [contributing](CONTRIBUTING.md), and [architecture decisions](docs/adr/README.md) |
+| Navigate the repository with a coding agent | [Repository instructions](AGENTS.md) and [source map](docs/README.md#source-map) |
 
 ## Explore the story, then the structure
 
@@ -86,7 +98,9 @@ Open [the local demo](http://127.0.0.1:3200). `npm run start` serves the static
 For UI development, use `cd web && npm run dev` after installation.
 
 See [web/README.md](web/README.md) for routes, GitHub Pages configuration, and
-verification commands.
+verification commands. The public experience is a working educational demo; the
+local teaching API is a separate development reference. See [project scope and
+priorities](docs/PROJECT.md) before proposing an extension.
 
 ## The local teaching kit
 

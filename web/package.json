@@ -17,8 +17,7 @@
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test --grep @smoke",
     "verify": "npm run typecheck && npm run build && npm run test:e2e:smoke",
-    "screenshots": "node scripts/capture-screenshots.mjs",
-    "screenshots:rebuild-gif": "node scripts/capture-screenshots.mjs --from-existing"
+    "screenshots": "node scripts/capture-screenshots.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -39,8 +38,6 @@
     "@types/react-dom": "^19.2.2",
     "eslint": "^9.28.0",
     "eslint-config-next": "16.4.6",
-    "gifenc": "^1.0.3",
-    "pngjs": "^7.0.0",
     "tailwindcss": "^4",
     "typescript": "^5.8.3"
   },
@@ -50,6 +47,11 @@
     "js-yaml": "4.3.2",
     "browserslist": "4.28.9",
     "sharp": "0.35.5",
-    "source-map-js": "1.2.2"
-  }
+    "source-map-js": "1.2.2",
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.8"
+    }
+  },
+  "description": "Browser-only synthetic care journeys and referral handoffs for healthcare stakeholders. NOT FOR CLINICAL USE.",
+  "homepage": "https://safetymp.github.io/Asclepius/"
 }

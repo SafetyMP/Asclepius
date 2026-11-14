@@ -3,6 +3,17 @@
 - **Status:** Accepted
 - **Date:** 2026-07-03
 
+> **Current scope (November 2026):** This dated decision describes the local
+> synthetic teaching core. Its original platform framing and production
+> comparisons are historical rationale, not current deployment guidance or
+> claims of clinical capability. The stakeholder-facing browser demo is defined
+> in [ADR 0013](0013-browser-teaching-demo.md); [project scope](../PROJECT.md)
+> governs current work. **NOT_FOR_CLINICAL_USE.**
+>
+> The current resource subset also includes ServiceRequest and Task. Their
+> authored schemas are limited; Task input/output supports references or
+> strings only. Browser validation shares these schemas with the local core.
+
 ## Context
 
 We need both a **static type** (for the compiler) and a **runtime validator**

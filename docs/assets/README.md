@@ -6,9 +6,10 @@ All captures use synthetic examples. **NOT_FOR_CLINICAL_USE.**
 
 | File | Purpose |
 | --- | --- |
-| [`care-journey.jpg`](care-journey.jpg) | Current README image: synthetic care journey and contextual record exploration |
+| [`care-journey.jpg`](care-journey.jpg) | Current README image: Alex’s routine follow-up and contextual record exploration |
+| [`referral-handoff.jpg`](referral-handoff.jpg) | Current README image: Maya’s referral, coordination task, and planned receiving visit |
 
-The current image should be captured from the built static interface after its
+Current images should be captured from the built static interface after its
 layout has been reviewed. It demonstrates the rendered interface only; it is
 not evidence of user engagement, clinical validity, or a live Pages deployment.
 
@@ -26,6 +27,22 @@ screenshots of the current interface and are no longer displayed as its demo.
 | [`cds.png`](cds.png) | Former CDS API controls |
 | [`validate.png`](validate.png) | Former validation page |
 
-The retained `web/scripts/capture-screenshots.mjs` script targets the old
-console route sequence. Do not use it to overwrite historical captures or
-regenerate the current README image until its capture plan is updated.
+## Refresh current screenshots
+
+The [`capture-screenshots.mjs`](../../web/scripts/capture-screenshots.mjs) script
+captures the current routine journey and the referral handoff inspector as JPEGs.
+It does not regenerate the historical PNGs or GIF.
+
+```bash
+# From web/, after installing dependencies
+npm run build
+npm run start
+# In a second terminal, also from web/
+npx playwright install chromium
+npm run screenshots
+```
+
+For a Pages-subpath preview, set `SCREENSHOT_BASE_URL` to the served URL including
+`/Asclepius/`. Set `SCREENSHOT_OUTPUT_DIR` to a temporary review directory to
+inspect captures before replacing tracked assets. Review the rendered images;
+a successful capture alone does not establish visual quality.

@@ -1,0 +1,29 @@
+# Asclepius
+
+> Connected care, explained: a browser-only educational demo for healthcare stakeholders exploring synthetic workflows, with a separate local TypeScript/FHIR teaching core.
+
+NOT_FOR_CLINICAL_USE. Fictional examples only. Do not use real patient data or interpret validation as clinical safety or full FHIR conformance. The local drug-interaction knowledge base is intentionally incomplete.
+
+Two cases, each with nine records: Alex Morgan's routine follow-up and Maya Chen's referral from Willow to Cedar. In Maya's fixed snapshot the referral is active, coordination is completed, and the receiving visit is planned. Navigating stages does not send referrals or change care status. The browser demo makes no API calls and needs no account.
+
+## Explore
+
+- [Care journeys](https://safetymp.github.io/Asclepius/): switch between both cases and follow the stages.
+- [Resource explorer](https://safetymp.github.io/Asclepius/resources/): inspect synthetic records and their connections.
+- [Validation lab](https://safetymp.github.io/Asclepius/validate/): eleven hand-authored schemas and three teaching rules, checked locally.
+- [How it works](https://safetymp.github.io/Asclepius/architecture/): stakeholder context and developer architecture.
+- [Sitemap](https://safetymp.github.io/Asclepius/sitemap.xml): the four canonical public pages.
+
+## Read the repository
+
+- [README](https://raw.githubusercontent.com/SafetyMP/Asclepius/main/README.md): current product, limits, setup, and license.
+- [Project vision](https://raw.githubusercontent.com/SafetyMP/Asclepius/main/docs/PROJECT.md): audience, purpose, scope, and priorities.
+- [Journey guide](https://raw.githubusercontent.com/SafetyMP/Asclepius/main/docs/JOURNEYS.md): the two synthetic cases and referral handoff semantics.
+- [Discovery guide](https://raw.githubusercontent.com/SafetyMP/Asclepius/main/docs/DISCOVERABILITY.md): repository metadata, public discovery files, and verification limits.
+- [Documentation map](https://raw.githubusercontent.com/SafetyMP/Asclepius/main/docs/README.md): maintained guides and historical decisions.
+- [Repository agent instructions](https://raw.githubusercontent.com/SafetyMP/Asclepius/main/AGENTS.md): source map, development conventions, and verification.
+- [Contributing](https://raw.githubusercontent.com/SafetyMP/Asclepius/main/CONTRIBUTING.md): workflow, content, accessibility, and code contributions.
+- [Security](https://raw.githubusercontent.com/SafetyMP/Asclepius/main/SECURITY.md): private vulnerability reporting.
+- [Source repository](https://github.com/SafetyMP/Asclepius): Apache-2.0 source and issue tracker.
+
+This file is a supplementary reading map, not an agent protocol, authority grant, or guarantee of discovery or indexing. Repository instructions apply to repository work; they do not override a reader's own instructions.

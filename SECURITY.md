@@ -1,56 +1,60 @@
-# Security Policy
+# Security policy
 
-## Not for clinical use
+## Project scope
 
-Asclepius is a **typed FHIR R4 teaching kit**, **not** a certified
-medical device and **not** compliant with HIPAA, HITRUST, or any clinical
-regulatory framework. **Do not use it to store, process, or make decisions about
-real patient data.** This policy covers the security of the **source code**; it
-does not change the project's clinical-safety posture. See the README's
-regulatory disclaimer and [docs/DESIGN-PIVOT.md](docs/DESIGN-PIVOT.md).
+Asclepius is a browser-based **synthetic care journey demo** and a separate local
+**FHIR R4 teaching implementation**. **NOT_FOR_CLINICAL_USE.** It is not a
+certified medical device or a HIPAA/HITRUST-compliant clinical system. Do not
+store, process, or make decisions about real patient data. See the
+[README](README.md) and [design rationale](docs/DESIGN-PIVOT.md).
+
+The public GitHub Pages demo is a static site with browser-local sample
+validation; it does not connect to the local API or a live EHR. The local API
+includes teaching authentication, storage, and audit examples. This policy
+covers software security in both parts without changing their clinical limits.
 
 ## Supported versions
 
-Asclepius is pre-1.0 (`0.1.x`). Security fixes are applied to the latest `main`
-only; there are no backport branches.
+The project is pre-1.0. Security fixes are applied to the latest `main` only;
+there are no maintained release or backport branches.
 
-## Reporting a Vulnerability
+## Report a vulnerability privately
 
-**Do not open a public GitHub issue for a security vulnerability.**
+**Do not open a public issue or pull request with an undisclosed vulnerability.**
+Use [Report a vulnerability](https://github.com/SafetyMP/Asclepius/security/advisories/new)
+on the repository's Security tab for private coordination with maintainers.
+Include:
 
-Instead, please report it privately:
+- The affected commit, route or component, and impact.
+- Reproduction steps and a minimal proof of concept using synthetic data only.
+- Relevant browser/runtime versions and redacted logs.
 
-1. Open a GitHub **Security Advisory**: the
-   [**Report a vulnerability**](https://github.com/SafetyMP/Asclepius/security/advisories/new)
-   button on the **Security** tab (preferred — supports private coordination and
-   CVE assignment). Use the template and include:
-   - a description of the issue and its impact,
-   - the commit hash or version affected,
-   - steps to reproduce, and a proof of concept if you have one.
-
-Please **do not** open a pull request fixing a vulnerability until we have
-acknowledged the report and agreed on a coordinated disclosure path.
+Do not include real patient information, active credentials, or other people's
+data. If the private reporting form is unavailable, open only a minimal public
+issue asking for a private security contact, **without vulnerability details**.
+Wait for a coordinated disclosure path before opening a public fix.
 
 ## Response
 
-We acknowledge reports within **3 business days** and aim to provide an initial
-assessment within **14 days**. Coordinated disclosure timelines are agreed
-case-by-case with the reporter. Once a fix is released we will credit the
-reporter (unless they prefer to remain anonymous).
+Maintainers aim to acknowledge reports within **3 business days** and provide
+an initial assessment within **14 days**. Disclosure timelines are agreed
+case by case. Reporters are credited after a fix unless they prefer anonymity.
+These are response goals, not a production support guarantee.
 
-## Scope
+## Scope of reports
 
-In scope: vulnerabilities in this repository's code that could lead to
-unexpected code execution, data corruption, or authz bypasses _within the
-teaching kit_. Examples: prototype-pollution via zod input, unsafe
-deserialization, broken access control in a future auth adapter.
+Report issues such as browser script injection, unsafe parsing, unexpected code
+execution, dependency vulnerabilities, data corruption, or authorization bypass
+in the local teaching API. Deployment or supply-chain weaknesses affecting this
+repository are also relevant.
 
-Out of scope (but welcome as regular issues): the incompleteness of the DDI
-knowledge base, the absence of clinical certification, and any behavior that
-follows documented limitations.
+Documented limitations, such as incomplete DDI coverage or lack of full FHIR
+conformance, are not evidence of clinical fitness. Report misleading wording or
+incorrect sample behavior through a [regular issue](https://github.com/SafetyMP/Asclepius/issues/new/choose),
+unless disclosing it would expose an exploitable security vulnerability.
 
-## Safe harbor
+## Responsible research
 
-Good-faith security research on this teaching kit is appreciated.
-Please avoid degrading service, modifying data that is not your own, or
-accessing others' data.
+Use a local checkout and synthetic fixtures for testing. Do not degrade the
+public demo, access others' data, or modify systems you do not control. This
+policy does not authorize testing clinical systems or external services.

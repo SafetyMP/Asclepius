@@ -1,32 +1,30 @@
-<!-- Thanks for contributing! Provide a short summary above. -->
+## Problem and result
 
-## Summary
+<!-- Describe who was affected, the concrete friction, and the resulting behavior.
+Link an issue when relevant. Include synthetic before/after images for visual changes. -->
 
-<!-- What does this change do, and why? Reference an issue if applicable. -->
+## Verification
 
-## Change type
-
-- [ ] feat — new capability
-- [ ] fix — bug fix
-- [ ] refactor — no behavior change
-- [ ] docs — documentation only
-- [ ] test — tests only
-- [ ] chore — tooling, deps, CI
+<!-- List commands actually run and observed results; state omitted checks and why.
+For web changes, include journey switching, referral ownership/status, keyboard
+navigation, responsive layout, and Pages subpath checks as applicable. -->
 
 ## Checklist
 
-- [ ] `npm run gate` is green locally (format · lint · typecheck · test · build).
-- [ ] New behavior is covered by a test (`*.test.ts` next to the module).
-- [ ] No `any` in `src/`; `import type` used for type-only imports.
-- [ ] Dependencies still point inward (`domain` ← `service` ← `adapter`; no
-      adapter imports in `service`/`domain`).
-- [ ] No secrets, `*.db`, or `dist/` staged.
-- [ ] Regulatory posture preserved: `NOT_FOR_CLINICAL_USE` markers and the
-      DDI-incompleteness caveat are not weakened.
-- [ ] If this introduces or reverses a decision, an ADR is added/updated in
-      `docs/adr/`.
+- [ ] The change supports the stakeholder journeys or the local teaching core.
+- [ ] `npm run gate` passed; web changes also passed the documented web checks.
+- [ ] Changed behavior has meaningful regression coverage, where applicable.
+- [ ] Synthetic-only data, `NOT_FOR_CLINICAL_USE`, and DDI limitations are preserved.
+- [ ] Validation and handoff claims stay within the documented teaching subset.
+- [ ] Architecture, strict types, accessibility, and existing user context are preserved.
+- [ ] Documentation and agent guidance reflect changed behavior; an ADR records any architectural decision change.
+- [ ] No secrets, real patient data, databases, dependencies, or generated builds are staged.
+
+<!-- These checks support review; they do not establish clinical validation or
+measured usability. If a checkbox does not apply, explain it above. -->
 
 ## Security
 
-If this change fixes a security vulnerability, **stop** and follow
-[SECURITY.md](../SECURITY.md) instead of opening a public PR.
+For an undisclosed vulnerability, follow
+[SECURITY.md](https://github.com/SafetyMP/Asclepius/blob/main/SECURITY.md) before
+opening a public pull request.
