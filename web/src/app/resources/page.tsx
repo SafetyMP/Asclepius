@@ -1,5 +1,10 @@
+'use client';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import { useJourney } from '@/components/workspace/journey-context';
 import { ResourceExplorer } from '@/components/workspace/resource-explorer';
 export default function ResourcesPage() {
+  const { state, setState } = useJourney();
   return (
     <div className="workspace-page">
       <div className="page-title">
@@ -12,7 +17,17 @@ export default function ResourcesPage() {
         </div>
         <span className="soft-pill">9 supported resource types</span>
       </div>
-      <ResourceExplorer />
+      <Link className="text-link context-return" href="/">
+        <ArrowLeft size={16} />
+        Back to care journey
+      </Link>
+      <ResourceExplorer
+        context="explorer"
+        initialType={state.explorerSelection ?? undefined}
+        initialQuery={state.explorerQuery}
+        onSelectionChange={(type) => setState((old) => ({ ...old, explorerSelection: type }))}
+        onQueryChange={(query) => setState((old) => ({ ...old, explorerQuery: query }))}
+      />
       <div className="bottom-note">
         These examples demonstrate the repository’s teaching subset. References connect sample
         records; no live systems are queried.
