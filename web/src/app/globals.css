@@ -1815,3 +1815,107 @@ main {
     gap: 10px;
   }
 }
+
+/* Keep case switching in view and make the referral path easy to follow. */
+.journey-picker-help {
+  margin: -3px 0 12px;
+  color: #62716d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.journey-choice-description {
+  margin-top: 6px;
+}
+.journey-choice-stage {
+  display: block;
+  font-size: 12px;
+  margin-top: 3px;
+}
+.handoff-links {
+  margin: 4px 0 22px;
+  padding: 14px;
+  border: 1px solid #dce6dc;
+  border-radius: 9px;
+  background: #f3f7f0;
+}
+.handoff-links-heading {
+  font-size: 14px;
+  margin: 0 0 10px;
+}
+.handoff-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 54px;
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid #d5e1d5;
+  border-radius: 7px;
+  background: white;
+  margin-top: 8px;
+  color: #355f46;
+}
+.handoff-link:hover {
+  background: #eaf1e8;
+  border-color: #75966c;
+}
+.handoff-link svg {
+  flex-shrink: 0;
+}
+.handoff-link-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 650;
+}
+.handoff-link-title {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: #596b5d;
+  line-height: 1.5;
+}
+.takeaway .explore-final {
+  margin-top: 14px;
+}
+.resource-list > .section-heading > .text-link {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+@media (max-width: 1000px) {
+  .takeaway .explore-final {
+    margin: 0 0 0 auto;
+    flex-shrink: 0;
+  }
+}
+@media (max-width: 760px) {
+  .takeaway:has(.explore-final) {
+    flex-wrap: wrap;
+  }
+  .takeaway .explore-final {
+    width: 100%;
+    margin: 6px 0 0;
+  }
+  .journey-picker-help {
+    font-size: 13px;
+  }
+}
+/* Avoid repeating orientation copy and spacing before the first actionable stage. */
+.journey-picker {
+  margin-bottom: 0;
+}
+.journey-choice {
+  padding: 12px 16px;
+}
+.scenario-card .person-summary {
+  margin-top: 16px;
+}
+.scenario-card .scenario-meta {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+.scenario-card-bottom {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}

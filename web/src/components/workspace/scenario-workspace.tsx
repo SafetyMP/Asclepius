@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useHydrated } from '@/lib/use-hydrated';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useJourney } from './journey-context';
 import { JourneyPicker } from './journey-picker';
 import { getJourney } from '@/lib/journeys';
@@ -22,7 +22,7 @@ import {
   Send,
   Handshake,
 } from 'lucide-react';
-import { ResourceExplorer } from './resource-explorer';
+import { ResourceExplorer, type ResourceExplorerHandle } from './resource-explorer';
 
 const stageIcons = {
   person: UserRound,
@@ -34,6 +34,9 @@ const stageIcons = {
 };
 export function ScenarioWorkspace() {
   const hydrated = useHydrated();
+  const explorerRef = useRef<ResourceExplorerHandle>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const focusStage = useRef(false);
   const [resetId, setResetId] = useState(0);
   const { state, setState, journeyId } = useJourney();
   const journey = getJourney(journeyId);
@@ -42,7 +45,15 @@ export function ScenarioWorkspace() {
   const stage = stages[step] ?? stages[0];
   const lastStep = stages.length - 1;
   const nextStage = stages[step + 1];
+  useEffect(() => {
+    if (focusStage.current) {
+      focusStage.current = false;
+      stageRef.current?.focus({ preventScroll: true });
+      stageRef.current?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [step, journeyId]);
   function changeStep(index: number) {
+    if (index === step) return;
     setState((old) => ({
       ...old,
       step: index,
@@ -114,11 +125,10 @@ export function ScenarioWorkspace() {
             <GitBranch size={20} />
           </span>
           <h2>Follow the connections.</h2>
-          <p>Move through the journey, inspect a record, then see the FHIR structure behind it.</p>
           <div className="progress-label">
             <span>Your exploration</span>
             <strong>
-              {visited.length} of {stages.length} stages
+              {visited.length} of {stages.length} stages explored
             </strong>
           </div>
           <div className="progress-track" aria-hidden="true">
@@ -201,6 +211,7 @@ export function ScenarioWorkspace() {
           })}
         </div>
         <div
+          ref={stageRef}
           id="stage-content"
           role="tabpanel"
           aria-labelledby={`stage-${step}`}
@@ -237,27 +248,32 @@ export function ScenarioWorkspace() {
               <button
                 disabled={!hydrated}
                 className="text-link"
-                onClick={() => changeStep(step + 1)}
+                onClick={() => {
+                  focusStage.current = true;
+                  changeStep(step + 1);
+                }}
               >
                 Next: {nextStage.title}
                 <ArrowRight size={15} />
               </button>
             ) : (
-              <Link
-                className="text-link"
-                href={`/validate?journey=${journey.id}&record=${encodeURIComponent(journey.finalRecordKey)}&from=journey&stage=${lastStep}`}
-                onClick={() =>
-                  setState((old) => ({ ...old, journeySelection: journey.finalRecordKey }))
-                }
+              <button
+                disabled={!hydrated}
+                className="button primary explore-final"
+                onClick={() => explorerRef.current?.openRecord(journey.finalRecordKey)}
               >
                 {journey.finalActionLabel}
                 <ArrowRight size={15} />
-              </Link>
+              </button>
             )}
           </div>
         </div>
       </section>
       <ResourceExplorer
+        ref={explorerRef}
+        onViewAll={() =>
+          setState((old) => ({ ...old, explorerQuery: '', explorerSelection: null }))
+        }
         key={`${journey.id}-${step}-${resetId}`}
         records={journey.records}
         recordKeys={stage.recordKeys}

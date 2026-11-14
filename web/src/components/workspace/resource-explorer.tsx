@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import type { Ref } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -13,11 +14,18 @@ import {
   X,
 } from 'lucide-react';
 import { examples, type ResourceExample } from '@/lib/examples';
-import { recordConnections, recordFacts } from '@/lib/record-context';
+import { recordConnections, recordFacts, recordHandoffLinks } from '@/lib/record-context';
 import { recordKey, type JourneyId } from '@/lib/journeys';
 import { useHydrated } from '@/lib/use-hydrated';
 
 type ExplorerContext = 'journey' | 'explorer';
+export type ResourceExplorerHandle = { openRecord: (record: string) => void };
+
+function focusRecordDetails() {
+  const panel = document.getElementById('resource-detail');
+  panel?.focus({ preventScroll: true });
+  panel?.scrollIntoView({ block: 'nearest' });
+}
 
 export function ResourceDetail({
   example,
@@ -30,6 +38,7 @@ export function ResourceDetail({
   records = examples,
   journeyId = 'routine',
   person = 'Alex Morgan',
+  autoFocus = false,
 }: {
   example: ResourceExample;
   onClose: () => void;
@@ -41,15 +50,19 @@ export function ResourceDetail({
   records?: ResourceExample[];
   journeyId?: JourneyId;
   person?: string;
+  autoFocus?: boolean;
 }) {
   const [json, setJson] = useState(false);
   const panelRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    panelRef.current?.focus({ preventScroll: true });
-    panelRef.current?.scrollIntoView({ block: 'nearest' });
-  }, []);
+    if (autoFocus) {
+      panelRef.current?.focus({ preventScroll: true });
+      panelRef.current?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [autoFocus]);
   const facts = recordFacts(example, records);
   const connections = recordConnections(example, records);
+  const handoffLinks = recordHandoffLinks(example, records);
   const validationHref = `/validate?journey=${journeyId}&record=${encodeURIComponent(recordKey(example))}&resource=${example.type}&from=${context}${context === 'journey' && stage !== undefined ? `&stage=${stage}` : ''}`;
   return (
     <section
@@ -81,6 +94,25 @@ export function ResourceDetail({
       <h3>{example.title}</h3>
       <p className="text-muted">{example.description}</p>
       <div className="record-status">{person} · Fictional teaching record</div>
+      {handoffLinks.length > 0 && (
+        <section className="handoff-links" aria-label="Follow this handoff">
+          <h4 className="handoff-links-heading">Follow this handoff</h4>
+          {handoffLinks.map(({ example: linked, label }) => (
+            <button
+              key={recordKey(linked)}
+              className="handoff-link"
+              aria-label={label}
+              onClick={() => onSelect(linked)}
+            >
+              <span>
+                <span className="handoff-link-label">{label}</span>
+                <span className="handoff-link-title">{linked.title}</span>
+              </span>
+              <ArrowRight size={16} aria-hidden="true" />
+            </button>
+          ))}
+        </section>
+      )}
       <h4>At a glance</h4>
       <dl className="record-facts">
         {facts.map((fact) => (
@@ -136,6 +168,7 @@ export function ResourceDetail({
 }
 
 export function ResourceExplorer({
+  ref,
   types,
   compact = false,
   context,
@@ -149,7 +182,9 @@ export function ResourceExplorer({
   initialQuery = '',
   onQueryChange,
   stage,
+  onViewAll,
 }: {
+  ref?: Ref<ResourceExplorerHandle>;
   types?: string[];
   compact?: boolean;
   context?: ExplorerContext;
@@ -163,6 +198,7 @@ export function ResourceExplorer({
   initialQuery?: string;
   onQueryChange?: (query: string) => void;
   stage?: number;
+  onViewAll?: () => void;
 }) {
   const hydrated = useHydrated();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -177,11 +213,17 @@ export function ResourceExplorer({
       ) ?? null,
   );
   const [history, setHistory] = useState<ResourceExample[]>([]);
+  const [focusDetails, setFocusDetails] = useState(false);
   const effectiveContext = context ?? (compact ? 'journey' : 'explorer');
-  const filtered = records.filter(
+  const recordsByKey = new Map(records.map((record) => [recordKey(record), record]));
+  const orderedRecords = recordKeys
+    ? Array.from(new Set(recordKeys))
+        .map((key) => recordsByKey.get(key))
+        .filter((record): record is ResourceExample => record !== undefined)
+    : records;
+  const filtered = orderedRecords.filter(
     (example) =>
       (!types || types.includes(example.type)) &&
-      (!recordKeys || recordKeys.includes(recordKey(example))) &&
       `${example.type} ${example.title} ${example.description}`
         .toLowerCase()
         .includes(query.toLowerCase()),
@@ -191,6 +233,8 @@ export function ResourceExplorer({
     onQueryChange?.(value);
   }
   function select(example: ResourceExample, followReference: boolean) {
+    setFocusDetails(true);
+    if (selected && recordKey(selected) === recordKey(example)) focusRecordDetails();
     setHistory((previous) => (followReference && selected ? [...previous, selected] : []));
     setSelected(example);
     onSelectionChange?.(recordKey(example));
@@ -198,6 +242,7 @@ export function ResourceExplorer({
   function goBack() {
     const previous = history[history.length - 1];
     if (!previous) return;
+    setFocusDetails(true);
     setHistory(history.slice(0, -1));
     setSelected(previous);
     onSelectionChange?.(recordKey(previous));
@@ -209,9 +254,18 @@ export function ResourceExplorer({
       : (fallback ?? searchRef.current ?? listRef.current);
     setSelected(null);
     setHistory([]);
+    setFocusDetails(false);
     onSelectionChange?.(null);
     target?.focus();
   }
+  useImperativeHandle(ref, () => ({
+    openRecord(key: string) {
+      const record = recordsByKey.get(key);
+      if (!record) return;
+      triggerRef.current = null;
+      select(record, false);
+    },
+  }));
   return (
     <div className={`explorer-layout ${selected ? 'has-detail' : ''}`}>
       <section className="resource-list panel" ref={listRef} tabIndex={-1} aria-label="Record list">
@@ -225,7 +279,7 @@ export function ResourceExplorer({
             </p>
           </div>
           {compact && (
-            <Link className="text-link" href="/resources">
+            <Link className="text-link" href="/resources" onClick={onViewAll}>
               View all <ArrowRight size={15} />
             </Link>
           )}
@@ -305,6 +359,7 @@ export function ResourceExplorer({
         <ResourceDetail
           key={recordKey(selected)}
           example={selected}
+          autoFocus={focusDetails}
           onClose={close}
           onSelect={(example) => select(example, true)}
           previous={history[history.length - 1]}
