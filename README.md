@@ -1,176 +1,139 @@
-# Asclepius — Typed FHIR R4 teaching kit
+# Asclepius — a synthetic care journey, made understandable
 
 [![CI](https://github.com/SafetyMP/Asclepius/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/SafetyMP/Asclepius/badge)](https://scorecard.dev/viewer/?uri=github.com/SafetyMP/Asclepius)
 [![License: Apache-2.0](https://img.shields.io/github/license/SafetyMP/Asclepius)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white)](#getting-started)
 
-> ⚠️ **NOT FOR CLINICAL USE.** Asclepius is a teaching kit of nine FHIR R4 zod
-> types — Patient, Practitioner, Organization, Encounter, Condition, Observation,
-> MedicationRequest, AllergyIntolerance, and DiagnosticReport. It is **not a
-> FHIR server** and **not** for clinical use: **not** a clinical data platform,
-> **not** a server for PHI, **not** HIPAA-certified, **not** a regulated medical
-> device, and its drug-interaction knowledge base is intentionally
-> **incomplete**. Do **not** store, process, or base clinical decisions on real
-> patient data with this software. See the [regulatory disclaimer](#regulatory-disclaimer) below.
+Explore how a fictional visit becomes connected health records. Asclepius gives
+healthcare stakeholders a guided view of a synthetic case, its context, and the
+FHIR resources behind it. Developers can look deeper in the validation lab and
+ports-and-adapters teaching kit.
 
-A from-scratch, layered FHIR R4 subset you can read in one sitting: **zod** as
-the source of truth, **ports and adapters**, and DDI that is incomplete by
-design. Built to be **correct and testable**, not feature-complete. Every
-architectural choice is documented with first-principles reasoning and an
-honest "better tool for production" callout in [Architecture Decision Records](docs/adr/).
-See [docs/DESIGN-PIVOT.md](docs/DESIGN-PIVOT.md) for why this is a teaching kit.
+**[GitHub Pages demo](https://safetymp.github.io/Asclepius/)**
+The demo runs in the browser, with no account, API server, or token required.
 
-> **Permit rule:** Incomplete DDI and uncertified software must not be used as a clinical record. Teaching kit only. Same instinct: [SafetyMP](https://github.com/SafetyMP/SafetyMP).
+> **NOT_FOR_CLINICAL_USE — NOT FOR CLINICAL USE.** Synthetic examples only.
+> Do not store, process, or base clinical decisions on real patient data.
+> Asclepius is an educational reference, not a clinical data platform or a
+> production FHIR server. Its drug-interaction knowledge base is intentionally
+> incomplete. Never connect it to real clinical systems, pharmacies, or EHRs.
 
-<p align="center">
-  <img src="docs/assets/demo.gif" alt="Asclepius teaching console — overview, patients, drug interactions, and clinical decision support (synthetic demo data only — NOT FOR CLINICAL USE)" width="900" />
-</p>
+![Asclepius synthetic care journey — fictional case and linked records](docs/assets/care-journey.jpg)
 
-## Why not Medplum / HAPI
+## Explore the story, then the structure
 
-- **Medplum** is a production TypeScript FHIR platform you operate. This repo is
-  architecture you can read in one sitting (zod schemas, ports, tests) — not a
-  substitute and not a place for PHI.
-- **HAPI FHIR** is the Java FHIR server for real APIs and conformance. Use it
-  when you need a production server; use Asclepius when you want hexagonal
-  adapters and `z.infer` types without a framework.
-- **IBM FHIR** (and similar enterprise servers) persist clinical data at scale.
-  Asclepius DDI is incomplete by design and must never store real patient data
-  or connect to an EHR.
+- **Care journey:** follow a fictional case and inspect the records that give
+  each step its context.
+- **Resource library:** explore nine supported resource types, their roles,
+  and synthetic JSON examples.
+- **Validation lab:** edit an example, run the kit’s structural and teaching
+  profile checks, inspect field-level issues, and try repairing a missing
+  identity. Validation runs locally in the browser.
+- **Architecture:** follow schemas, services, ports, and adapters back to
+  their source files.
 
-## Screenshots
+The interface is designed around a calm workspace and a contextual first
+interaction. It replaces the former clinical-console tool grid and setup-first
+experience. The intended improvements are easier orientation and a clearer
+connection between a case and its data; these are design hypotheses, not
+measured claims of better engagement. See [the design rationale](docs/DESIGN-PIVOT.md).
 
-Synthetic demo data only — **NOT FOR CLINICAL USE.** No real patient data.
+### What validation means here
 
-| Overview (synthetic) | Patients (synthetic) | Drug interactions (synthetic) | Clinical decision support (synthetic) |
-|:--------------------:|:--------------------:|:-----------------------------:|:-------------------------------------:|
-| ![Overview](docs/assets/overview.png) | ![Patients](docs/assets/patients.png) | ![Drug interactions](docs/assets/interactions.png) | ![Clinical decision support](docs/assets/cds.png) |
+The lab uses the repository’s nine hand-authored FHIR R4 Zod schemas and three
+teaching profile rules. Passing means **passes this teaching subset**. It does
+not establish full FHIR conformance, terminology validity, reference existence,
+clinical correctness, or the safety of a treatment. The resource types are
+Patient, Practitioner, Organization, Encounter, Condition, Observation,
+MedicationRequest, AllergyIntolerance, and DiagnosticReport.
 
-| Validate resource (synthetic) |
-|:-----------------------------:|
-| ![Validate resource](docs/assets/validate.png) |
+## Run the browser demo locally
 
-The optional console in [`web/`](web/) explores the local FHIR API. Run
-`npm run dev` for the API (port 8787), then `cd web && npm install && npm run dev`
-on port **3200**. Regenerate visuals with `cd web && npm run screenshots`; see
-[`docs/assets/README.md`](docs/assets/README.md). The next slice shrinks `web/`
-clinical chrome; **validate and ports tests are the product**.
-
-_Synthetic demo data only — NOT FOR CLINICAL USE._
-
-## Status
-
-This is a **teaching kit** — core pillars are built and tested; see the
-table below for what exists today. Positioning: [docs/DESIGN-PIVOT.md](docs/DESIGN-PIVOT.md).
-
-| Pillar                    | Implementation                                                                                                                                                                                                                                                                | Status                                                            |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| FHIR R4 resource model    | Hand-authored zod schemas (single source of truth → inferred TS types); 9 resources, primitives, datatypes, Bundle, OperationOutcome                                                                                                                                          | ✅ Built                                                          |
-| Storage                   | `ResourceRepository` **port** + in-memory versioned adapter (immutable snapshots, history, soft delete)                                                                                                                                                                       | ✅ Built                                                          |
-| Storage (persistent)      | SQLite adapter via `better-sqlite3` (WAL, JSON columns); selected by `STORAGE=sqlite`                                                                                                                                                                                         | ✅ Built ([ADR 0004](docs/adr/0004-storage-sqlite-and-memory.md)) |
-| FHIR search               | Hand-built query-plan **compiler** (param types, modifiers, prefixes) + **executor** (path extraction, per-type matching, reference chaining, `_sort`/`_count`/`_page`)                                                                                                       | ✅ Built                                                          |
-| REST API                  | Hono HTTP adapter: create/read/vread/update(+create-on-update)/delete, ETag/Location/versioning, instance + type history Bundles, search (GET ?params + POST _search → searchset Bundle, incl. reference chaining + self/next/prev pagination links), OperationOutcome errors | ✅ Built ([ADR 0005](docs/adr/0005-hono-http.md))                 |
-| Validation                | zod structural validation + profile-level rules (Patient identity, Observation code system, MedicationRequest medication[x]); `$validate` operation (`POST /{Type}/$validate`) + create/update gating                                                                         | ✅ Built                                                          |
-| Clinical Decision Support | Composable rule DSL (pure functions `PatientContext → CdsCard[]`) + CDS Hooks endpoint (`POST /cds-services/:id`); MVP rules: drug-allergy + warfarin-NSAID bleeding risk                                                                                                     | ✅ Built ([ADR 0007](docs/adr/0007-cds-rule-dsl.md))              |
-| Drug–drug interactions    | In-memory knowledge base (6 RxNorm interactions) + bidirectional checker; `POST /MedicationRequest/$check-interactions` endpoint + DDI CDS rule — **incomplete by design**                                                                                                    | ✅ Built                                                          |
-| AuthN/AuthZ               | JWT (HS256, jose) + SMART-style scope middleware (`system/Patient.read`, `user/*.write`); dev-only `/auth/token` issuer (prod-disabled). Patient-compartment filtering + role-based overrides deferred                                                                        | ✅ Built ([ADR 0008](docs/adr/0008-jwt-and-smart-scopes.md))      |
-| Audit                     | Hash-chained, append-only, tamper-evident log (SHA-256 chain; in-memory + SQLite adapters; every request recorded via middleware)                                                                                                                                             | ✅ Built ([ADR 0009](docs/adr/0009-hash-chained-audit.md))        |
-| Web console               | Next.js local UI in [`web/`](web/) — teaching surface only (BFF → FHIR API). Next slice: shrink clinical chrome; keep validate/ports tests                                                                                                                                    | ✅ Built                                                          |
-
-## Architecture (ports & adapters)
-
-```
-        ┌─────────────────────── HTTP (entry) ────────────────────────────────┐
-        │  adapter/http · adapter/auth · adapter/audit                       │
-        └───────────────────────────────┼───────────────────────────────────┘
-                                        │ depends on ports only
-        ┌───────────────────────────────▼───────────────────────────────────┐
-        │  service: search · validation · cds · ddi   (application logic)    │
-        └───────────────────────────────┼───────────────────────────────────┘
-                                        │ depends on domain only
-        ┌───────────────────────────────▼───────────────────────────────────┐
-        │  domain: fhir resources · value objects · OperationOutcome         │
-        └───────────────────────────────┼───────────────────────────────────┘
-                                        │ port interfaces
-        ┌───────────────────────────────▼───────────────────────────────────┐
-        │  adapter/storage: in-memory · sqlite   (port implementations)      │
-        └───────────────────────────────────────────────────────────────────┘
-```
-
-_Target layered architecture — the [Status](#status) table is the source of truth
-for what is implemented today._
-
-Dependencies point **inward**: `domain` depends on nothing; `service` depends on
-`domain` + `port`; adapters depend on `port` + `domain`. `src/app.ts` is the
-single composition root that wires adapters to services.
-
-## Getting started
-
-Requires **Node.js ≥ 22** (see `.nvmrc` for the dev version).
+Use **Node.js 22**, **npm 10.9.2**, and **Python 3** for the web workflow. The root
+package also supports newer Node versions; the web package currently specifies
+Node 22. Installing the root dependencies builds `better-sqlite3` and may require
+a C++ toolchain.
 
 ```bash
-npm install              # dependencies (builds better-sqlite3's native module)
-npm run dev              # run via tsx (no compile step), hot reload — http://127.0.0.1:8787
-npm test                 # run the test suite
-npm run gate             # format:check → lint → typecheck → test → build
-
-# Optional: local teaching console (requires API above)
-cd web && npm install && npm run dev   # http://localhost:3200
+npm ci
+cd web
+npm ci
+npm run build
+npm run start
 ```
 
-The project is configured for **max-strict TypeScript** (`strict`,
-`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`).
-A change is not done until `npm run gate` is green.
+Open [the local demo](http://127.0.0.1:3200). `npm run start` serves the static
+`web/out/` export using Python; it does not start a Next.js server or a FHIR API.
+For UI development, use `cd web && npm run dev` after installation.
 
-`npm run build` writes the library entry. It exports the nine FHIR R4 schemas and `parseResource`. HL7 FHIR R4 choice elements are exactly one: a medication request with both medication fields, or a patient with both deceased fields, does not parse. Not for clinical use.
+See [web/README.md](web/README.md) for routes, GitHub Pages configuration, and
+verification commands.
 
-## Why these tools (and where there's a better one)
+## The local teaching kit
 
-Every component choice is documented with its first-principles rationale and an
-honest "better tool for production" callout in `docs/adr/`. Summary:
+The backend remains a separate local reference implementation. Its existing
+TypeScript, Zod, Hono, and storage architecture is retained. The static website
+does not call the local API, issue credentials, or operate its clinical-rule
+endpoints. The former patient route opens the synthetic journey; the former
+authentication, CDS, and interaction routes explain the local examples and link
+to code instead of presenting unavailable API controls.
 
-- **TypeScript** — models FHIR's structural types; compiler verifies shape.
-  _Production FHIR servers: Java (HAPI) or .NET (Firely)._
-- **zod** — single source of truth for types + runtime validation.
-  _Full FHIR profiling: Firely validator._
-- **In-memory + SQLite** — zero-config real persistence + fast tests.
-  _Scale: Postgres + JSONB/GIN._
-- **Hono** — web-standard, portable, fast. _Larger ecosystem: Fastify._
-- **Hand-built search** — the hard core; no library does FHIR search correctly.
-  _Scale: Elasticsearch._
-- **CDS rule DSL** — testable pure functions. _Production: CQL._
-- **JWT + scopes** — models FHIR's resource/action access.
-  _Production: full SMART-on-FHIR OAuth2 via a real IdP._
+| Component | Teaching implementation |
+| --- | --- |
+| Resource model | Nine Zod schemas, inferred TypeScript types, datatypes, Bundle, and OperationOutcome |
+| Validation | Structural checks and three profile rules; local `$validate` operation |
+| Storage | Repository port with versioned in-memory and SQLite adapters |
+| Search | Query-plan parser/compiler and executor with a supported subset of FHIR search |
+| HTTP | Hono routes for resource operations, history, search, and validation |
+| Rule examples | Composable CDS rules and an intentionally incomplete six-interaction DDI knowledge base |
+| Authentication | JWT verification and SMART-style scopes; development-only token issuer |
+| Audit | Hash-chained append-only log with in-memory and SQLite adapters |
 
-See [`docs/adr/`](docs/adr/) for the full reasoning on each.
+From the repository root:
 
-## Contributing
+```bash
+npm run dev       # local teaching API at http://127.0.0.1:8787
+npm test          # unit and integration tests
+npm run gate      # format, lint, typecheck, test, build
+```
 
-Contributions are welcome. Please read [`CONTRIBUTING.md`](CONTRIBUTING.md)
-(the `npm run gate` requirement, code style, and the ADR-first decision process)
-before opening a pull request. Community contract: [`AGENTS.md`](AGENTS.md).
-For security issues, see [`SECURITY.md`](SECURITY.md) — **do not** file
-vulnerabilities as public issues.
+`src/app.ts` is the local harness’s composition root. Dependencies point inward:
+adapters use ports and domain types; services use ports and domain types; domain
+code does not import adapters. Zod is the source of truth for the supported FHIR
+types. See the [architecture decisions](docs/adr/) and [contributor guide](CONTRIBUTING.md).
+
+This kit does not replace a production FHIR server. The ADRs explain the
+tradeoffs and identify production-oriented alternatives for capabilities this
+teaching implementation does not provide.
+
+## Verification and deployment
+
+A change requires the root `npm run gate`. The web checks cover the exported
+experience, including its main interactions, responsive navigation,
+accessibility, and the GitHub Pages subpath. Run `cd web && npm run verify` for
+the web gate; see the web guide for the full browser suite.
+
+The [Pages workflow](.github/workflows/pages.yml) builds and checks the site on
+pull requests, then deploys verified `main` builds with the `/Asclepius` base
+path. Deployment status is available in the repository’s Actions tab.
+
+Old console captures are retained as historical assets, not screenshots of the
+current interface. See [the asset inventory](docs/assets/README.md).
 
 ## Regulatory disclaimer
 
-Asclepius is a **typed FHIR R4 teaching kit**. It is **not** a
-certified medical device, is **not** HIPAA- or HITRUST-compliant, and carries no
-warranty of fitness for any clinical purpose. The DDI knowledge base is
-intentionally incomplete; missing interaction data is a patient-safety hazard.
-**Never** connect this software to real clinical systems, pharmacies, or EHRs,
-or use it to store or make decisions about real patient data.
+Asclepius is an educational reference. It is **not** a certified medical device,
+**not** HIPAA- or HITRUST-compliant, and carries no warranty of fitness for any
+clinical purpose. The DDI knowledge base is intentionally incomplete; missing
+interaction data is a patient-safety hazard. Do not use this software to store
+real patient data or make clinical decisions.
 
-## License
+## Contributing and license
 
-Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) and
-[`NOTICE.md`](NOTICE.md). Unless required by applicable law or agreed to in
-writing, software distributed under the License is distributed on an "AS IS"
-BASIS, **WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND**, express or implied.
+Read [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and
+[SECURITY.md](SECURITY.md). Do not report vulnerabilities in public issues.
+[docs/README.md](docs/README.md) maps the remaining documentation.
 
-
-## Documentation map
-
-[docs/README.md](docs/README.md) lists the repository layout. Community policy files are the root `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and `SECURITY.md`.
+Licensed under the [Apache License, Version 2.0](LICENSE). See
+[NOTICE.md](NOTICE.md). Provided on an “AS IS” basis, without warranties or
+conditions of any kind.

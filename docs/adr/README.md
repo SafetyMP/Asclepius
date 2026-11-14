@@ -21,3 +21,13 @@ an honest "better tool for production" callout.
 
 Future decisions (storage indexing, transactions, bundle handling) land here as
 they're made.
+
+## Interface evolution
+
+The [November 2026 design rationale](../DESIGN-PIVOT.md) records the move from
+the former clinical-console presentation to a static synthetic care journey for
+healthcare stakeholders. It preserves the backend decisions above and reuses
+the existing validation service in the browser. The static site is a teaching
+interface; it does not expose a hosted clinical API or establish full FHIR
+conformance. See [the web guide](../../web/README.md) for build, verification,
+and GitHub Pages details.

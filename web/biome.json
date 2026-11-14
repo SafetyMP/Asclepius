@@ -1,0 +1,24 @@
+{
+  "extends": [
+    "../biome.json"
+  ],
+  "files": {
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.css",
+      "!.next/**",
+      "!out/**",
+      "!node_modules/**",
+      "!.pages-preview/**",
+      "!test-results/**",
+      "!playwright-report/**"
+    ]
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "root": false
+}

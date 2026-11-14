@@ -1,18 +1,13 @@
-import type { NextConfig } from "next";
-
-const fhirUrl = process.env.ASCLEPIUS_API_URL ?? "http://127.0.0.1:8787";
+import type { NextConfig } from 'next';
+import path from 'node:path';
 
 const nextConfig: NextConfig = {
+  output: 'export',
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH ?? '',
+  trailingSlash: true,
+  images: { unoptimized: true },
   turbopack: {
-    root: import.meta.dirname,
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${fhirUrl}/:path*`,
-      },
-    ];
+    root: path.resolve(import.meta.dirname, '..'),
   },
 };
 

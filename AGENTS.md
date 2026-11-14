@@ -21,7 +21,7 @@ and [`.github/skills/fhir-ports-adapters`](.github/skills/fhir-ports-adapters).
   from an adapter inside `service` or `domain`.
 - **`src/app.ts` is the only composition root.** All adapter wiring happens
   there. Do not construct adapters inside services.
-- **`web/`** is the Next.js reference console (BFF → API :8787). Not for clinical use.
+- **`web/`** is the static Next.js synthetic care journey and browser validation lab. The local API remains separate. Not for clinical use.
 - **Ports live in `src/port/`.** A new external dependency (DB, IdP, message
   bus) gets a port interface first; adapters implement it.
 - **zod is the single source of truth for FHIR types.** Author a schema, derive
@@ -56,7 +56,7 @@ and [`.github/skills/fhir-ports-adapters`](.github/skills/fhir-ports-adapters).
 
 ```bash
 ./scripts/verify.sh
-cd web && npm run verify   # optional: reference console (API optional for static smoke)
+cd web && npm run verify   # synthetic journey, shared validator, accessibility, and static routing
 ```
 
 ## Commit / PR style

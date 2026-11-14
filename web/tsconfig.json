@@ -25,6 +25,15 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@/domain/*": [
+        "../src/domain/*"
+      ],
+      "@/port/*": [
+        "../src/port/*"
+      ],
+      "@/service/*": [
+        "../src/service/*"
       ]
     }
   },
