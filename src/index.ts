@@ -19,6 +19,8 @@ export {
   parseResource,
   patient,
   practitioner,
+  serviceRequest,
+  task,
 } from '@/domain/fhir';
 export type {
   IssueSeverity,

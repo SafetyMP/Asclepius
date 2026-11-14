@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      # Active Node.js LTS lines (22, 24) plus the current line (26, matches
-      # .nvmrc). Node 20 reached EOL 2026-04-30. See https://github.com/nodejs/release
+      # Active Node.js LTS lines (22, 24) plus the current line (26). .nvmrc selects 22 for the shared
+      # core + web development workflow. Node 20 reached EOL 2026-04-30. See https://github.com/nodejs/release
       matrix:
         node: ['22.x', '24.x', '26.x']
     steps:
@@ -39,3 +39,7 @@ jobs:
 
       - name: Gate (format:check → lint → typecheck → test → build)
         run: npm run gate
+
+      - name: Check repository documentation links
+        if: matrix.node == '22.x'
+        run: npm run docs:check

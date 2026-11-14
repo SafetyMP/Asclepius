@@ -1,4 +1,5 @@
-Asclepius — FHIR-native Clinical Data Platform
+Asclepius — Connected care, explained
+Synthetic care journeys and a FHIR R4 teaching implementation
 Copyright 2026 SafetyMP
 
 This product includes software developed as part of the Asclepius project

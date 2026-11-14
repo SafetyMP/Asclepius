@@ -3,6 +3,16 @@
 - **Status:** Accepted
 - **Date:** 2026-07-03
 
+> **Current scope (November 2026):** This dated decision describes the local
+> synthetic teaching core. Its original platform framing and production
+> comparisons are historical rationale, not current deployment guidance or
+> claims of clinical capability. The stakeholder-facing browser demo is defined
+> in [ADR 0013](0013-browser-teaching-demo.md); [project scope](../PROJECT.md)
+> governs current work. **NOT_FOR_CLINICAL_USE.**
+>
+> The hash chain demonstrates a limited integrity check; it does not establish
+> compliance or protect against all log replacement or truncation scenarios.
+
 ## Context
 
 HIPAA requires an accounting of disclosures: who accessed what PHI, when. An

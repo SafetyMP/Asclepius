@@ -3,6 +3,16 @@
 - **Status:** Accepted
 - **Date:** 2026-07-03
 
+> **Current scope (November 2026):** This dated decision describes the local
+> synthetic teaching core. Its original platform framing and production
+> comparisons are historical rationale, not current deployment guidance or
+> claims of clinical capability. The stakeholder-facing browser demo is defined
+> in [ADR 0013](0013-browser-teaching-demo.md); [project scope](../PROJECT.md)
+> governs current work. **NOT_FOR_CLINICAL_USE.**
+>
+> The public demo has no login, token issuance, or API calls. These auth
+> examples apply only to the separate local teaching harness.
+
 ## Context
 
 FHIR access is **resource- and action-scoped**: a clinician may read all

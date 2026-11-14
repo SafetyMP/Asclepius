@@ -1,62 +1,59 @@
-name: Feature Request
-description: Propose a capability aligned with the typed FHIR R4 teaching kit
+name: Improvement or workflow idea
+description: Propose a clearer synthetic care experience, learning resource, or teaching-core improvement
 title: "[feature]: "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Read the [design pivot](https://github.com/SafetyMP/Asclepius/blob/main/docs/DESIGN-PIVOT.md) and
-        [ADRs](https://github.com/SafetyMP/Asclepius/tree/main/docs/adr) before filing.
-        Asclepius is a typed FHIR R4 teaching kit — **NOT FOR CLINICAL USE**.
-        Proposals that imply production FHIR, PHI storage, or clinical completeness should say so explicitly.
-
+        Asclepius helps healthcare stakeholders explore synthetic care workflows, with
+        a local FHIR teaching core for developers. **NOT FOR CLINICAL USE**.
+        See the [project overview](https://github.com/SafetyMP/Asclepius#readme)
+        and [design rationale](https://github.com/SafetyMP/Asclepius/blob/main/docs/DESIGN-PIVOT.md).
+        Use fictional examples only; do not include real patient data or credentials.
   - type: dropdown
     id: component
     attributes:
-      label: Component
+      label: Area
       options:
-        - domain / FHIR zod schemas
-        - ports / adapters
-        - service (search, validation, CDS, DDI)
-        - adapter/http · auth · audit
-        - web/ teaching console
-        - harness / CI / supply chain
-        - docs / ADRs
-        - Unsure / needs triage
+        - Care journeys or care-team handoff
+        - Record context or validation explanations
+        - Accessibility or visual design
+        - Documentation or learning material
+        - FHIR schemas or local API
+        - Architecture, tooling, or CI
+        - Unsure
     validations:
       required: true
-
   - type: textarea
     id: problem
     attributes:
-      label: Problem or use case
-      description: What problem does this solve for the teaching kit or architecture story?
+      label: Who needs this, and what are they trying to understand or do?
+      description: Describe the stakeholder or developer need and the current friction.
     validations:
       required: true
-
   - type: textarea
     id: proposal
     attributes:
-      label: Proposed solution
-      description: High-level approach; link an ADR or issue if applicable
+      label: Suggested improvement
+      description: Describe a concrete change. A technical design is not required.
     validations:
       required: true
-
+  - type: textarea
+    id: success
+    attributes:
+      label: How would we know it helped?
+      description: A visible outcome or example is enough. Avoid claims of clinical effectiveness.
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives considered
-      description: Optional
-
+      label: Alternatives considered (optional)
   - type: checkboxes
     id: scope
     attributes:
-      label: Scope checklist
+      label: Project scope
       options:
-        - label: I understand Asclepius is a teaching kit, NOT FOR CLINICAL USE, not a production FHIR server
+        - label: I understand this project is synthetic and educational, NOT FOR CLINICAL USE.
           required: true
-        - label: I will not propose connecting to real EHRs or storing PHI
+        - label: This proposal does not require real patient data or connections to clinical systems.
           required: true
-        - label: I am willing to include validate/ports tests if applicable
-          required: false

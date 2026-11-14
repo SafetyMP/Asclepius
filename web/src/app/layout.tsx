@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
+import { pageMetadata, siteDescription, siteUrl } from '@/lib/site-metadata';
 import { JourneyProvider } from '@/components/workspace/journey-context';
 import { AppShell } from '@/components/layout/app-shell';
 import { asclepiusNav } from '@/lib/navigation';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Asclepius · Connected care, explained',
-  description:
-    'Explore a fictional care journey and the FHIR resources that connect it. Synthetic educational demo. NOT FOR CLINICAL USE.',
+  ...pageMetadata('', 'Asclepius · Connected care, explained', siteDescription),
+  metadataBase: new URL(siteUrl),
+  applicationName: 'Asclepius',
+  icons: { icon: new URL('icon.svg', siteUrl).href },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

@@ -53,13 +53,17 @@ representative at an online or offline event.
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the repository maintainers via
-[GitHub private vulnerability reporting](https://github.com/SafetyMP/Asclepius/security/advisories/new)
-or by contacting maintainers through this repository's GitHub discussions /
-maintainers listed in the org. All complaints will be reviewed and investigated
-promptly and fairly. All community leaders are obligated to respect the privacy
-and security of the reporter of any incident.
+For abusive content on GitHub, use the content's **Report content** menu.
+Where offered, choose **Report to repository admins** for maintainer review;
+otherwise use **Report abuse to GitHub Support**. GitHub documents these options
+in [Reporting abuse or spam](https://docs.github.com/en/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam).
+Reports sent to GitHub Support are handled by GitHub, not directly by the
+maintainers. Do not publish private incident details in a public issue.
+
+This project does not currently publish a separate private conduct contact.
+The Security Advisory channel is for software vulnerabilities, as described in
+[SECURITY.md](SECURITY.md). Maintainers will review conduct reports they receive
+fairly and respect the privacy and security of reporters.
 
 ## Enforcement Guidelines
 

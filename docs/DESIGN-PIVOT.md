@@ -1,9 +1,12 @@
-# Design pivot — a contextual teaching experience
+# Design pivot — Connected care, explained
 
 > **NOT_FOR_CLINICAL_USE — NOT FOR CLINICAL USE.** Do not store, process, or base
 > clinical decisions on real patient data. The DDI knowledge base is
 > intentionally incomplete. Never connect this software to a real EHR,
 > pharmacy, or clinical system.
+
+The current audience, scope, and priorities are summarized in [Project vision](PROJECT.md).
+For a nontechnical tour of both cases, read [the care journey guide](JOURNEYS.md).
 
 ## Historical pivot: September 2026
 
@@ -20,9 +23,8 @@ product was educational. That historical mismatch motivates this redesign.
 
 ## Current redesign: November 2026
 
-The user selected **healthcare stakeholders exploring synthetic workflows** as
-the primary audience and **a calm, polished developer workspace** as the visual
-direction. The new entry point is a fictional care journey with contextual,
+The redesign prioritizes **healthcare stakeholders exploring synthetic workflows**
+with **a calm, polished workspace** as its visual direction. The new entry point is a fictional care journey with contextual,
 linked FHIR records. Validation remains available as a deeper learning tool.
 
 This is a change to the educational interface, not a return to the clinical
@@ -35,7 +37,7 @@ platform claim. The backend remains a local teaching harness.
 | Raw payloads without much context | Case context, resource explanations, and inspectable JSON |
 | Single validation sample and raw outcome | Two journeys of nine examples each, field-level feedback, reset, and a repair exercise |
 | Clinical endpoint controls in the public UI | Source-linked explanations of local auth, CDS, and DDI examples |
-| Local-only web console | Static export prepared for GitHub Pages at `/Asclepius` |
+| Local-only web console | Static export deployed through GitHub Pages at `/Asclepius` |
 
 The hypothesis is that a recognizable story makes resource relationships easier
 to understand and that a working first interaction reduces setup friction.

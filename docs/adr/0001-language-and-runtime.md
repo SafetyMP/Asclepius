@@ -3,6 +3,16 @@
 - **Status:** Accepted
 - **Date:** 2026-07-03
 
+> **Current scope (November 2026):** This dated decision describes the local
+> synthetic teaching core. Its original platform framing and production
+> comparisons are historical rationale, not current deployment guidance or
+> claims of clinical capability. The stakeholder-facing browser demo is defined
+> in [ADR 0013](0013-browser-teaching-demo.md); [project scope](../PROJECT.md)
+> governs current work. **NOT_FOR_CLINICAL_USE.**
+>
+> The Node 20+ minimum below records the original decision. Current setup uses
+> Node 22 and npm 10; package manifests and CI define supported versions.
+
 ## Context
 
 A FHIR-native platform's core job is to model, store, query, and validate JSON

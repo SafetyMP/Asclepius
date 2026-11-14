@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f5f7f5"/>
+  <rect x="0" y="0" width="16" height="630" fill="#235c56"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="76" y="83" fill="#235c56" font-size="25" font-weight="700" letter-spacing="3">ASCLEPIUS</text>
+    <text x="76" y="172" fill="#192f30" font-size="58" font-weight="700">Connected care, explained.</text>
+    <text x="79" y="224" fill="#526766" font-size="27">Two fictional journeys. Linked FHIR records.</text>
+    <rect x="76" y="286" width="500" height="180" rx="20" fill="#ffffff" stroke="#d4dfd9"/>
+    <rect x="600" y="286" width="524" height="180" rx="20" fill="#ffffff" stroke="#d4dfd9"/>
+    <circle cx="117" cy="331" r="15" fill="#e2eee8"/>
+    <circle cx="641" cy="331" r="15" fill="#e2eee8"/>
+    <text x="147" y="340" fill="#235c56" font-size="22" font-weight="700">A routine follow-up</text>
+    <text x="671" y="340" fill="#235c56" font-size="22" font-weight="700">A referral and handoff</text>
+    <text x="105" y="395" fill="#526766" font-size="23">Check-in → Assessment → Follow-up</text>
+    <text x="629" y="395" fill="#526766" font-size="23">Referral → Team review → Handoff</text>
+    <text x="105" y="435" fill="#526766" font-size="19">Understand the context behind a visit.</text>
+    <text x="629" y="435" fill="#526766" font-size="19">Follow ownership between care teams.</text>
+    <text x="78" y="550" fill="#526766" font-size="21">A learning workspace for healthcare stakeholders</text>
+    <text x="78" y="586" fill="#235c56" font-size="18" font-weight="700">SYNTHETIC ONLY · NOT FOR CLINICAL USE</text>
+  </g>
+</svg>

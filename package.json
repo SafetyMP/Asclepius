@@ -2,14 +2,14 @@
   "name": "asclepius",
   "version": "0.1.0",
   "private": true,
-  "description": "Asclepius — a teaching kit of eleven FHIR R4 zod types (NOT for clinical use)",
+  "description": "Connected care, explained: synthetic healthcare journeys, referral handoffs, and a FHIR R4 teaching core. NOT FOR CLINICAL USE.",
   "type": "module",
   "engines": {
     "node": ">=22",
     "npm": ">=10.9.2 <11"
   },
   "packageManager": "npm@10.9.2",
-  "homepage": "https://github.com/SafetyMP/Asclepius",
+  "homepage": "https://safetymp.github.io/Asclepius/",
   "repository": {
     "type": "git",
     "url": "https://github.com/SafetyMP/Asclepius.git"
@@ -18,13 +18,16 @@
     "url": "https://github.com/SafetyMP/Asclepius/issues"
   },
   "keywords": [
-    "fhir",
-    "hl7",
     "healthcare",
-    "clinical-data",
+    "synthetic-data",
+    "care-coordination",
+    "patient-journey",
+    "fhir",
+    "fhir-r4",
+    "healthcare-interoperability",
+    "education",
     "typescript",
-    "zod",
-    "reference-implementation"
+    "zod"
   ],
   "author": "SafetyMP",
   "exports": {
@@ -47,7 +50,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "gate": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
-    "oss:scorecard": "bash scripts/oss-scorecard.sh"
+    "oss:scorecard": "bash scripts/oss-scorecard.sh",
+    "docs:check": "node scripts/check-doc-links.mjs"
   },
   "license": "Apache-2.0",
   "dependencies": {

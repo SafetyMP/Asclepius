@@ -76,7 +76,7 @@ async function main(): Promise<void> {
   });
 
   const server = serve({ fetch: app.fetch, port: config.port });
-  log.info(`Asclepius FHIR server listening on http://localhost:${config.port}`);
+  log.info(`Asclepius synthetic teaching API listening on http://localhost:${config.port}`);
 
   // Graceful shutdown: stop accepting requests, flush/close SQLite if in use,
   // then exit. Registering the handler reinstates termination (otherwise Node

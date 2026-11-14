@@ -1,81 +1,81 @@
-name: Bug Report
-description: Report a defect, gate failure, or teaching-kit regression
+name: Bug or workflow friction
+description: Report confusing journey behavior, accessibility friction, or a teaching-core defect
 title: "[bug]: "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting a bug. Include commands you ran and their output when possible.
-        Asclepius is a typed FHIR R4 teaching kit — **NOT FOR CLINICAL USE** — see [SECURITY.md](https://github.com/SafetyMP/Asclepius/blob/main/.github/SECURITY.md).
-        Use synthetic fixtures only. Do not include real PHI or credentials.
-
+        Help us make connected care easier to understand. No coding knowledge is required.
+        Asclepius uses synthetic examples only — **NOT FOR CLINICAL USE**.
+        Do not include real patient data or credentials. For vulnerabilities, use
+        [private security reporting](https://github.com/SafetyMP/Asclepius/security/advisories/new).
   - type: textarea
     id: description
     attributes:
       label: What happened?
-      description: Clear description of the bug
-      placeholder: $validate accepts a Patient fixture that should fail identity rules...
+      description: Describe the confusing, inaccessible, or broken behavior.
+      placeholder: After switching to the referral journey, I could not tell which team owned the next step.
     validations:
       required: true
-
   - type: dropdown
     id: component
     attributes:
-      label: Component
+      label: Where did it happen?
       options:
-        - domain / FHIR zod schemas
-        - ports / adapters
-        - service (search, validation, CDS, DDI)
-        - adapter/http · auth · audit
-        - web/ teaching console
-        - harness / CI
-        - docs
-        - Other
+        - Care journey or journey switching
+        - Referral and care-team handoff
+        - Resource explorer or linked records
+        - Validation lab
+        - Accessibility or mobile layout
+        - How it works or documentation
+        - Local API, schemas, or validation
+        - Local search, authentication, storage, or audit
+        - Build, CI, or deployment
+        - Unsure
     validations:
       required: true
-
   - type: textarea
     id: reproduction
     attributes:
       label: Steps to reproduce
-      description: Commands or workflow steps
+      description: Include the journey, stage, and record if relevant. Commands are optional.
       placeholder: |
-        1. npm install && npm run gate
-        2. npm test -- src/service/validation
-        3. …
-      render: shell
+        1. Open the live demo.
+        2. Choose A referral and handoff.
+        3. Open the Handoff stage, then ...
     validations:
       required: true
-
   - type: textarea
     id: expected
     attributes:
-      label: Expected behavior
+      label: What did you expect?
     validations:
       required: true
-
-  - type: textarea
-    id: logs
-    attributes:
-      label: Logs or output
-      description: Paste relevant stderr, CI link, or JSON result
-      render: shell
-
   - type: dropdown
     id: environment
     attributes:
       label: Environment
       options:
-        - Local (npm run dev / npm run gate)
-        - Docker
+        - Live GitHub Pages demo
+        - Local browser demo
+        - Local teaching API or tests
         - GitHub Actions CI
         - Other
     validations:
       required: true
-
+  - type: input
+    id: browser
+    attributes:
+      label: Browser, device, or runtime version
+      placeholder: Safari on iPad; Chrome on desktop; or Node.js version for local API work
   - type: input
     id: version
     attributes:
-      label: Branch, commit, or release tag
-      placeholder: main, abc1234
+      label: URL, commit, or release tag
+      placeholder: https://safetymp.github.io/Asclepius/ or a commit hash
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or logs (optional)
+      description: Synthetic examples only. Remove private information and credentials before posting.

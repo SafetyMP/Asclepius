@@ -19,4 +19,6 @@ npm ci
 echo "==> gate"
 npm run gate
 
-echo "verify: ok (ci/web parity)"
+npm run docs:check
+
+echo "verify: core and documentation checks passed; run the separate web gate for UI changes"

@@ -1,29 +1,34 @@
-# Copilot / community agents
+# Copilot and community agents
 
-Asclepius is a **typed FHIR R4 teaching kit**, not a clinical data platform
-and **not** a server for PHI. Keep [`AGENTS.md`](../AGENTS.md) as the community
-contract — do not wrap this repo in a factory overlay.
+Read [AGENTS.md](../AGENTS.md) for the repository contract and task-specific
+reading map. Asclepius explains connected care through two synthetic journeys
+for healthcare stakeholders, with a separate local TypeScript FHIR teaching
+core. The browser demo is static, requires no account or API, and uses shared
+validation. Preserve its calm style and plain-language context.
 
-Ports, adapters, and FHIR types: [`.github/skills/fhir-ports-adapters`](skills/fhir-ports-adapters).
-Positioning: [`docs/DESIGN-PIVOT.md`](../docs/DESIGN-PIVOT.md).
+## Product and safety
 
-## Verify
+- Preserve `NOT_FOR_CLINICAL_USE`, synthetic-only data, and the incomplete DDI
+  warning. Never imply clinical fitness or full FHIR conformance.
+- Do not connect to real EHRs, pharmacies, or clinical systems.
+- Keep journey records isolated by full `ResourceType/id` and preserve progress
+  when switching. A completed coordination task is not a completed receiving visit.
+- Keep technical details optional and navigation keyboard-accessible.
 
-- `./scripts/verify.sh` (preferred — `npm ci` + gate)
-- `npm run gate` (format → lint → typecheck → test → build)
+## Implementation
 
-Do not claim green without observed command output.
+Follow [path-specific instructions](instructions/) and the
+[FHIR architecture skill](skills/fhir-ports-adapters/SKILL.md) when relevant.
+Dependencies point inward; never import adapters into services or domain code.
+Wire local API adapters in `src/app.ts`. Define FHIR schemas with Zod and infer
+TypeScript types instead of maintaining parallel models.
 
-## Never
+## Verification
 
-- Never remove or soften `NOT_FOR_CLINICAL_USE`.
-- Never imply the DDI knowledge base is complete.
-- Never connect to real EHRs, pharmacies, or clinical systems.
-- Never store, process, or demo with real patient data (synthetic fixtures only).
-- Never import an adapter from `service` or `domain`.
-- Never construct adapters outside `src/app.ts`.
-- Never hand-write a FHIR TypeScript interface that can drift from its zod schema.
+Run `npm run gate` or `./scripts/verify.sh` for the core. For web changes also run
+`npm run verify --prefix web` and the full browser suite described in
+[web/README.md](../web/README.md). Report actual output and checks not run. Local
+success, CI success, publication, and live verification are distinct evidence.
 
-## Coding standards
-
-Follow path-specific files in [`.github/instructions/`](instructions/). Copilot code review loads [`.github/skills/code-review/`](skills/code-review/).
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for setup and
+[the review skill](skills/code-review/SKILL.md) for review checks.
