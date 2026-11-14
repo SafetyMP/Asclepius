@@ -56,6 +56,8 @@ export const SUPPORTED_RESOURCE_TYPES = [
   'MedicationRequest',
   'AllergyIntolerance',
   'DiagnosticReport',
+  'ServiceRequest',
+  'Task',
 ] as const;
 
 export type ResourceType = (typeof SUPPORTED_RESOURCE_TYPES)[number];

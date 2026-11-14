@@ -1,10 +1,13 @@
 'use client';
 import Link from 'next/link';
+import { getJourney } from '@/lib/journeys';
+import { JourneyPicker } from '@/components/workspace/journey-picker';
 import { ArrowLeft } from 'lucide-react';
 import { useJourney } from '@/components/workspace/journey-context';
 import { ResourceExplorer } from '@/components/workspace/resource-explorer';
 export default function ResourcesPage() {
-  const { state, setState } = useJourney();
+  const { state, setState, journeyId } = useJourney();
+  const journey = getJourney(journeyId);
   return (
     <div className="workspace-page">
       <div className="page-title">
@@ -12,18 +15,26 @@ export default function ResourcesPage() {
           <p className="eyebrow">THE BUILDING BLOCKS</p>
           <h1>Every record has a role.</h1>
           <p className="page-subtitle">
-            Explore the people, events, and information behind Alex’s fictional visit.
+            Explore the people, events, and information behind {journey.person}’s fictional journey.
           </p>
         </div>
-        <span className="soft-pill">9 supported resource types</span>
+        <span className="soft-pill">
+          {journey.records.length} records ·{' '}
+          {new Set(journey.records.map((record) => record.type)).size} resource types
+        </span>
       </div>
+      <JourneyPicker />
       <Link className="text-link context-return" href="/">
         <ArrowLeft size={16} />
         Back to care journey
       </Link>
       <ResourceExplorer
+        key={journeyId}
+        records={journey.records}
+        journeyId={journeyId}
+        person={journey.person}
         context="explorer"
-        initialType={state.explorerSelection ?? undefined}
+        initialRecord={state.explorerSelection ?? undefined}
         initialQuery={state.explorerQuery}
         onSelectionChange={(type) => setState((old) => ({ ...old, explorerSelection: type }))}
         onQueryChange={(query) => setState((old) => ({ ...old, explorerQuery: query }))}

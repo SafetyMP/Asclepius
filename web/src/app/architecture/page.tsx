@@ -96,9 +96,9 @@ export default function ArchitecturePage() {
         <p className="eyebrow">A QUICK ORIENTATION</p>
         <h1>Understand the story behind a record.</h1>
         <p className="text-muted leading-relaxed">
-          You do not need to read code to explore Asclepius. Follow one fictional visit, open its
-          records, and trace how the information connects. The aim is to understand the record’s
-          role and context—not to make a care decision.
+          You do not need to read code to explore Asclepius. Choose a routine visit or a referral
+          between two teams, open its records, and trace how the information connects. The aim is to
+          understand the record’s role and context—not to make a care decision.
         </p>
         <div className="flex flex-wrap gap-3 pt-2">
           <Link href="/" className="button primary">
@@ -131,6 +131,27 @@ export default function ArchitecturePage() {
             </li>
           ))}
         </ol>
+      </section>
+
+      <section className="panel p-6 sm:p-8" aria-labelledby="handoff-guide">
+        <p className="eyebrow">SCENARIO 02 · REFERRAL AND HANDOFF</p>
+        <h2 id="handoff-guide" className="mt-3 text-xl">
+          Who owns the next step?
+        </h2>
+        <p className="mt-3 text-muted leading-7">
+          Maya’s fictional journey connects Willow’s referring team to Cedar’s receiving team. A
+          ServiceRequest records what was requested and who it is for. A Task records who owns the
+          coordination work and its outcome.
+        </p>
+        <p className="mt-3 text-muted leading-7">
+          The handoff task is completed, the referral remains active, and the receiving visit is
+          still planned. Those statuses describe different records. Moving between stages explores
+          this fixed snapshot; it does not send a referral or change its status.
+        </p>
+        <p className="mt-3 text-muted leading-7">
+          In the care journey, choose “A referral and handoff” to trace the request, receiving team,
+          and planned visit.
+        </p>
       </section>
 
       <section aria-labelledby="terms-heading" className="space-y-4">
@@ -171,9 +192,9 @@ export default function ArchitecturePage() {
         <div className="mt-4 grid gap-6 md:grid-cols-2">
           <div className="space-y-3">
             <p className="text-muted leading-7">
-              Inspect nine linked fictional records, identify their roles, and follow their
-              connections. Open the validation lab to see how a missing detail can be detected by
-              the kit’s structural checks and teaching rules.
+              Inspect two journeys with nine linked fictional records each, identify their roles,
+              and follow their connections. Open the validation lab to see how a missing detail can
+              be detected by the kit’s structural checks and teaching rules.
             </p>
             <Link href="/validate" className="button secondary">
               Try the validation lab
@@ -181,7 +202,7 @@ export default function ArchitecturePage() {
           </div>
           <div className="space-y-3 text-muted leading-7">
             <p>
-              The scenario is fixed and synthetic. It does not exchange live information with a
+              Both scenarios are fixed and synthetic. It does not exchange live information with a
               clinic, save a clinical record, interpret results, or recommend treatment.
             </p>
             <p>

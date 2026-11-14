@@ -10,6 +10,8 @@ import {
   organization,
   patient,
   practitioner,
+  serviceRequest,
+  task,
 } from './resources';
 
 /**
@@ -20,6 +22,8 @@ import {
 export const resourceUnion = z.discriminatedUnion('resourceType', [
   patient,
   practitioner,
+  serviceRequest,
+  task,
   organization,
   encounter,
   condition,
@@ -46,6 +50,8 @@ export const resourceSchemaByType = {
   MedicationRequest: medicationRequest,
   AllergyIntolerance: allergyIntolerance,
   DiagnosticReport: diagnosticReport,
+  ServiceRequest: serviceRequest,
+  Task: task,
 } as const satisfies Record<ResourceType, z.ZodType>;
 
 export type ResourceSchemaMap = typeof resourceSchemaByType;

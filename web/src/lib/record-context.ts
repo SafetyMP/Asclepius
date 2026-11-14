@@ -1,4 +1,5 @@
 import { examples, type ResourceExample } from './examples';
+import { recordKey } from './journeys';
 
 export type RecordFact = { label: string; value: string };
 export type RecordConnection = {
@@ -16,12 +17,10 @@ const text = (value: unknown): string | undefined =>
   typeof value === 'string' ? value : undefined;
 const first = (value: unknown): unknown => (Array.isArray(value) ? value[0] : undefined);
 
-function referenceName(value: unknown): string | undefined {
+function referenceName(value: unknown, records: ResourceExample[]): string | undefined {
   const reference = object(value);
   if (!reference) return undefined;
-  const match = examples.find(
-    (item) => `${item.type}/${String(item.resource.id)}` === reference.reference,
-  );
+  const match = records.find((item) => recordKey(item) === reference.reference);
   return match?.title ?? text(reference.display) ?? text(reference.reference);
 }
 
@@ -49,7 +48,11 @@ function dateLabel(value: unknown): string | undefined {
 }
 
 /** Present facts from the sample, not a second FHIR model or a clinical interpretation. */
-export function recordFacts(example: ResourceExample): RecordFact[] {
+export function recordFacts(
+  example: ResourceExample,
+  records: ResourceExample[] = examples,
+): RecordFact[] {
+  const nameOf = (value: unknown) => referenceName(value, records);
   const record = example.resource;
   const facts: RecordFact[] = [];
   const add = (label: string, value: string | undefined) => {
@@ -59,8 +62,8 @@ export function recordFacts(example: ResourceExample): RecordFact[] {
     add('Person', example.title);
     add('Date of birth', dateLabel(record.birthDate));
     add('Example identifier', text(object(first(record.identifier))?.value));
-    add('Care team', referenceName(first(record.generalPractitioner)));
-    add('Organization', referenceName(record.managingOrganization));
+    add('Care team', nameOf(first(record.generalPractitioner)));
+    add('Organization', nameOf(record.managingOrganization));
   } else if (example.type === 'Practitioner') {
     add('Care team member', example.title);
     add('Example identifier', text(object(first(record.identifier))?.value));
@@ -72,19 +75,40 @@ export function recordFacts(example: ResourceExample): RecordFact[] {
   } else {
     const statuses: Record<string, string> = {
       finished: 'Completed visit',
+      planned: 'Planned visit',
       final: 'Final record',
-      draft: 'Draft — not an issued prescription',
+      draft:
+        example.type === 'MedicationRequest'
+          ? 'Draft — not an issued prescription'
+          : 'Draft request',
+      active: example.type === 'ServiceRequest' ? 'Active referral request' : 'Active',
+      completed:
+        example.type === 'Task' ? 'Coordination completed — not clinical care' : 'Completed',
     };
     const status = text(record.status);
-    if (status) add('Record status', statuses[status] ?? status);
+    if (status)
+      add(
+        example.type === 'Task'
+          ? 'Handoff status'
+          : example.type === 'ServiceRequest'
+            ? 'Referral status'
+            : 'Record status',
+        statuses[status] ?? status,
+      );
     if (example.type === 'AllergyIntolerance')
       add('Verification status', 'Not recorded in this example');
-    add('Person', referenceName(record.subject ?? record.patient));
+    add('Person', nameOf(record.subject ?? record.patient ?? record.for));
     if (example.type === 'Encounter') {
-      add('Visit started', dateLabel(object(record.period)?.start));
-      add('Visit ended', dateLabel(object(record.period)?.end));
-      add('Care team', referenceName(object(first(record.participant))?.individual));
-      add('Organization', referenceName(record.serviceProvider));
+      add(
+        record.status === 'planned' ? 'Planned start' : 'Visit started',
+        dateLabel(object(record.period)?.start),
+      );
+      add(
+        record.status === 'planned' ? 'Planned end' : 'Visit ended',
+        dateLabel(object(record.period)?.end),
+      );
+      add('Care team', nameOf(object(first(record.participant))?.individual));
+      add('Organization', nameOf(record.serviceProvider));
     } else {
       if (example.type === 'Observation') {
         const quantity = object(record.valueQuantity);
@@ -97,21 +121,39 @@ export function recordFacts(example: ResourceExample): RecordFact[] {
         add('Measured at', dateLabel(record.effectiveDateTime));
       } else if (example.type === 'DiagnosticReport') {
         add('Report issued', dateLabel(record.issued));
-        add('Source measurement', referenceName(first(record.result)));
-        add('Report interpreter', referenceName(first(record.resultsInterpreter)));
+        add('Source measurement', nameOf(first(record.result)));
+        add('Report interpreter', nameOf(first(record.resultsInterpreter)));
+      } else if (example.type === 'ServiceRequest') {
+        add('Requested service', text(object(record.code)?.text));
+        add('Created at', dateLabel(record.authoredOn));
+        add('Referring team member', nameOf(record.requester));
+        add('Receiving team', nameOf(first(record.performer)));
+        add('Reason recorded', text(object(first(record.reasonCode))?.text));
+      } else if (example.type === 'Task') {
+        add('Coordination activity', text(object(record.code)?.text));
+        add('Referral', nameOf(record.focus));
+        add('Requested by', nameOf(record.requester));
+        add('Receiving team responsible', nameOf(record.owner));
+        add('Coordination started', dateLabel(object(record.executionPeriod)?.start));
+        add('Coordination ended', dateLabel(object(record.executionPeriod)?.end));
+        add('Last updated', dateLabel(record.lastModified));
+        const output = object(first(record.output));
+        add('Linked receiving visit', nameOf(output?.valueReference));
       } else if (example.type === 'MedicationRequest') {
         add('Intent', text(record.intent) === 'proposal' ? 'Proposal only' : text(record.intent));
         add('Created at', dateLabel(record.authoredOn));
-        add('Requested by', referenceName(record.requester));
+        add('Requested by', nameOf(record.requester));
       } else {
         add('Recorded at', dateLabel(record.recordedDate));
-        add('Recorded by', referenceName(record.recorder));
+        add('Recorded by', nameOf(record.recorder));
       }
-      add('Visit', referenceName(record.encounter));
-      add(
-        example.type === 'DiagnosticReport' ? 'Report organization' : 'Performed by',
-        referenceName(first(record.performer)),
-      );
+      add('Visit', nameOf(record.encounter));
+      if (example.type !== 'ServiceRequest') {
+        add(
+          example.type === 'DiagnosticReport' ? 'Report organization' : 'Performed by',
+          nameOf(first(record.performer)),
+        );
+      }
     }
   }
   return facts;
@@ -131,6 +173,12 @@ function references(value: unknown, field = '', seen = new WeakSet<object>()): R
 const outgoingLabels: Record<string, string> = {
   subject: 'About this person',
   patient: 'About this person',
+  for: 'About this person',
+  focus: 'Referral coordinated by this task',
+  owner: 'Team responsible for this coordination',
+  basedOn: 'Request this record follows',
+  output: 'Visit linked by this handoff',
+  supportingInfo: 'Supporting context for the request',
   encounter: 'Recorded during this visit',
   generalPractitioner: 'Care team member',
   managingOrganization: 'Organization for this person',
@@ -145,6 +193,10 @@ const outgoingLabels: Record<string, string> = {
 };
 
 function incomingLabel(source: ResourceExample, target: ResourceExample, field: string): string {
+  if (field === 'focus' && source.type === 'Task') return 'Handoff coordinating this referral';
+  if (field === 'owner') return 'Coordination owned by this team';
+  if (field === 'output') return 'Handoff linking to this visit';
+  if (field === 'basedOn') return 'Record following this request';
   if (field === 'result') return 'Report using this measurement';
   if (source.type === 'Encounter' && target.type === 'Patient') return 'Visit for this person';
   const nouns: Record<string, string> = {
@@ -155,9 +207,12 @@ function incomingLabel(source: ResourceExample, target: ResourceExample, field: 
     MedicationRequest: 'Draft request',
     AllergyIntolerance: 'Reported allergy',
     DiagnosticReport: 'Report',
+    ServiceRequest: 'Referral',
+    Task: 'Handoff',
   };
   const noun = nouns[source.type] ?? source.type;
-  if (field === 'subject' || field === 'patient') return `${noun} for this person`;
+  if (field === 'subject' || field === 'patient' || field === 'for')
+    return `${noun} for this person`;
   if (field === 'encounter') return `${noun} from this visit`;
   if (field === 'performer' || field === 'participant')
     return `${noun} involving this team member or organization`;
@@ -167,25 +222,29 @@ function incomingLabel(source: ResourceExample, target: ResourceExample, field: 
 }
 
 /** One-hop links in either direction; never recursively traverse the resource graph. */
-export function recordConnections(example: ResourceExample): RecordConnection[] {
-  const currentId = `${example.type}/${String(example.resource.id)}`;
+export function recordConnections(
+  example: ResourceExample,
+  records: ResourceExample[] = examples,
+): RecordConnection[] {
+  const currentId = recordKey(example);
   const result = new Map<string, RecordConnection>();
   for (const link of references(example.resource)) {
-    const match = examples.find(
-      (item) => `${item.type}/${String(item.resource.id)}` === link.reference,
-    );
-    if (match && match !== example && !result.has(match.type))
-      result.set(match.type, {
+    const match = records.find((item) => recordKey(item) === link.reference);
+    if (match && recordKey(match) !== currentId && !result.has(recordKey(match)))
+      result.set(recordKey(match), {
         example: match,
-        relationship: outgoingLabels[link.field] ?? 'Linked from this record',
+        relationship:
+          example.type === 'ServiceRequest' && link.field === 'performer'
+            ? 'Receiving team for this referral'
+            : (outgoingLabels[link.field] ?? 'Linked from this record'),
         direction: 'outgoing',
       });
   }
-  for (const candidate of examples) {
-    if (candidate === example || result.has(candidate.type)) continue;
+  for (const candidate of records) {
+    if (recordKey(candidate) === currentId || result.has(recordKey(candidate))) continue;
     const link = references(candidate.resource).find((item) => item.reference === currentId);
     if (link)
-      result.set(candidate.type, {
+      result.set(recordKey(candidate), {
         example: candidate,
         relationship: incomingLabel(candidate, example, link.field),
         direction: 'incoming',

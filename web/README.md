@@ -1,7 +1,7 @@
 # Asclepius — synthetic care journey
 
 A browser-based educational experience for healthcare stakeholders exploring a
-fictional case and its connected FHIR records. Developers can inspect the
+routine visit or referral handoff and its connected FHIR records. Developers can inspect the
 underlying examples, validation results, and architecture.
 
 **NOT_FOR_CLINICAL_USE. Synthetic data only.** Do not enter real patient data.
@@ -38,16 +38,21 @@ repository root for local synthetic experiments on port 8787.
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Synthetic care journey and contextual record exploration |
+| `/` | Two synthetic journeys, separate progress, and contextual records |
 | `/patients/` | Alternate entry to the same synthetic care journey |
-| `/resources/` | Nine-resource library with explanations and synthetic JSON |
+| `/resources/` | Selected journey’s nine records, including multiple records of the same type |
 | `/validate/` | Browser validation lab, issue feedback, and missing-identity exercise |
-| `/architecture/` | Schemas, services, ports, and adapters with source links |
+| `/architecture/` | Stakeholder orientation, referral context, glossary, and optional developer details |
 | `/interactions/` | Local DDI example explanation and source/test links |
 | `/cds/` | Local rule-composition explanation and source/test links |
 | `/auth/` | Local authentication explanation and setup references |
 
 The three local-reference routes do not invoke APIs or issue credentials.
+The selected journey and its navigation state remain in memory until refresh.
+Lab links include `journey` and the exact `Type/id` record key, so refreshing a
+referral draft reloads the correct synthetic sample. Practice edits are not saved.
+ServiceRequest and Task use the same limited Zod schemas as the local API; Task
+input/output supports only references and strings. The browser makes no API calls.
 
 ## Verification
 

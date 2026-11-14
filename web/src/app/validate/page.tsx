@@ -1,5 +1,5 @@
 'use client';
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useJourney } from '@/components/workspace/journey-context';
 import { useSearchParams } from 'next/navigation';
@@ -15,7 +15,7 @@ import {
   FlaskConical,
   RotateCcw,
 } from 'lucide-react';
-import { examples } from '@/lib/examples';
+import { getJourney, recordKey } from '@/lib/journeys';
 import { teachingValidator } from '@/lib/validation';
 
 type Result =
@@ -29,14 +29,21 @@ function ValidationLab() {
     panel?.focus({ preventScroll: true });
     panel?.scrollIntoView({ block: 'nearest' });
   }
-  const { setState } = useJourney();
+  const { journeyId, setJourneyId, setJourneyState } = useJourney();
+  const journey = getJourney(params.get('journey') ?? journeyId);
+  const examples = journey.records;
   const fromJourney = params.get('from') === 'journey';
-  const returnType =
-    examples.find((item) => item.type === params.get('resource'))?.type ?? 'Patient';
-  const stageParam = params.get('stage');
-  const returnStage = stageParam === '1' ? 1 : stageParam === '2' ? 2 : 0;
+  const requestedRecord = params.get('record');
   const initial =
-    examples.find((example) => example.type === params.get('resource')) ?? examples[0];
+    examples.find((item) => recordKey(item) === requestedRecord) ??
+    examples.find((item) => item.type === params.get('resource')) ??
+    examples[0];
+  const returnRecord = recordKey(initial);
+  const stageParam = Number(params.get('stage') ?? 0);
+  const returnStage =
+    Number.isInteger(stageParam) && stageParam >= 0 && stageParam < journey.stages.length
+      ? stageParam
+      : 0;
   const [example, setExample] = useState(initial);
   const [body, setBody] = useState(JSON.stringify(initial.resource, null, 2));
   const [result, setResult] = useState<Result | null>(null);
@@ -81,7 +88,11 @@ function ValidationLab() {
     setExample(patient);
     setChallenge(true);
     replaceBody(
-      JSON.stringify({ resourceType: 'Patient', id: 'demo-challenge', gender: 'unknown' }, null, 2),
+      JSON.stringify(
+        { resourceType: 'Patient', id: `${journey.id}-challenge`, gender: 'unknown' },
+        null,
+        2,
+      ),
     );
   }
   function repairIdentity() {
@@ -116,15 +127,16 @@ function ValidationLab() {
     }
   }
   function restoreContext() {
-    setState((old) =>
+    setJourneyId(journey.id);
+    setJourneyState(journey.id, (old) =>
       fromJourney
         ? {
             ...old,
             step: returnStage,
             visited: Array.from(new Set([...old.visited, returnStage])),
-            journeySelection: returnType,
+            journeySelection: returnRecord,
           }
-        : { ...old, explorerSelection: returnType },
+        : { ...old, explorerSelection: returnRecord },
     );
   }
   async function copy() {
@@ -168,8 +180,8 @@ function ValidationLab() {
         </span>
         <p>
           <strong>From a story to a structured record.</strong> FHIR gives information a shared
-          shape. This lab checks the kit’s nine schemas and three teaching rules. It does not check
-          full FHIR conformance, terminology, reference existence, or clinical correctness.
+          shape. This lab checks the kit’s eleven schemas and three teaching rules. It does not
+          check full FHIR conformance, terminology, reference existence, or clinical correctness.
         </p>
       </div>
       <div className="lab-layout">
@@ -181,15 +193,15 @@ function ValidationLab() {
         >
           <div className="section-heading">
             <h2>Check a sample record</h2>
-            <span className="subtle-pill">Synthetic examples</span>
+            <span className="subtle-pill">{journey.label}</span>
           </div>
           <div className="editor-toolbar">
-            <label htmlFor="example">Record type</label>
+            <label htmlFor="example">Sample record</label>
             <select
               id="example"
-              value={example.type}
+              value={recordKey(example)}
               onChange={(event) => {
-                const next = examples.find((item) => item.type === event.target.value);
+                const next = examples.find((item) => recordKey(item) === event.target.value);
                 if (next) {
                   setExample(next);
                   replaceBody(JSON.stringify(next.resource, null, 2));
@@ -198,7 +210,7 @@ function ValidationLab() {
               }}
             >
               {examples.map((item) => (
-                <option key={item.type} value={item.type}>
+                <option key={recordKey(item)} value={recordKey(item)}>
                   {item.type} · {item.title}
                 </option>
               ))}
@@ -211,7 +223,7 @@ function ValidationLab() {
             {copied}
           </p>
           <div className="sample-context">
-            <span className="eyebrow">ALEX MORGAN · FICTIONAL VISIT</span>
+            <span className="eyebrow">{journey.person.toUpperCase()} · FICTIONAL JOURNEY</span>
             <h3>{challenge ? 'Missing identity exercise' : example.title}</h3>
             <p>
               {challenge
@@ -361,7 +373,12 @@ function ValidationLab() {
 }
 function ValidationRoute() {
   const params = useSearchParams();
-  return <ValidationLab key={params.toString()} />;
+  const { journeyId, setJourneyId } = useJourney();
+  const requestedJourney = params.get('journey');
+  useEffect(() => {
+    if (requestedJourney) setJourneyId(getJourney(requestedJourney).id);
+  }, [requestedJourney, setJourneyId]);
+  return <ValidationLab key={`${params.toString()}-${params.get('journey') ?? journeyId}`} />;
 }
 
 export default function ValidatePage() {

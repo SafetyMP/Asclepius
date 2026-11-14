@@ -4,8 +4,8 @@
 [![CodeQL](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml)
 [![License: Apache-2.0](https://img.shields.io/github/license/SafetyMP/Asclepius)](LICENSE)
 
-Explore how a fictional visit becomes connected health records. Asclepius gives
-healthcare stakeholders a guided view of a synthetic case, its context, and the
+Explore how a fictional visit or referral becomes connected health records. Asclepius gives
+healthcare stakeholders a guided view of two synthetic cases, their context, and the
 FHIR resources behind it. Developers can look deeper in the validation lab and
 ports-and-adapters teaching kit.
 
@@ -22,17 +22,17 @@ The demo runs in the browser, with no account, API server, or token required.
 
 ## Explore the story, then the structure
 
-- **Care journey:** follow a fictional case and inspect the records that give
-  each step its context.
+- **Care journeys:** follow Alex’s routine visit or Maya’s referral from Willow
+  to Cedar. Inspect the records that give each step its context.
 - **Resource explorer:** read key facts, follow incoming and outgoing
-  connections, and retrace your steps through nine fictional records.
+  connections, and retrace your steps through nine fictional records in each journey.
 - **Validation lab:** check a sample and repair a missing identity without
   coding. JSON editing is available under advanced details. Checks run locally
   in the browser and do not change the fictional case.
 - **How it works:** start with stakeholder questions and a plain-language
   glossary; expand developer architecture and source links when needed.
 
-Journey progress, the open record, and explorer search stay in place while
+Each journey keeps its own progress, open record, and explorer search while
 navigating within the demo. Refresh starts a new session; practice drafts are
 discarded when leaving the lab.
 
@@ -42,14 +42,27 @@ experience. The intended improvements are easier orientation and a clearer
 connection between a case and its data; these are design hypotheses, not
 measured claims of better engagement. See [the design rationale](docs/DESIGN-PIVOT.md).
 
+### Referral and handoff
+
+Choose **A referral and handoff** for Maya Chen’s fictional Willow → Cedar journey.
+The referral remains active, Cedar’s coordination task is completed, and the
+receiving visit is planned. Stage navigation explores a fixed teaching snapshot;
+it does not change statuses or send a referral. Full record identities keep the
+two practitioners, organizations, and visits distinct.
+
+![Maya’s synthetic referral and handoff between Willow and Cedar](docs/assets/referral-handoff.jpg)
+
 ### What validation means here
 
-The lab uses the repository’s nine hand-authored FHIR R4 Zod schemas and three
+The lab uses the repository’s eleven hand-authored FHIR R4 Zod schemas and three
 teaching profile rules. Passing means **passes this teaching subset**. It does
 not establish full FHIR conformance, terminology validity, reference existence,
 clinical correctness, or the safety of a treatment. The resource types are
 Patient, Practitioner, Organization, Encounter, Condition, Observation,
-MedicationRequest, AllergyIntolerance, and DiagnosticReport.
+MedicationRequest, AllergyIntolerance, DiagnosticReport, ServiceRequest, and Task.
+The referral subset checks request and coordination structure. Task input/output
+values support references or strings only. It does not verify receipt by a team,
+clinical appropriateness, or completion of care.
 
 ## Run the browser demo locally
 
@@ -84,7 +97,7 @@ to code instead of presenting unavailable API controls.
 
 | Component | Teaching implementation |
 | --- | --- |
-| Resource model | Nine Zod schemas, inferred TypeScript types, datatypes, Bundle, and OperationOutcome |
+| Resource model | Eleven Zod schemas, inferred TypeScript types, datatypes, Bundle, and OperationOutcome |
 | Validation | Structural checks and three profile rules; local `$validate` operation |
 | Storage | Repository port with versioned in-memory and SQLite adapters |
 | Search | Query-plan parser/compiler and executor with a supported subset of FHIR search |

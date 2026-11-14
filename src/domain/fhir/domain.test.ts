@@ -536,6 +536,8 @@ describe('resource union & registry', () => {
       'Organization',
       'Patient',
       'Practitioner',
+      'ServiceRequest',
+      'Task',
     ]);
   });
   it('schemaForResourceType returns the schema or undefined', () => {
