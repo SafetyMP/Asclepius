@@ -1,120 +1,122 @@
-"use client";
+'use client';
+import Link from 'next/link';
+import { useHydrated } from '@/lib/use-hydrated';
+import { usePathname } from 'next/navigation';
+import {
+  Activity,
+  ArrowUpRight,
+  BookOpen,
+  Boxes,
+  CheckCheck,
+  GitBranch,
+  Menu,
+  PanelLeftClose,
+  ShieldCheck,
+} from 'lucide-react';
+import { useState } from 'react';
+import type { NavItem } from '@/lib/navigation';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, Moon, Sun, X } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useState } from "react";
-
-import { Button } from "@/components/ui/button";
-import { type NavItem } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
-
-type Props = {
+const icons = [GitBranch, Boxes, CheckCheck, BookOpen];
+export function AppShell({
+  productName,
+  eyebrow,
+  nav,
+  children,
+}: {
   productName: string;
   eyebrow: string;
   nav: NavItem[];
   children: React.ReactNode;
-};
-
-function NavLinks({
-  nav,
-  pathname,
-  onNavigate,
-  className,
-}: {
-  nav: NavItem[];
-  pathname: string;
-  onNavigate?: () => void;
-  className?: string;
 }) {
+  const hydrated = useHydrated();
+  const pathname = usePathname().replace(/\/$/, '') || '/';
+  const [open, setOpen] = useState(false);
   return (
-    <nav aria-label="Primary" className={cn("flex flex-col gap-1", className)}>
-      {nav.map((item) => {
-        const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigate}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "touch-target rounded-md px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              active ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent",
-            )}
-          >
-            {item.label}
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}
-
-export function AppShell({ productName, eyebrow, nav, children }: Props) {
-  const pathname = usePathname();
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  return (
-    <div className="flex min-h-screen w-full">
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar lg:flex">
-        <div className="border-b border-sidebar-border px-4 py-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{eyebrow}</p>
-          <p className="mt-1 text-lg font-semibold tracking-tight text-foreground">{productName}</p>
-        </div>
-        <div className="flex-1 p-3">
-          <NavLinks nav={nav} pathname={pathname} />
+    <div className="app-layout">
+      <aside className="sidebar">
+        <Link href="/" className="brand" aria-label="Asclepius home">
+          <span className="brand-mark">
+            <Activity size={24} strokeWidth={1.8} />
+          </span>
+          <span>
+            {productName}
+            <small>{eyebrow}</small>
+          </span>
+        </Link>
+        <button
+          className="mobile-menu icon-button"
+          disabled={!hydrated}
+          aria-expanded={open}
+          aria-controls="sidebar-content"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle navigation"
+        >
+          {open ? <PanelLeftClose size={21} /> : <Menu size={21} />}
+        </button>
+        <div id="sidebar-content" className={`sidebar-content ${open ? 'is-open' : ''}`}>
+          <p className="nav-caption">WORKSPACE</p>
+          <nav aria-label="Primary">
+            {nav.map((item, index) => {
+              const Icon = icons[index] ?? BookOpen;
+              const active =
+                pathname === item.href || (item.href === '/' && pathname === '/patients');
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={active ? 'page' : undefined}
+                  className={`nav-link ${active ? 'active' : ''}`}
+                >
+                  <Icon size={18} />
+                  <span>{item.label}</span>
+                  {index === 1 && <span className="nav-count">9</span>}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="sidebar-note">
+            <span className="mini-icon">
+              <BookOpen size={18} />
+            </span>
+            <h3>A little context goes a long way.</h3>
+            <p>See how everyday care becomes connected information.</p>
+            <Link href="/architecture" onClick={() => setOpen(false)}>
+              Explore the foundations <ArrowUpRight size={14} />
+            </Link>
+          </div>
+          <div className="sidebar-footer">
+            <a href="https://github.com/SafetyMP/Asclepius" target="_blank" rel="noreferrer">
+              View project on GitHub <ArrowUpRight size={15} />
+            </a>
+            <span>
+              <i className="status-dot" /> FHIR R4 teaching subset
+            </span>
+          </div>
         </div>
       </aside>
-
-      {mobileOpen ? (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/50"
-            aria-label="Close navigation menu"
-            onClick={() => setMobileOpen(false)}
-          />
-          <aside className="relative flex h-full w-72 flex-col border-r border-sidebar-border bg-sidebar shadow-lg">
-            <div className="flex items-center justify-between border-b border-sidebar-border px-4 py-4">
-              <p className="font-semibold text-foreground">{productName}</p>
-              <Button variant="ghost" size="sm" aria-label="Close menu" onClick={() => setMobileOpen(false)}>
-                <X className="h-5 w-5" aria-hidden />
-              </Button>
-            </div>
-            <div className="flex-1 p-3">
-              <NavLinks nav={nav} pathname={pathname} onNavigate={() => setMobileOpen(false)} />
-            </div>
-          </aside>
-        </div>
-      ) : null}
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card/95 px-4 backdrop-blur sm:px-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="lg:hidden"
-            aria-label="Open navigation menu"
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen(true)}
-          >
-            <Menu className="h-5 w-5" aria-hidden />
-          </Button>
-          <p className="hidden text-sm font-medium text-muted-foreground lg:block">Clinical reference console</p>
-          <Button
-            variant="ghost"
-            size="sm"
-            aria-label={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-          >
-            {resolvedTheme === "dark" ? <Sun className="h-5 w-5" aria-hidden /> : <Moon className="h-5 w-5" aria-hidden />}
-          </Button>
+      <div className="main-column">
+        <header className="topbar">
+          <div>
+            <span className="text-muted">Workspace</span>
+            <span className="breadcrumb-slash">/</span>
+            <span>{nav.find((item) => item.href === pathname)?.label ?? 'Learning notes'}</span>
+          </div>
+          <span className="demo-pill">
+            <span className="status-dot" /> Interactive demo
+          </span>
         </header>
-        <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+        <main id="main-content" tabIndex={-1}>
           {children}
         </main>
+        <footer className="safety-footer">
+          <ShieldCheck size={16} />
+          <span>
+            <strong>NOT FOR CLINICAL USE</strong> · Fictional records only. No real patient data.
+            Educational subset, not a complete FHIR validator.
+          </span>
+          <span className="footer-local">Runs in your browser</span>
+        </footer>
       </div>
     </div>
   );

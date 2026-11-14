@@ -1,100 +1,90 @@
-"use client";
+import Link from 'next/link';
+import { ArrowUpRight, Terminal } from 'lucide-react';
 
-import { useState } from "react";
-
-import { ClinicalStatus } from "@/components/clinical/status";
-import { PageHeader } from "@/components/layout/page-header";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { issueDevToken, setAccessToken } from "@/lib/api";
-
-export default function AuthPage() {
-  const [sub, setSub] = useState("practitioner-demo");
-  const [scopes, setScopes] = useState("system/*.*");
-  const [role, setRole] = useState("practitioner");
-  const [tokenPreview, setTokenPreview] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function onIssue(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setTokenPreview(null);
-    const res = await issueDevToken({ sub, scopes, role });
-    setLoading(false);
-    if (!res.ok) {
-      setError(`${res.status}: ${res.error}`);
-      return;
-    }
-    setAccessToken(res.data.access_token);
-    setTokenPreview(`${res.data.access_token.slice(0, 24)}… (${res.data.expires_in}s)`);
-  }
-
-  function onClear() {
-    setAccessToken(null);
-    setTokenPreview(null);
-  }
-
+export default function LocalReferencePage() {
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        eyebrow="Development"
-        title="Dev authentication"
-        description="Issue a local bearer token for SMART-style scoped API calls. Disabled in production builds of the API server."
-      />
-
-      <ClinicalStatus variant="warning">Dev-only token issuer</ClinicalStatus>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Token request</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onIssue} className="flex flex-col gap-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="sub">Subject (sub)</Label>
-                <Input id="sub" value={sub} onChange={(e) => setSub(e.target.value)} required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Input id="role" value={role} onChange={(e) => setRole(e.target.value)} required />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="scopes">Scopes</Label>
-                <Input id="scopes" value={scopes} onChange={(e) => setScopes(e.target.value)} required />
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button type="submit" disabled={loading}>
-                {loading ? "Issuing…" : "Issue token"}
-              </Button>
-              <Button type="button" variant="outline" onClick={onClear}>
-                Clear stored token
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      {error ? <div role="alert" className="rounded-lg border-2 border-destructive/40 bg-destructive/10 p-4 text-sm">{error}</div> : null}
-
-      {tokenPreview ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              Session <ClinicalStatus variant="success">Token stored</ClinicalStatus>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="font-mono text-sm">{tokenPreview}</p>
-            <p className="mt-2 text-sm text-muted-foreground">Stored in sessionStorage for subsequent API calls from this browser tab.</p>
-          </CardContent>
-        </Card>
-      ) : null}
+    <div className="max-w-4xl space-y-7">
+      <header className="space-y-3">
+        <p className="eyebrow">LOCAL DEVELOPMENT</p>
+        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+          Authentication belongs in the harness.
+        </h1>
+        <p className="max-w-3xl text-muted leading-relaxed">
+          No account or token is needed for the browser learning experience. The local backend
+          retains its development-only token issuer for studying scoped API access.
+        </p>
+      </header>
+      <section className="panel p-6 sm:p-8">
+        <h2 className="text-xl font-semibold">Learn the boundary</h2>
+        <p className="mt-3 text-sm leading-7 text-muted">
+          The local harness demonstrates JWT verification and SMART-style scopes. Its development
+          token issuer is disabled in production. This example does not provide a production
+          identity service.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+          <a
+            href="https://github.com/SafetyMP/Asclepius/blob/main/src/adapter/auth/jwt-verifier.ts"
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-teal-800 underline-offset-4 hover:underline"
+          >
+            Read token verification
+            <ArrowUpRight className="h-4 w-4" aria-hidden />
+          </a>
+          <a
+            href="https://github.com/SafetyMP/Asclepius/blob/main/docs/adr/0008-jwt-and-smart-scopes.md"
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-teal-800 underline-offset-4 hover:underline"
+          >
+            Read the authentication decision
+            <ArrowUpRight className="h-4 w-4" aria-hidden />
+          </a>
+        </div>
+      </section>
+      <section className="panel p-6 sm:p-8" aria-labelledby="local-setup">
+        <div className="flex items-center gap-3">
+          <Terminal className="h-5 w-5 text-teal-700" aria-hidden />
+          <h2 id="local-setup" className="text-xl font-semibold">
+            Try the local teaching harness
+          </h2>
+        </div>
+        <p className="mt-3 text-sm leading-7 text-muted">
+          Follow the repository setup and authentication documentation when exploring the local API.
+          This hosted demo does not issue or store bearer tokens.
+        </p>
+        <pre className="mt-5 overflow-x-auto rounded-xl bg-slate-950 p-5 text-sm leading-7 text-slate-100">
+          <code>{`git clone https://github.com/SafetyMP/Asclepius.git
+cd Asclepius
+npm ci
+npm test
+npm run dev`}</code>
+        </pre>
+        <p className="mt-4 text-sm leading-6 text-muted">
+          Requires Node.js 22 or newer and npm 10. See the{' '}
+          <a
+            className="font-semibold text-teal-800 underline underline-offset-4"
+            href="https://github.com/SafetyMP/Asclepius#getting-started"
+          >
+            repository setup guide
+          </a>{' '}
+          for the supported environment and local API details.
+        </p>
+      </section>
+      <div className="flex flex-wrap gap-3">
+        <Link href="/" className="button">
+          Return to the synthetic case
+        </Link>
+        <Link href="/architecture" className="button secondary">
+          Explore the architecture
+        </Link>
+      </div>
+      <aside
+        role="note"
+        className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950"
+      >
+        <p className="font-semibold">NOT_FOR_CLINICAL_USE</p>
+        <p className="mt-1">
+          Educational reference only. Do not store, process, or base clinical decisions on real
+          patient data. The drug-interaction knowledge base is intentionally incomplete.
+        </p>
+      </aside>
     </div>
   );
 }

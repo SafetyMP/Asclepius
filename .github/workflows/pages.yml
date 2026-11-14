@@ -1,0 +1,87 @@
+name: GitHub Pages demo
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_BASE_PATH: /Asclepius
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22.x'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            web/package-lock.json
+
+      - name: Install teaching-kit dependencies
+        run: npm ci
+
+      - name: Verify teaching-kit core
+        run: npm run gate
+
+      - name: Install web dependencies
+        run: npm ci
+        working-directory: web
+
+      - name: Typecheck and export demo
+        run: npm run typecheck && npm run build
+        working-directory: web
+
+      - name: Install browser for verification
+        run: npx playwright install --with-deps chromium
+        working-directory: web
+
+      - name: Stage the actual GitHub Pages subpath
+        run: |
+          mkdir -p .pages-preview/Asclepius
+          cp -R out/. .pages-preview/Asclepius/
+        working-directory: web
+
+      - name: Verify demo journeys and accessibility at /Asclepius
+        run: npm run test:e2e
+        working-directory: web
+        env:
+          PLAYWRIGHT_STATIC_DIR: .pages-preview
+
+      - name: Upload verified static site
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: web/out
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Publish verified demo
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

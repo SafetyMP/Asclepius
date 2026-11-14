@@ -1,13 +1,7 @@
-export type NavItem = {
-  href: string;
-  label: string;
-};
-
+export type NavItem = { href: string; label: string };
 export const asclepiusNav: NavItem[] = [
-  { href: "/", label: "Overview" },
-  { href: "/patients", label: "Patients" },
-  { href: "/interactions", label: "Drug interactions" },
-  { href: "/cds", label: "Clinical decision support" },
-  { href: "/validate", label: "Validate resource" },
-  { href: "/auth", label: "Dev auth" },
+  { href: '/', label: 'Care journey' },
+  { href: '/resources', label: 'Resource explorer' },
+  { href: '/validate', label: 'Validation lab' },
+  { href: '/architecture', label: 'How it works' },
 ];
