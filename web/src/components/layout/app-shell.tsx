@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { ShiftProvider } from '@/app/referral-review/shift';
 import studyStyles from '@/app/referral-review/case.module.css';
 import { useJourney } from '@/components/workspace/journey-context';
 import { getJourney } from '@/lib/journeys';
@@ -35,29 +36,35 @@ export function AppShell({
   const { journeyId } = useJourney();
   const pathname = usePathname().replace(/\/$/, '') || '/';
   const [open, setOpen] = useState(false);
-  if (pathname === '/' || pathname === '/referral-review') {
+  if (pathname === '/' || pathname === '/referral-review' || pathname === '/workspace') {
     return (
-      <div className={studyStyles.studyShell}>
-        <header className={studyStyles.masthead}>
-          <Link href="/" className={studyStyles.wordmark}>
-            <Activity size={24} aria-hidden />
-            Asclepius
-          </Link>
-          <nav aria-label="Study navigation">
-            <a href="#pilot-title">Educator worksheet</a>
-            <Link href="/workspace">Technical workspace</Link>
-          </nav>
-        </header>
-        <main id="main-content" tabIndex={-1}>
-          {children}
-        </main>
-        <footer className="safety-footer">
-          <ShieldCheck size={16} aria-hidden />
-          <span>
-            <strong>NOT FOR CLINICAL USE</strong> · Fictional teaching records only.
-          </span>
-        </footer>
-      </div>
+      <ShiftProvider>
+        <div className={studyStyles.studyShell}>
+          <header className={studyStyles.masthead}>
+            <Link href="/" className={studyStyles.wordmark}>
+              <Activity size={24} aria-hidden />
+              Asclepius
+            </Link>
+            <nav aria-label="Study navigation">
+              <Link href="/" aria-current={pathname === '/workspace' ? undefined : 'page'}>
+                Referral desk
+              </Link>
+              <Link href="/workspace" aria-current={pathname === '/workspace' ? 'page' : undefined}>
+                Technical reference
+              </Link>
+            </nav>
+          </header>
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
+          <footer className="safety-footer">
+            <ShieldCheck size={16} aria-hidden />
+            <span>
+              <strong>NOT FOR CLINICAL USE</strong> · Fictional teaching records only.
+            </span>
+          </footer>
+        </div>
+      </ShiftProvider>
     );
   }
   return (

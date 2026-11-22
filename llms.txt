@@ -12,7 +12,7 @@ clinical correctness. The drug-interaction knowledge base is incomplete.
 
 ## Start here
 
-- [Live demo](https://safetymp.github.io/Asclepius/): explore both fictional journeys
+- [Live demo](https://safetymp.github.io/Asclepius/): reconcile a fictional shift of incoming referral mail
 - [README](README.md): audience, capabilities, setup, and limitations
 - [Project vision](docs/PROJECT.md): scope, status, and priorities
 - [Journey walkthroughs](docs/JOURNEYS.md): routine follow-up and referral handoff

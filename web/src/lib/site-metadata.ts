@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 export const siteUrl = 'https://safetymp.github.io/Asclepius/';
 export const repositoryUrl = 'https://github.com/SafetyMP/Asclepius';
 export const siteDescription =
-  'Match a specialist report to a fictional referral. Explore two synthetic care journeys and linked FHIR records in the technical workspace. Not for clinical use.';
+  'Staff a fictional referral desk. Reconcile incoming mail, track report receipts and hand off open work. The kit includes two synthetic care journeys. Not for clinical use.';
 export const publicRoutes = [
   '',
   'resources/',

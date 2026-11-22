@@ -6,7 +6,8 @@ All captures use synthetic examples. **NOT_FOR_CLINICAL_USE.**
 
 | File | Purpose |
 | --- | --- |
-| [`care-journey.jpg`](care-journey.jpg) | Current README image: Alex’s routine follow-up and contextual record exploration |
+| [`referral-desk.png`](referral-desk.png) | Current README image: Willow’s correspondence desk and two synthetic referral registers |
+| [`care-journey.jpg`](care-journey.jpg) | Alex’s routine follow-up and contextual record exploration |
 | [`referral-handoff.jpg`](referral-handoff.jpg) | Current README image: Maya’s referral, coordination task, and planned receiving visit |
 
 Current images should be captured from the built static interface after its

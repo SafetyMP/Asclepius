@@ -3,11 +3,11 @@ import { expect, test } from '@playwright/test';
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 const published = 'https://safetymp.github.io/Asclepius/';
 const routes = [
-  ['', 'Referral review · Asclepius'],
+  ['', 'Referral desk · Asclepius'],
   ['resources/', 'Resource explorer · Asclepius'],
   ['validate/', 'Validation lab · Asclepius'],
   ['architecture/', 'How connected care works · Asclepius'],
-  ['workspace/', 'Technical workspace · Asclepius'],
+  ['workspace/', 'Technical reference · Asclepius'],
   ['journeys/', 'Care journey · Asclepius'],
 ] as const;
 
