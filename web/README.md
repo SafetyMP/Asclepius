@@ -1,8 +1,6 @@
 # Asclepius web — Connected care, explained
 
-A browser-based educational experience for healthcare stakeholders exploring a
-routine visit or referral handoff and its connected FHIR records. Developers can inspect the
-underlying examples, validation results, and architecture.
+A browser-based referral review and training decision for a coordinator, interface analyst and education lead. A separate implementation trace carries the selected case and sponsor assumptions.
 
 [Live demo](https://safetymp.github.io/Asclepius/) ·
 [Written journey guide](../docs/JOURNEYS.md) · [Project scope](../docs/PROJECT.md)
@@ -41,24 +39,11 @@ repository root for local synthetic experiments on port 8787.
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Referral correspondence desk with two requests, two deliveries and an end-of-shift handoff |
-| `/workspace/` | Source-linked reference for the fixture, desk state, validation service and local API |
-| `/journeys/` | Both care journeys, separate progress, and contextual records |
-| `/referral-review/` | Alternate entry to the referral-matching exercise |
-| `/patients/` | Alternate entry to the same synthetic care journey |
-| `/resources/` | Selected journey’s nine records, including multiple records of the same type |
-| `/validate/` | Browser validation lab, issue feedback, and missing-identity exercise |
-| `/architecture/` | Stakeholder orientation, referral context, glossary, and optional developer details |
-| `/interactions/` | Local DDI example explanation and source/test links |
-| `/cds/` | Local rule-composition explanation and source/test links |
-| `/auth/` | Local authentication explanation and setup references |
+| `/` | Maya’s referral review, document citation, queue decision, staff-time worksheet and training choice |
+| `/workspace/` | Selected-case trace, four filing replays and the shared validator with intact and missing-status trials |
+| `/referral-review/` | Alternate bookmark for the public case |
 
-The three local-reference routes do not invoke APIs or issue credentials.
-The selected journey and its navigation state remain in memory until refresh.
-Lab links include `journey` and the exact `Type/id` record key, so refreshing a
-referral draft reloads the correct synthetic sample. Practice edits are not saved.
-ServiceRequest and Task use the same limited Zod schemas as the local API; Task
-input/output supports only references and strings. The browser makes no API calls.
+Former technical bookmarks open the same compact implementation trace. Only the case and technical trace appear in the sitemap. Navigation between the two retains the current selections in memory. Refresh starts a new practice session unless using the technical evidence permalink, which restores the selected case and trials from its URL fragment. All actions use synthetic data and stay in the browser.
 
 ## Verification
 
@@ -72,8 +57,7 @@ npm run verify       # typecheck, static build, smoke browser suite
 npm run test:e2e      # complete browser suite against the existing export
 ```
 
-The browser tests use a Python static server. They exercise the learning
-journeys and accessibility; passing tests do not establish clinical validity or
+The browser tests use a Python static server. They exercise the referral decision, technical trials, legacy bookmarks and accessibility; passing tests do not establish clinical validity or
 measured user engagement. Review current command output before claiming a pass.
 
 ## GitHub Pages
@@ -116,7 +100,6 @@ live in `src/lib/examples.ts` and `src/lib/referral-examples.ts`. The
 validator and tests. Keep the [written walkthrough](../docs/JOURNEYS.md) aligned
 when changing either case.
 
-Use `npm run screenshots` against a running static preview to capture the two
-current README images. See [the asset guide](../docs/assets/README.md#refresh-current-screenshots)
+Use `npm run screenshots` against a running static preview to capture the referral study and its technical trace. See [the asset guide](../docs/assets/README.md#refresh-current-screenshots)
 for review output and Pages-subpath options. Historical console images remain
 preserved separately.

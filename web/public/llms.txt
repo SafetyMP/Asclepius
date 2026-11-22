@@ -8,13 +8,9 @@ Two cases, each with nine records: Alex Morgan's routine follow-up and Maya Chen
 
 ## Explore
 
-- [Referral desk](https://safetymp.github.io/Asclepius/): file incoming letters, reconcile receipts and hand off unresolved requests.
-- [Technical reference](https://safetymp.github.io/Asclepius/workspace/): source links for fixtures, desk state, the validator and local API.
-- [Care journeys](https://safetymp.github.io/Asclepius/journeys/): switch between both cases and follow the stages.
-- [Resource explorer](https://safetymp.github.io/Asclepius/resources/): inspect synthetic records and their connections.
-- [Validation lab](https://safetymp.github.io/Asclepius/validate/): eleven hand-authored schemas and three teaching rules, checked locally.
-- [How it works](https://safetymp.github.io/Asclepius/architecture/): stakeholder context and developer architecture.
-- [Sitemap](https://safetymp.github.io/Asclepius/sitemap.xml): canonical public pages.
+- [Review Maya’s referral](https://safetymp.github.io/Asclepius/): inspect Cedar’s evidence, cite the request, and compare onboarding approaches.
+- [Technical evidence](https://safetymp.github.io/Asclepius/workspace/): trace the selected case, replay filing and correction, and test the shared validator.
+- [Sitemap](https://safetymp.github.io/Asclepius/sitemap.xml): canonical public routes.
 
 ## Read the repository
 

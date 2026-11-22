@@ -1,7 +1,7 @@
 # Asclepius — Connected care, explained
 
 > A browser-only educational workspace for healthcare stakeholders exploring
-> two synthetic care journeys: a routine follow-up and a referral between teams.
+> a synthetic referral-review case and an onboarding decision.
 > NOT_FOR_CLINICAL_USE. No real patient data or clinical decisions.
 
 The public demo requires no account, API server, or credentials. A separate local
@@ -12,7 +12,7 @@ clinical correctness. The drug-interaction knowledge base is incomplete.
 
 ## Start here
 
-- [Live demo](https://safetymp.github.io/Asclepius/): reconcile a fictional shift of incoming referral mail
+- [Live demo](https://safetymp.github.io/Asclepius/): review a consultant report, choose a training pilot and inspect selected technical evidence
 - [README](README.md): audience, capabilities, setup, and limitations
 - [Project vision](docs/PROJECT.md): scope, status, and priorities
 - [Journey walkthroughs](docs/JOURNEYS.md): routine follow-up and referral handoff

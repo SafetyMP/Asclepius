@@ -1,7 +1,7 @@
 # Discoverability and repository upkeep
 
 Asclepius is **Connected care, explained**: an educational workspace for healthcare
-stakeholders exploring two synthetic care journeys, supported by a local FHIR R4
+stakeholders exploring a synthetic referral and training decision, supported by a local FHIR R4
 teaching core. Use this description consistently; do not describe the demo as a
 clinical platform, a live referral service, or a conformant production FHIR server.
 
@@ -15,15 +15,12 @@ clinical platform, a live referral service, or a conformant production FHIR serv
 | Contributor instructions | Portable source map and meaningful checks | [AGENTS.md](../AGENTS.md), [CONTRIBUTING.md](../CONTRIBUTING.md) |
 | Browser page metadata | Distinct titles, descriptions, canonical and share URLs | [site-metadata.ts](../web/src/lib/site-metadata.ts) and route layouts |
 | Structured data | Educational source identity and repository/license links | `SoftwareSourceCode` JSON-LD on the home page |
-| Sitemap | Six primary public routes under `/Asclepius/` | [sitemap.ts](../web/src/app/sitemap.ts) |
+| Sitemap | Two primary public routes under `/Asclepius/` | [sitemap.ts](../web/src/app/sitemap.ts) |
 | Agent reading maps | Short entry points with source links and scope | [llms.txt](../llms.txt), [public llms.txt](../web/public/llms.txt) |
 | Share card | Calm, clearly synthetic social preview | [SVG source](../web/public/social-preview.svg), [PNG](../web/public/social-preview.png) |
 
 The canonical public address is **https://safetymp.github.io/Asclepius/**.
-The primary routes are the referral case at `/`, the technical guide at `/workspace/`, and the tools at `/journeys/`, `/resources/`, `/validate/`, and `/architecture/`.
-Compatibility routes (`/referral-review/`, `/patients/`, `/auth/`, `/cds/`, `/interactions/`) stay usable
-for old links but have `noindex, follow` metadata and are omitted from the sitemap.
-Query parameters used to restore a sample in the lab canonicalize to the lab page.
+The public referral study at `/` and its compact technical evidence at `/workspace/` are canonical. The case alias and historical technical bookmarks are excluded from indexing. Saved technical links render the evidence inspector.
 
 Metadata is present in the exported HTML. The main page content is pre-rendered;
 interactive journey state still requires JavaScript. The walkthrough provides
