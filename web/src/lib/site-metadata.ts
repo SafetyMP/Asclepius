@@ -3,16 +3,8 @@ import type { Metadata } from 'next';
 // Canonicals describe the public deployment, including its GitHub Pages project path.
 export const siteUrl = 'https://safetymp.github.io/Asclepius/';
 export const repositoryUrl = 'https://github.com/SafetyMP/Asclepius';
-export const siteDescription =
-  'Staff a fictional referral desk. Reconcile incoming mail, track report receipts and hand off open work. The kit includes two synthetic care journeys. Not for clinical use.';
-export const publicRoutes = [
-  '',
-  'resources/',
-  'validate/',
-  'architecture/',
-  'workspace/',
-  'journeys/',
-] as const;
+export const siteDescription = 'Match a consultant report to a fictional referral, choose an onboarding pilot and trace the selected evidence through a teaching subset of FHIR. Not for clinical use.';
+export const publicRoutes = ['', 'workspace/'] as const;
 
 export function pageMetadata(
   path: string,
@@ -39,7 +31,7 @@ export function pageMetadata(
           url: image,
           width: 1200,
           height: 630,
-          alt: 'Asclepius: Connected care, explained. Two fictional journeys, linked FHIR records. Synthetic only; not for clinical use.',
+          alt: 'Asclepius: Connected care, explained. A fictional referral review and onboarding decision. Synthetic only; not for clinical use.',
         },
       ],
     },

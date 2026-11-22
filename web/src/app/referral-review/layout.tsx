@@ -2,8 +2,8 @@ import { pageMetadata } from '@/lib/site-metadata';
 
 export const metadata = pageMetadata(
   '',
-  'Referral desk · Asclepius',
-  'Reconcile incoming letters with two synthetic referrals and prepare an evidence-backed shift handoff.',
+  'Referral review · Asclepius',
+  'Match the consultant’s report to Maya’s referral and compare educational pilot choices and staff time.',
   false,
 );
 

@@ -3,12 +3,8 @@ import { expect, test } from '@playwright/test';
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 const published = 'https://safetymp.github.io/Asclepius/';
 const routes = [
-  ['', 'Referral desk · Asclepius'],
-  ['resources/', 'Resource explorer · Asclepius'],
-  ['validate/', 'Validation lab · Asclepius'],
-  ['architecture/', 'How connected care works · Asclepius'],
-  ['workspace/', 'Technical reference · Asclepius'],
-  ['journeys/', 'Care journey · Asclepius'],
+  ['', 'Referral review · Asclepius'],
+  ['workspace/', 'Technical evidence · Asclepius'],
 ] as const;
 
 // Inspect the response itself: crawlers must not need hydration to find these fields.
@@ -41,7 +37,17 @@ test.describe('Published discovery metadata @smoke', () => {
   });
 
   test('compatibility routes remain reachable but excluded from indexing', async ({ request }) => {
-    for (const route of ['patients', 'auth', 'cds', 'interactions', 'referral-review']) {
+    for (const route of [
+      'journeys',
+      'architecture',
+      'resources',
+      'validate',
+      'patients',
+      'auth',
+      'cds',
+      'interactions',
+      'referral-review',
+    ]) {
       const response = await request.get(`${base}/${route}/`);
       expect(response.ok()).toBe(true);
       expect(meta(await response.text(), 'robots')).toBe('noindex, follow');
@@ -58,7 +64,7 @@ test.describe('Published discovery metadata @smoke', () => {
     expect(data['@type']).toBe('SoftwareSourceCode');
     expect(data.codeRepository).toBe('https://github.com/SafetyMP/Asclepius');
     expect(data.url).toBe(published);
-    expect(data.description).toContain('two synthetic care journeys');
+    expect(data.description).toContain('onboarding pilot');
     expect(data.description).toContain('Not for clinical use');
     expect(data.license).toBe('https://www.apache.org/licenses/LICENSE-2.0');
     expect(data).not.toHaveProperty('aggregateRating');

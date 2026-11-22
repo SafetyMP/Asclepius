@@ -6,13 +6,10 @@ All captures use synthetic examples. **NOT_FOR_CLINICAL_USE.**
 
 | File | Purpose |
 | --- | --- |
-| [`referral-desk.png`](referral-desk.png) | Current README image: Willow’s correspondence desk and two synthetic referral registers |
-| [`care-journey.jpg`](care-journey.jpg) | Alex’s routine follow-up and contextual record exploration |
-| [`referral-handoff.jpg`](referral-handoff.jpg) | Current README image: Maya’s referral, coordination task, and planned receiving visit |
+| [referral-study.jpg](referral-study.jpg) | Selected report and original paired referral review |
+| [referral-trace.jpg](referral-trace.jpg) | Technical evidence for the selected case and a corrected filing trial |
 
-Current images should be captured from the built static interface after its
-layout has been reviewed. It demonstrates the rendered interface only; it is
-not evidence of user engagement, clinical validity, or a live Pages deployment.
+The prior desk and journey images are historical captures. These synthetic images document interface state only.
 
 ## Historical console assets
 
@@ -31,7 +28,7 @@ screenshots of the current interface and are no longer displayed as its demo.
 ## Refresh current screenshots
 
 The [`capture-screenshots.mjs`](../../web/scripts/capture-screenshots.mjs) script
-captures the current routine journey and the referral handoff inspector as JPEGs.
+captures the selected referral review and its technical filing replay as JPEGs.
 It does not regenerate the historical PNGs or GIF.
 
 ```bash

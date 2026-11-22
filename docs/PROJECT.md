@@ -11,32 +11,11 @@ Do not enter real patient data or use these examples to make clinical decisions.
 
 ## The experience we are building
 
-A visitor should be able to open the [care journeys](https://safetymp.github.io/Asclepius/journeys/),
-understand the selected case, follow its connected records, and explain which team
-owns the next step without installing software or learning FHIR first. FHIR stands
-for Fast Healthcare Interoperability Resources; this repository teaches a limited
-subset of its R4 record structures.
+The [public study](https://safetymp.github.io/Asclepius/) asks whether Willow can record a returned report for Maya’s referral. The coordinator decides, the analyst cites the exact request, and the education lead compares training approaches using paired accuracy measures, staff time and a delayed retest.
 
-The design uses a calm workspace, plain-language facts, visible ownership, and
-optional technical details. Each journey keeps its own navigation context while
-visitors switch cases. This is an educational snapshot, not a system for carrying
-out care coordination.
+The technical route carries the chosen document, queue decision, citation and pilot assumptions. It links the original request, coordination and receiving visit to the underlying fixture and checks a local copy with the shared teaching validator. Earlier public technical bookmarks resolve to that same compact evidence.
 
-## What is available
-
-| Surface | Current scope |
-| --- | --- |
-| Care journeys | Alex’s routine follow-up and Maya’s referral between Willow and Cedar; nine synthetic records per journey |
-| Resource explorer | Case-specific record facts, incoming/outgoing links, search, and navigation history |
-| Validation lab | Shared eleven-schema teaching subset and three profile rules, plus a missing-identity repair exercise |
-| How it works | Stakeholder orientation, glossary, referral ownership, and optional architecture detail |
-| Local teaching core | TypeScript, Zod, ports and adapters, Hono API, storage, search, auth, audit, and rule examples |
-| Publishing | Static GitHub Pages demo built and checked from `main` through GitHub Actions |
-
-The public demo runs in the browser without an API, login, or token. The local API
-is separate teaching material. Browser practice edits do not update the fictional
-case or survive leaving the validation lab. Journey navigation state lasts until
-refresh.
+The separate local TypeScript core provides the Zod schemas, Hono API, persistence, auth, search, audit and educational rule examples. Browser interactions stay in memory and do not call clinical systems.
 
 ## Boundaries
 
@@ -68,7 +47,7 @@ observation with intended users before being described as measured improvements.
 
 These are areas for discussion, not promised releases:
 
-1. Observe intended stakeholders using the two journeys and document where their
+1. Observe intended stakeholders using the referral study and document where their
    interpretation differs from the intended learning outcome.
 2. Improve explanations, navigation, and accessibility where evidence shows friction.
 3. Keep documentation, metadata, and agent instructions aligned with the actual demo.

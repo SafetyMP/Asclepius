@@ -8,7 +8,7 @@ patient data, clinical systems, or production deployments.
 
 | Need | Where to go |
 | --- | --- |
-| Understand the two journeys and their limits | [README](README.md), [How it works](https://safetymp.github.io/Asclepius/architecture/) |
+| Understand the two journeys and their limits | [README](README.md), [Selected technical evidence](https://safetymp.github.io/Asclepius/workspace/) |
 | Ask a usage or setup question | [Question form](https://github.com/SafetyMP/Asclepius/issues/new?template=question.yml) |
 | Report broken behavior, confusing context, or accessibility friction | [Bug report](https://github.com/SafetyMP/Asclepius/issues/new?template=bug_report.yml) |
 | Suggest an improvement | [Feature request](https://github.com/SafetyMP/Asclepius/issues/new?template=feature_request.yml) |

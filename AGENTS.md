@@ -6,9 +6,7 @@ no personal machine configuration or external agent runtime is required.
 ## Product intent and reading map
 
 Asclepius explains connected care through **synthetic workflows for healthcare
-stakeholders**. The calm browser workspace offers a routine follow-up and a
-referral between care teams, plus linked records and a validation lab. The local
-TypeScript FHIR teaching core remains a separate developer reference.
+stakeholders**. The public study asks coordinators and interface analysts to evaluate the same referral, then gives the education lead a training decision. Its compact technical trace reuses the underlying fixture, filing trials and validator. The local TypeScript FHIR teaching core remains separate.
 
 Read only the context needed for the task:
 
@@ -16,8 +14,8 @@ Read only the context needed for the task:
 | --- | --- |
 | Product scope and limitations | [README.md](README.md), [design rationale](docs/DESIGN-PIVOT.md) |
 | Setup, contribution, and checks | [CONTRIBUTING.md](CONTRIBUTING.md), [web guide](web/README.md) |
-| Journey content and navigation | `web/src/lib/journeys.ts`, `web/src/lib/examples.ts`, `web/src/lib/referral-examples.ts`, `web/src/components/workspace/` |
-| Record explanations and connections | `web/src/lib/record-context.ts`, `web/src/components/workspace/resource-explorer.tsx` |
+| Source fixture content | `web/src/lib/journeys.ts`, `web/src/lib/examples.ts`, `web/src/lib/referral-examples.ts`, `web/src/components/workspace/` |
+| Earlier journey components | `web/src/lib/record-context.ts`, `web/src/components/workspace/resource-explorer.tsx` |
 | Shared validation and local API | `src/domain/fhir/`, `src/service/validation/`, [architecture decisions](docs/adr/) |
 | Documentation and discovery | [documentation map](docs/README.md) |
 | Security reports | [SECURITY.md](SECURITY.md) |

@@ -23,8 +23,8 @@ deeper development exercises. **NOT_FOR_CLINICAL_USE. Synthetic data only.**
 | [`web/src/lib/examples.ts`](../web/src/lib/examples.ts) | Alex’s nine fictional routine follow-up records |
 | [`web/src/lib/referral-examples.ts`](../web/src/lib/referral-examples.ts) | Maya’s nine fictional referral and handoff records |
 | [`web/src/lib/record-context.ts`](../web/src/lib/record-context.ts) | Plain-language record facts and connections within a journey |
-| [`web/src/components/workspace/`](../web/src/components/workspace/) | Journey switching, progress, exploration, and contextual inspection |
-| [`web/src/app/`](../web/src/app/) | Static pages, validation lab, and explanatory routes |
+| [`web/src/components/workspace/`](../web/src/components/workspace/) | Earlier journey components, retained as source |
+| [`web/src/app/`](../web/src/app/) | Referral study, educator worksheet, technical filing trials and shared validation |
 | [`src/domain/fhir/`](../src/domain/fhir/) | Shared Zod schemas and inferred types; limited FHIR R4 subset |
 | [`src/service/`](../src/service/) | Validation, search, rules, and intentionally incomplete DDI examples |
 | [`src/port/`](../src/port/) and [`src/adapter/`](../src/adapter/) | Local reference interfaces and HTTP, storage, auth, and audit implementations |

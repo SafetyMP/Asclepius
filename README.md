@@ -4,81 +4,19 @@
 [![CodeQL](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml)
 [![License: Apache-2.0](https://img.shields.io/github/license/SafetyMP/Asclepius)](LICENSE)
 
-Explore how a fictional visit or referral becomes connected health records. Asclepius gives
-healthcare stakeholders a guided view of two synthetic cases, their context, and the
-FHIR (Fast Healthcare Interoperability Resources) records behind each story. Developers can look deeper in the validation lab and
-ports-and-adapters teaching kit.
+**[Can Willow mark Maya’s report as received?](https://safetymp.github.io/Asclepius/)** A referral coordinator chooses the queue entry. An interface analyst cites the exact request in Cedar’s document. An interoperability education lead compares a mentor walkthrough, a one-page guide and a practice exercise for the next intake.
 
-**[Explore the live demo](https://safetymp.github.io/Asclepius/)** ·
-[Read both journeys](docs/JOURNEYS.md) · [Project vision](docs/PROJECT.md) ·
-[Documentation map](docs/README.md)
+![Original review case with Willow’s request and Cedar’s selected document](docs/assets/referral-study.jpg)
 
-**[Staff Willow’s referral desk](https://safetymp.github.io/Asclepius/).** Reconcile incoming mail for two synthetic requests involving the same person. Compare the full request reference, file correspondence or enter a report receipt, assign follow-up and receive the afternoon delivery. The shift handoff shows which entries have supporting evidence and which open requests still need an owner. The [technical reference](https://safetymp.github.io/Asclepius/workspace/) traces the register, fixture, validator and local API to their source.
+## Work through the case
 
-The demo runs in the browser, with no account, API server, or token required.
+1. Inspect the original coordination note and the two consultant reports. The same person can have two referrals. Check the queue decision and the exact reference separately.
+2. Change annual learners, combined staff minutes saved and preparation hours. Choose the next training approach and decide how the referral lead and interface mentor will test retained accuracy one week later.
+3. Open [technical evidence](https://safetymp.github.io/Asclepius/workspace/) to trace the selected document, note and sponsor assumptions. Compare filing the same letter against two registers, then run the shared validator on an intact fixture and a copy with its required status removed.
 
-> **NOT_FOR_CLINICAL_USE — NOT FOR CLINICAL USE.** Synthetic examples only.
-> Do not store, process, or base clinical decisions on real patient data.
-> Asclepius is an educational reference, not a clinical data platform or a
-> production FHIR server. Its drug-interaction knowledge base is intentionally
-> incomplete. Never connect it to real clinical systems, pharmacies, or EHRs.
+The [fixture guide](docs/JOURNEYS.md) documents the authored records. The [web guide](web/README.md) covers local setup, routes and tests. The public exercise needs no account, API server or token.
 
-![Willow referral desk with one coordination notice and a consultant letter filed against two different requests](docs/assets/referral-desk.png)
-
-## Start with your question
-
-| Your goal | Start here |
-| --- | --- |
-| Understand how a visit becomes connected records | [Live care journeys](https://safetymp.github.io/Asclepius/journeys/) or the [written walkthrough](docs/JOURNEYS.md) |
-| Follow a referral between care teams | [Maya’s handoff guide](docs/JOURNEYS.md#maya-a-referral-and-handoff) |
-| Explore the code or contribute | [Local setup](#run-the-browser-demo-locally), [contributing](CONTRIBUTING.md), and [architecture decisions](docs/adr/README.md) |
-| Navigate the repository with a coding agent | [Repository instructions](AGENTS.md) and [source map](docs/README.md#source-map) |
-
-## Explore the story, then the structure
-
-- **Care journeys:** follow Alex’s routine visit or Maya’s referral from Willow
-  to Cedar. Inspect the records that give each step its context.
-- **Resource explorer:** read key facts, follow incoming and outgoing
-  connections, and retrace your steps through nine fictional records in each journey.
-  “View all” clears prior filters; sidebar navigation resumes the saved search.
-- **Validation lab:** check a sample and repair a missing identity without
-  coding. JSON editing is available under advanced details. Checks run locally
-  in the browser and do not change the fictional case.
-- **How it works:** start with stakeholder questions and a plain-language
-  glossary; expand developer architecture and source links when needed.
-
-Each journey keeps its own progress, open record, and explorer search while
-navigating within the demo. Refresh starts a new session; practice drafts are
-discarded when leaving the lab.
-
-The interface is designed around a calm workspace and a contextual first
-interaction. It replaces the former clinical-console tool grid and setup-first
-experience. The intended improvements are easier orientation and a clearer
-connection between a case and its data; these are design hypotheses, not
-measured claims of better engagement. See [the design rationale](docs/DESIGN-PIVOT.md).
-
-### Referral and handoff
-
-Choose **A referral and handoff** for Maya Chen’s fictional Willow → Cedar journey.
-The referral remains active, Cedar’s coordination task is completed, and the
-receiving visit is planned. Stage navigation explores a fixed teaching snapshot;
-it does not change statuses or send a referral. Full record identities keep the
-two practitioners, organizations, and visits distinct. The final stage opens the
-handoff record, with prominent links to the request and planned receiving visit.
-
-![Maya’s synthetic referral and handoff between Willow and Cedar](docs/assets/referral-handoff.jpg)
-
-### What validation means here
-
-The lab uses the repository’s eleven hand-authored FHIR R4 Zod schemas and three
-teaching profile rules. Passing means **passes this teaching subset**. It does
-not establish full FHIR conformance, terminology validity, reference existence,
-clinical correctness, or the safety of a treatment. The resource types are
-Patient, Practitioner, Organization, Encounter, Condition, Observation,
-MedicationRequest, AllergyIntolerance, DiagnosticReport, ServiceRequest, and Task.
-The referral subset checks request and coordination structure. Task input/output
-values support references or strings only. It does not verify receipt by a team,
-clinical appropriateness, or completion of care.
+> **NOT_FOR_CLINICAL_USE — NOT FOR CLINICAL USE.** Synthetic examples only. Never use real patient data. The educational subset does not establish full FHIR conformance, clinical correctness, treatment safety, or specialist report delivery in a real clinic. The local drug-interaction knowledge base is intentionally incomplete.
 
 ## Run the browser demo locally
 
