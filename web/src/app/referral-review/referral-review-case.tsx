@@ -97,13 +97,18 @@ export default function ReferralReview() {
   const { setJourneyId, setJourneyState } = useJourney();
   const [inbox, setInbox] = useState<(typeof inboxScenarios)[number]>(inboxScenarios[0]);
   const [decision, setDecision] = useState<'track' | 'received' | null>(null);
+  const [inspected, setInspected] = useState(false);
+  const [citation, setCitation] = useState('');
+  const [graded, setGraded] = useState(false);
   const [cohort, setCohort] = useState(24);
   const [minutes, setMinutes] = useState(15);
   const [setup, setSetup] = useState(6);
   const savedHours = (cohort * minutes) / 60;
   const netHours = savedHours - setup;
   const chartMax = Math.max(savedHours, setup, 1);
-  const matched = decision === inbox.decision;
+  const referenceMatches = citation.trim() === inbox.reference;
+  const actionMatches = decision === inbox.decision;
+  const canCheck = inspected && citation.trim().length > 0 && decision !== null;
 
   function selectRecord(key: string) {
     setJourneyId('referral');
@@ -119,7 +124,7 @@ export default function ReferralReview() {
             <h1 id="decision-title">Can Willow mark Maya’s report as received?</h1>
             <p>
               Match the inbox document to the open referral. As the coordinator, choose a queue
-              entry. As the interface analyst, identify the evidence that supports it.
+              entry. As the interface analyst, cite the exact request the document names.
             </p>
           </div>
           <ReferralPath />
@@ -135,7 +140,10 @@ export default function ReferralReview() {
                   checked={inbox === item}
                   onChange={() => {
                     setInbox(item);
+                    setInspected(false);
+                    setCitation('');
                     setDecision(null);
+                    setGraded(false);
                   }}
                 />
                 {item.label}
@@ -173,47 +181,107 @@ export default function ReferralReview() {
               <UserRound size={16} aria-hidden />
               Maya Chen · {inbox.sender}
             </p>
-            <dl>
-              <dt>
-                <Link2 size={15} aria-hidden />
-                Referral reference
-              </dt>
-              <dd>
-                <code>{inbox.reference}</code>
-              </dd>
-            </dl>
-            <p>{inbox.note}</p>
+            <details
+              className={styles.sourceDetails}
+              key={inbox.label}
+              onToggle={(event) => {
+                if (event.currentTarget.open) setInspected(true);
+              }}
+            >
+              <summary>Inspect document details</summary>
+              <dl>
+                <dt>
+                  <Link2 size={15} aria-hidden />
+                  Referral reference
+                </dt>
+                <dd>
+                  <code>{inbox.reference}</code>
+                </dd>
+              </dl>
+              <p>{inbox.note}</p>
+            </details>
           </section>
         </div>
-        <div className={styles.queueEntry}>
-          <fieldset className={styles.choices}>
+        <form
+          className={styles.queueEntry}
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (canCheck) setGraded(true);
+          }}
+        >
+          <h2>Your review note</h2>
+          <p id="citation-help">
+            Open the inbox document, then copy its full referral reference into your note.
+          </p>
+          <label className={styles.citation}>
+            Request cited by the inbox document
+            <input
+              type="text"
+              value={citation}
+              disabled={!inspected}
+              aria-describedby="citation-help"
+              autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              onChange={(event) => {
+                setCitation(event.target.value);
+                setGraded(false);
+              }}
+            />
+          </label>
+          <fieldset
+            className={styles.choices}
+            disabled={!inspected || citation.trim().length === 0}
+          >
             <legend>Which queue entry does the evidence support?</legend>
-            <button
-              className={decision === 'track' ? 'button primary' : 'button secondary'}
-              aria-pressed={decision === 'track'}
-              onClick={() => setDecision('track')}
-            >
-              Continue tracking the report
-            </button>
-            <button
-              className={decision === 'received' ? 'button primary' : 'button secondary'}
-              aria-pressed={decision === 'received'}
-              onClick={() => setDecision('received')}
-            >
-              Mark report received
-            </button>
+            {(
+              [
+                ['track', 'Continue tracking the report'],
+                ['received', 'Mark report received'],
+              ] as const
+            ).map(([value, text]) => (
+              <label className={styles.actionChoice} key={value}>
+                <input
+                  type="radio"
+                  name="queue"
+                  checked={decision === value}
+                  onChange={() => {
+                    setDecision(value);
+                    setGraded(false);
+                  }}
+                />
+                {text}
+              </label>
+            ))}
           </fieldset>
-          <div aria-live="polite" className={styles.feedback}>
-            {decision && (
-              <p>
-                <strong>
-                  {matched ? 'Supported by this evidence. ' : 'Recheck the evidence. '}
-                </strong>
-                {inbox.response}
-              </p>
+          <button className="button primary" disabled={!canCheck} type="submit">
+            Check my review note
+          </button>
+          <div aria-live="polite">
+            {graded && (
+              <div className={styles.assessment}>
+                <h3>
+                  {referenceMatches && actionMatches
+                    ? 'Both parts of your note are supported.'
+                    : 'Review your note.'}
+                </h3>
+                <dl>
+                  <dt>Request reference</dt>
+                  <dd>
+                    {referenceMatches
+                      ? 'Matches the inbox document.'
+                      : 'Reopen the inbox document and copy its full referral reference. The open request and the cited request can differ.'}
+                  </dd>
+                  <dt>Queue decision</dt>
+                  <dd>
+                    <strong>{actionMatches ? 'Supported. ' : 'Recheck the action. '}</strong>
+                    {inbox.response}
+                  </dd>
+                </dl>
+              </div>
             )}
           </div>
-        </div>
+        </form>
       </section>
 
       <section className={styles.section} aria-labelledby="evidence-title">

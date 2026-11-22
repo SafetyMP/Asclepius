@@ -3,32 +3,61 @@ import AxeBuilder from '@axe-core/playwright';
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
-test('compare the fixed snapshot with a hypothetical receipt and trace its records @smoke', async ({
+test('grade the cited request and the queue action only after exploring the inbox @smoke', async ({
   page,
 }) => {
   await page.goto(`${base}/`);
-  await expect(
-    page.getByRole('heading', { level: 1, name: 'Can Willow mark Maya’s report as received?' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: 'Mark report received' }).click();
-  await expect(page.getByText('Recheck the evidence.')).toBeVisible();
-  await page.getByRole('button', { name: 'Continue tracking the report' }).click();
-  await expect(page.getByText('Supported by this evidence.')).toBeVisible();
-  await page.getByRole('radio', { name: 'Report A' }).check();
-  await expect(page.getByText('Supported by this evidence.')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Mark report received' }).click();
-  await expect(page.getByText('Supported by this evidence.')).toBeVisible();
+  const document = page.getByRole('region', { name: 'Selected inbox document' });
+  const note = page.getByRole('textbox', { name: 'Request cited by the inbox document' });
+  const submit = page.getByRole('button', { name: 'Check my review note' });
+  const supported = page.getByRole('heading', { name: 'Both parts of your note are supported.' });
+  const track = page.getByRole('radio', { name: 'Continue tracking the report' });
+  const received = page.getByRole('radio', { name: 'Mark report received' });
+  await expect(note).toBeDisabled();
+  await expect(submit).toBeDisabled();
+  await expect(document.getByText('ServiceRequest/referral-request')).toBeHidden();
+  await expect(supported).toHaveCount(0);
+  const inspect = document.getByText('Inspect document details');
+  await inspect.click();
+  await expect(track).toBeDisabled();
+  await note.fill('ServiceRequest/referral-request');
+  await expect(submit).toBeDisabled();
+  await track.check();
+  await expect(supported).toHaveCount(0);
+  await submit.click();
+  await expect(supported).toBeVisible();
+
   await page.getByRole('radio', { name: 'Report B' }).check();
-  await expect(page.getByRole('region', { name: 'Selected inbox document' })).toContainText(
-    'ServiceRequest/earlier-request',
-  );
-  await expect(page.getByRole('region', { name: 'Open referral' })).toContainText(
-    'ServiceRequest/referral-request',
-  );
-  await page.getByRole('button', { name: 'Mark report received' }).click();
-  await expect(page.getByText('Recheck the evidence.')).toBeVisible();
-  await page.getByRole('button', { name: 'Continue tracking the report' }).click();
-  await expect(page.getByText('Supported by this evidence.')).toBeVisible();
+  await expect(note).toHaveValue('');
+  await expect(note).toBeDisabled();
+  await expect(document.getByText('ServiceRequest/earlier-request')).toBeHidden();
+  await expect(submit).toBeDisabled();
+  await expect(supported).toHaveCount(0);
+  await inspect.click();
+  await note.fill('ServiceRequest/referral-request');
+  await track.check();
+  await submit.click();
+  await expect(page.getByText('Review your note.', { exact: true })).toBeVisible();
+  await expect(page.getByText(/Reopen the inbox document and copy/)).toBeVisible();
+  await expect(supported).toHaveCount(0);
+  await note.fill('ServiceRequest/earlier-request');
+  await expect(page.getByText('Review your note.', { exact: true })).toHaveCount(0);
+  await received.check();
+  await submit.click();
+  await expect(page.getByText('Matches the inbox document.')).toBeVisible();
+  await expect(page.getByText('Recheck the action.')).toBeVisible();
+  await expect(supported).toHaveCount(0);
+  await track.check();
+  await submit.click();
+  await expect(supported).toBeVisible();
+
+  await page.getByRole('radio', { name: 'Report A' }).check();
+  await inspect.click();
+  await expect(document.getByText('ServiceRequest/referral-request')).toBeVisible();
+  await note.fill('ServiceRequest/referral-request');
+  await received.check();
+  await submit.click();
+  await expect(supported).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.getByRole('link', { name: 'Inspect Encounter' }).click();
   const detail = page.getByRole('region', { name: 'Encounter details' });

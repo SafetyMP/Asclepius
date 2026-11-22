@@ -13,7 +13,7 @@ ports-and-adapters teaching kit.
 [Read both journeys](docs/JOURNEYS.md) · [Project vision](docs/PROJECT.md) ·
 [Documentation map](docs/README.md)
 
-**[Try the referral review](https://safetymp.github.io/Asclepius/).** Cedar has finished coordinating Maya’s visit. Does Willow have enough evidence to mark her specialist report received? A referral coordinator can choose a queue entry while an interface analyst traces the report to its request. Try a receipt for an earlier referral for the same person. An interoperability education lead can compare the exercise with a status guide or mentor walkthrough using staff time, correct decisions and correct record matches.
+**[Try the referral review](https://safetymp.github.io/Asclepius/).** Cedar has finished coordinating Maya’s visit. Does Willow have enough evidence to mark her specialist report received? Inspect the inbox document and cite its full referral reference before choosing a queue entry. The exercise checks the citation and action separately. Try both consultant reports for the same person. An interoperability education lead can compare the exercise with a status guide or mentor walkthrough using staff time, correct decisions and correct record matches.
 
 The demo runs in the browser, with no account, API server, or token required.
 
