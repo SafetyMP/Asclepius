@@ -41,8 +41,8 @@ repository root for local synthetic experiments on port 8787.
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Referral-matching exercise and educator worksheet |
-| `/workspace/` | Compact guide to the teaching tools, fixtures and their limits |
+| `/` | Referral correspondence desk with two requests, two deliveries and an end-of-shift handoff |
+| `/workspace/` | Source-linked reference for the fixture, desk state, validation service and local API |
 | `/journeys/` | Both care journeys, separate progress, and contextual records |
 | `/referral-review/` | Alternate entry to the referral-matching exercise |
 | `/patients/` | Alternate entry to the same synthetic care journey |

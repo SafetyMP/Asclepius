@@ -2,8 +2,8 @@ import { pageMetadata } from '@/lib/site-metadata';
 
 export const metadata = pageMetadata(
   '',
-  'Referral review · Asclepius',
-  'Use three fictional FHIR records to review a referral handoff and weigh the staff time for a training pilot.',
+  'Referral desk · Asclepius',
+  'Reconcile incoming letters with two synthetic referrals and prepare an evidence-backed shift handoff.',
   false,
 );
 

@@ -4,55 +4,58 @@ import styles from '../referral-review/case.module.css';
 
 export const metadata = pageMetadata(
   'workspace/',
-  'Technical workspace · Asclepius',
-  'Find care journeys, linked FHIR resources, validation tools and the limits of the synthetic evidence.',
+  'Technical reference · Asclepius',
+  'Trace the static referral desk, synthetic resource identities, shared validation service and separate local API to their TypeScript sources.',
 );
-
+const source = 'https://github.com/SafetyMP/Asclepius/blob/main/';
+const components = [
+  [
+    'Record identity',
+    'The referral fixture links the request, coordination task and planned encounter by ResourceType/id.',
+    'web/src/lib/referral-examples.ts',
+  ],
+  [
+    'Desk state',
+    'The register stores local filing decisions separately from the immutable FHIR snapshot. Reloading clears the practice shift.',
+    'web/src/app/referral-review/shift.tsx',
+  ],
+  [
+    'Teaching validation',
+    'The shared Zod parser and three profile rules return an OperationOutcome for eleven supported R4 resource types.',
+    'src/service/validation/service.ts',
+  ],
+  [
+    'Local API',
+    'The Hono composition root wires service ports to memory or SQLite adapters. The exported Pages demo needs no API or credentials.',
+    'src/app.ts',
+  ],
+] as const;
 export default function Workspace() {
   return (
-    <article className={`workspace-page ${styles.guide}`}>
-      <header>
-        <p className={styles.documentLabel}>FHIR R4 teaching kit</p>
-        <h1>Technical workspace</h1>
-        <p>Trace a reference, check a resource, or see what the fictional cases can establish.</p>
-      </header>
-      <details open>
-        <summary>Teaching tools</summary>
-        <ul>
-          <li>
-            <Link href="/journeys">Care journeys</Link> · Follow Alex’s visit or Maya’s referral.
-          </li>
-          <li>
-            <Link href="/resources">Resource explorer</Link> · Inspect the full record and its
-            links.
-          </li>
-          <li>
-            <Link href="/validate">Validation lab</Link> · Check and repair a synthetic resource.
-          </li>
-        </ul>
-      </details>
-      <details>
-        <summary>Fixtures and evidence</summary>
-        <p>
-          Each journey has nine authored records. The original referral snapshot contains an active
-          request, a completed coordination task, and a planned receiving visit. Report A and Report
-          B are hypothetical inbox documents in the case exercise.
-        </p>
-        <a href="https://github.com/SafetyMP/Asclepius/blob/main/web/src/lib/referral-examples.ts">
-          Inspect Maya’s fixture records
-        </a>
-      </details>
-      <details>
-        <summary>Validation limits and architecture</summary>
-        <p>
-          The lab checks eleven resource schemas and three teaching rules. A passing check cannot
-          establish that a visit happened or a report reached the right person.
-        </p>
-        <Link href="/architecture">How the teaching kit works</Link>
-      </details>
-      <Link className="text-link" href="/">
-        Return to the referral exercise
-      </Link>
+    <article className={styles.guide}>
+      <p className={styles.kicker}>Asclepius · Implementation notes</p>
+      <h1>Technical reference</h1>
+      <p>
+        The browser reads authored fixtures. Filing an envelope changes only the practice register.
+      </p>
+      <dl>
+        {components.map(([title, description, path]) => (
+          <div key={title}>
+            <dt>{title}</dt>
+            <dd>
+              {description}{' '}
+              <a href={source + path}>
+                Source<span className="sr-only"> for {title}</span>
+              </a>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p className={styles.limit}>
+        A passing schema check establishes teaching-subset structure. Report delivery, clinical
+        correctness and full FHIR conformance require separate evidence.
+      </p>
+      <Link href="/">Return to the referral desk</Link>
     </article>
   );
 }

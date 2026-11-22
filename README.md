@@ -13,7 +13,7 @@ ports-and-adapters teaching kit.
 [Read both journeys](docs/JOURNEYS.md) · [Project vision](docs/PROJECT.md) ·
 [Documentation map](docs/README.md)
 
-**[Try the referral review](https://safetymp.github.io/Asclepius/).** Cedar has finished coordinating Maya’s visit. Does Willow have enough evidence to mark her specialist report received? Inspect the inbox document and cite its full referral reference before choosing a queue entry. The exercise checks the citation and action separately. Try both consultant reports for the same person. An interoperability education lead can compare the exercise with a status guide or mentor walkthrough using staff time, correct decisions and correct record matches.
+**[Staff Willow’s referral desk](https://safetymp.github.io/Asclepius/).** Reconcile incoming mail for two synthetic requests involving the same person. Compare the full request reference, file correspondence or enter a report receipt, assign follow-up and receive the afternoon delivery. The shift handoff shows which entries have supporting evidence and which open requests still need an owner. The [technical reference](https://safetymp.github.io/Asclepius/workspace/) traces the register, fixture, validator and local API to their source.
 
 The demo runs in the browser, with no account, API server, or token required.
 
