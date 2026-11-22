@@ -41,7 +41,10 @@ repository root for local synthetic experiments on port 8787.
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Two synthetic journeys, separate progress, and contextual records |
+| `/` | Referral-matching exercise and educator worksheet |
+| `/workspace/` | Compact guide to the teaching tools, fixtures and their limits |
+| `/journeys/` | Both care journeys, separate progress, and contextual records |
+| `/referral-review/` | Alternate entry to the referral-matching exercise |
 | `/patients/` | Alternate entry to the same synthetic care journey |
 | `/resources/` | Selected journey’s nine records, including multiple records of the same type |
 | `/validate/` | Browser validation lab, issue feedback, and missing-identity exercise |

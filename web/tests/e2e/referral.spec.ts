@@ -80,7 +80,7 @@ test.describe('Referral and handoff journey @smoke', () => {
   test('follow referral preparation, receiving team review, and a recorded handoff', async ({
     page,
   }) => {
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await selectReferral(page);
     await expect(page.getByRole('heading', { name: referral.headline })).toBeVisible();
     await expect(page.getByRole('tab', { name: /Referral/ })).toHaveAttribute(
@@ -175,7 +175,7 @@ test.describe('Referral and handoff journey @smoke', () => {
   test('preserve each journey’s stage and selection separately across the lab and journey switching', async ({
     page,
   }) => {
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await page.getByRole('button', { name: 'Next: Assessment' }).click();
     await page
       .getByRole('button', { name: 'Inspect Observation: Temperature measurement' })
@@ -184,7 +184,7 @@ test.describe('Referral and handoff journey @smoke', () => {
     await page.getByRole('tab', { name: /Handoff/ }).click();
     await page.getByRole('button', { name: 'Explore the handoff', exact: true }).click();
     await expect(page.getByRole('region', { name: 'Task details' })).toBeFocused();
-    await expect(page).toHaveURL(new RegExp(`${base}/$`));
+    await expect(page).toHaveURL(new RegExp(`${base}/journeys/$`));
     await page
       .getByRole('region', { name: 'Task details' })
       .getByRole('link', { name: 'Check record structure', exact: true })
@@ -283,7 +283,7 @@ test.describe('Referral and handoff journey @smoke', () => {
   test('follow the prominent handoff path and retrace request and planned-visit context', async ({
     page,
   }) => {
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await selectReferral(page);
     await page.getByRole('tab', { name: /Handoff/ }).click();
     await page.getByRole('button', { name: 'Explore the handoff', exact: true }).click();
@@ -319,7 +319,7 @@ test.describe('Referral and handoff journey @smoke', () => {
   }) => {
     test.setTimeout(60_000);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await page.getByRole('button', { name: 'Inspect Patient: Alex Morgan', exact: true }).click();
     await selectReferral(page);
     await page.getByRole('tab', { name: /Handoff/ }).click();
@@ -380,7 +380,7 @@ test.describe('Referral and handoff journey @smoke', () => {
   }) => {
     test.setTimeout(60_000);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await selectReferral(page);
     await checkAccessibility(page);
     await page.getByRole('tab', { name: /Handoff/ }).click();

@@ -24,7 +24,7 @@ export default function ResourcesPage() {
         </span>
       </div>
       <JourneyPicker />
-      <Link className="text-link context-return" href="/">
+      <Link className="text-link context-return" href="/journeys">
         <ArrowLeft size={16} />
         Back to care journey
       </Link>

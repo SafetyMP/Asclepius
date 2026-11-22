@@ -1,5 +1,5 @@
 import { sourceCodeSchema } from '@/lib/site-metadata';
-import { ScenarioWorkspace } from '@/components/workspace/scenario-workspace';
+import ReferralReview from './referral-review/referral-review-case';
 export default function Home() {
   return (
     <>
@@ -9,7 +9,7 @@ export default function Home() {
           __html: JSON.stringify(sourceCodeSchema).replace(/</g, '\\u003c'),
         }}
       />
-      <ScenarioWorkspace />
+      <ReferralReview />
     </>
   );
 }

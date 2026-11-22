@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import studyStyles from '@/app/referral-review/case.module.css';
 import { useJourney } from '@/components/workspace/journey-context';
 import { getJourney } from '@/lib/journeys';
 import { useHydrated } from '@/lib/use-hydrated';
@@ -34,6 +35,31 @@ export function AppShell({
   const { journeyId } = useJourney();
   const pathname = usePathname().replace(/\/$/, '') || '/';
   const [open, setOpen] = useState(false);
+  if (pathname === '/' || pathname === '/referral-review') {
+    return (
+      <div className={studyStyles.studyShell}>
+        <header className={studyStyles.masthead}>
+          <Link href="/" className={studyStyles.wordmark}>
+            <Activity size={24} aria-hidden />
+            Asclepius
+          </Link>
+          <nav aria-label="Study navigation">
+            <a href="#pilot-title">Educator worksheet</a>
+            <Link href="/workspace">Technical workspace</Link>
+          </nav>
+        </header>
+        <main id="main-content" tabIndex={-1}>
+          {children}
+        </main>
+        <footer className="safety-footer">
+          <ShieldCheck size={16} aria-hidden />
+          <span>
+            <strong>NOT FOR CLINICAL USE</strong> · Fictional teaching records only.
+          </span>
+        </footer>
+      </div>
+    );
+  }
   return (
     <div className="app-layout">
       <aside className="sidebar">
@@ -57,12 +83,14 @@ export function AppShell({
           {open ? <PanelLeftClose size={21} /> : <Menu size={21} />}
         </button>
         <div id="sidebar-content" className={`sidebar-content ${open ? 'is-open' : ''}`}>
-          <p className="nav-caption">WORKSPACE</p>
+          <Link href="/workspace" className="nav-caption">
+            TECHNICAL WORKSPACE
+          </Link>
           <nav aria-label="Primary">
             {nav.map((item, index) => {
               const Icon = icons[index] ?? BookOpen;
               const active =
-                pathname === item.href || (item.href === '/' && pathname === '/patients');
+                pathname === item.href || (item.href === '/journeys' && pathname === '/patients');
               return (
                 <Link
                   key={item.href}
@@ -105,7 +133,10 @@ export function AppShell({
           <div>
             <span className="text-muted">Workspace</span>
             <span className="breadcrumb-slash">/</span>
-            <span>{nav.find((item) => item.href === pathname)?.label ?? 'Learning notes'}</span>
+            <span>
+              {nav.find((item) => item.href === pathname)?.label ??
+                (pathname === '/workspace' ? 'Technical workspace' : 'Learning notes')}
+            </span>
           </div>
           <span className="demo-pill">
             <span className="status-dot" /> Interactive demo

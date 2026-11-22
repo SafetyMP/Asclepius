@@ -6,7 +6,7 @@ import { asclepiusNav } from '@/lib/navigation';
 import './globals.css';
 
 export const metadata: Metadata = {
-  ...pageMetadata('', 'Asclepius · Connected care, explained', siteDescription),
+  ...pageMetadata('', 'Referral review · Asclepius', siteDescription),
   metadataBase: new URL(siteUrl),
   applicationName: 'Asclepius',
   icons: { icon: new URL('icon.svg', siteUrl).href },

@@ -28,7 +28,7 @@ test.describe('Synthetic care journey @smoke', () => {
   });
 
   test('walk through all stages, use keyboard tabs, and start over', async ({ page }) => {
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await expect(
       page.getByRole('heading', { name: 'One visit. The whole picture.' }),
     ).toBeVisible();
@@ -67,7 +67,7 @@ test.describe('Synthetic care journey @smoke', () => {
   test('keyboard Next keeps focus on the new stage, including the final transition', async ({
     page,
   }) => {
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await page.getByRole('button', { name: 'Next: Assessment' }).focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('tabpanel')).toBeFocused();
@@ -192,7 +192,7 @@ test.describe('Synthetic care journey @smoke', () => {
 
   test('mobile navigation and record inspection fit the viewport', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     const menu = page.getByRole('button', { name: 'Toggle navigation' });
     await expect(menu).toHaveAttribute('aria-expanded', 'false');
     await menu.click();
@@ -287,7 +287,7 @@ test.describe('Synthetic care journey @smoke', () => {
   });
 
   test('return from the lab to the same journey stage and selected record', async ({ page }) => {
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await page.getByRole('button', { name: 'Next: Assessment' }).click();
     await page
       .getByRole('button', { name: 'Inspect Observation: Temperature measurement' })
@@ -307,7 +307,7 @@ test.describe('Synthetic care journey @smoke', () => {
     await page.getByRole('button', { name: 'Explore the report', exact: true }).click();
     const report = page.getByRole('region', { name: 'DiagnosticReport details' });
     await expect(report).toBeFocused();
-    await expect(page).toHaveURL(new RegExp(`${base}/$`));
+    await expect(page).toHaveURL(new RegExp(`${base}/journeys/$`));
     await report.getByRole('link', { name: 'Check record structure', exact: true }).click();
     await expect(page.getByLabel('Sample record')).toHaveValue('DiagnosticReport/demo-report');
     await page.getByRole('link', { name: 'Back to care journey' }).click();
@@ -445,7 +445,7 @@ test.describe('Synthetic care journey @smoke', () => {
     page,
   }) => {
     test.setTimeout(60_000);
-    await page.goto(`${base}/`);
+    await page.goto(`${base}/journeys/`);
     await expect(page.locator('#main-content')).toBeVisible();
     await checkAccessibility(page);
     await page.goto(`${base}/resources/`);

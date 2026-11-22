@@ -13,6 +13,8 @@ ports-and-adapters teaching kit.
 [Read both journeys](docs/JOURNEYS.md) · [Project vision](docs/PROJECT.md) ·
 [Documentation map](docs/README.md)
 
+**[Try the referral review](https://safetymp.github.io/Asclepius/).** Cedar has finished coordinating Maya’s visit. Does Willow have enough evidence to mark her specialist report received? A referral coordinator can choose a queue entry while an interface analyst traces the report to its request. Try a receipt for an earlier referral for the same person. An interoperability education lead can compare the exercise with a status guide or mentor walkthrough using staff time, correct decisions and correct record matches.
+
 The demo runs in the browser, with no account, API server, or token required.
 
 > **NOT_FOR_CLINICAL_USE — NOT FOR CLINICAL USE.** Synthetic examples only.
@@ -27,7 +29,7 @@ The demo runs in the browser, with no account, API server, or token required.
 
 | Your goal | Start here |
 | --- | --- |
-| Understand how a visit becomes connected records | [Live care journeys](https://safetymp.github.io/Asclepius/) or the [written walkthrough](docs/JOURNEYS.md) |
+| Understand how a visit becomes connected records | [Live care journeys](https://safetymp.github.io/Asclepius/journeys/) or the [written walkthrough](docs/JOURNEYS.md) |
 | Follow a referral between care teams | [Maya’s handoff guide](docs/JOURNEYS.md#maya-a-referral-and-handoff) |
 | Explore the code or contribute | [Local setup](#run-the-browser-demo-locally), [contributing](CONTRIBUTING.md), and [architecture decisions](docs/adr/README.md) |
 | Navigate the repository with a coding agent | [Repository instructions](AGENTS.md) and [source map](docs/README.md#source-map) |
