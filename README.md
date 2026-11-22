@@ -23,7 +23,7 @@ The demo runs in the browser, with no account, API server, or token required.
 > production FHIR server. Its drug-interaction knowledge base is intentionally
 > incomplete. Never connect it to real clinical systems, pharmacies, or EHRs.
 
-![Asclepius synthetic care journey — fictional case and linked records](docs/assets/care-journey.jpg)
+![Willow referral desk with one coordination notice and a consultant letter filed against two different requests](docs/assets/referral-desk.png)
 
 ## Start with your question
 
