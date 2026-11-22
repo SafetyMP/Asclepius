@@ -258,7 +258,7 @@ export default function Evidence() {
             </p>
           </div>
         )}
-        <a href={source + 'web/src/app/referral-review/referral-review-case.tsx'}>
+        <a href="https://github.com/SafetyMP/Asclepius/blob/bf8abf41fc9dea31c479caa945973d1b2ffbe0e8/web/src/app/referral-review/shift.tsx#L49">
           Source of the filing and correction rules
         </a>{' '}
         · <a href={source + 'web/src/app/referral-review/shift.tsx'}>Trial documents</a>
