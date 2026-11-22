@@ -11,7 +11,7 @@ Do not enter real patient data or use these examples to make clinical decisions.
 
 ## The experience we are building
 
-A visitor should be able to open the [live demo](https://safetymp.github.io/Asclepius/),
+A visitor should be able to open the [care journeys](https://safetymp.github.io/Asclepius/journeys/),
 understand the selected case, follow its connected records, and explain which team
 owns the next step without installing software or learning FHIR first. FHIR stands
 for Fast Healthcare Interoperability Resources; this repository teaches a limited

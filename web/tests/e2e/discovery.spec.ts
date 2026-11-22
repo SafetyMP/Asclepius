@@ -3,10 +3,12 @@ import { expect, test } from '@playwright/test';
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 const published = 'https://safetymp.github.io/Asclepius/';
 const routes = [
-  ['', 'Asclepius · Connected care, explained'],
+  ['', 'Referral review · Asclepius'],
   ['resources/', 'Resource explorer · Asclepius'],
   ['validate/', 'Validation lab · Asclepius'],
   ['architecture/', 'How connected care works · Asclepius'],
+  ['workspace/', 'Technical workspace · Asclepius'],
+  ['journeys/', 'Care journey · Asclepius'],
 ] as const;
 
 // Inspect the response itself: crawlers must not need hydration to find these fields.
@@ -39,7 +41,7 @@ test.describe('Published discovery metadata @smoke', () => {
   });
 
   test('compatibility routes remain reachable but excluded from indexing', async ({ request }) => {
-    for (const route of ['patients', 'auth', 'cds', 'interactions']) {
+    for (const route of ['patients', 'auth', 'cds', 'interactions', 'referral-review']) {
       const response = await request.get(`${base}/${route}/`);
       expect(response.ok()).toBe(true);
       expect(meta(await response.text(), 'robots')).toBe('noindex, follow');

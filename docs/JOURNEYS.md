@@ -1,6 +1,6 @@
 # A guide to the two synthetic care journeys
 
-[Open Asclepius](https://safetymp.github.io/Asclepius/) and choose a journey at the
+[Open the care journeys](https://safetymp.github.io/Asclepius/journeys/) and choose a journey at the
 top of the workspace. Both cases are fictional teaching snapshots, with nine
 connected records each. **NOT_FOR_CLINICAL_USE.** No navigation action sends a
 referral, changes a care status, or performs treatment.

@@ -15,13 +15,13 @@ clinical platform, a live referral service, or a conformant production FHIR serv
 | Contributor instructions | Portable source map and meaningful checks | [AGENTS.md](../AGENTS.md), [CONTRIBUTING.md](../CONTRIBUTING.md) |
 | Browser page metadata | Distinct titles, descriptions, canonical and share URLs | [site-metadata.ts](../web/src/lib/site-metadata.ts) and route layouts |
 | Structured data | Educational source identity and repository/license links | `SoftwareSourceCode` JSON-LD on the home page |
-| Sitemap | Four primary public routes under `/Asclepius/` | [sitemap.ts](../web/src/app/sitemap.ts) |
+| Sitemap | Six primary public routes under `/Asclepius/` | [sitemap.ts](../web/src/app/sitemap.ts) |
 | Agent reading maps | Short entry points with source links and scope | [llms.txt](../llms.txt), [public llms.txt](../web/public/llms.txt) |
 | Share card | Calm, clearly synthetic social preview | [SVG source](../web/public/social-preview.svg), [PNG](../web/public/social-preview.png) |
 
 The canonical public address is **https://safetymp.github.io/Asclepius/**.
-The four primary routes are `/`, `/resources/`, `/validate/`, and `/architecture/`.
-Compatibility routes (`/patients/`, `/auth/`, `/cds/`, `/interactions/`) stay usable
+The primary routes are the referral case at `/`, the technical guide at `/workspace/`, and the tools at `/journeys/`, `/resources/`, `/validate/`, and `/architecture/`.
+Compatibility routes (`/referral-review/`, `/patients/`, `/auth/`, `/cds/`, `/interactions/`) stay usable
 for old links but have `noindex, follow` metadata and are omitted from the sitemap.
 Query parameters used to restore a sample in the lab canonicalize to the lab page.
 

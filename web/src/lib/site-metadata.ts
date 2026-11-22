@@ -4,8 +4,15 @@ import type { Metadata } from 'next';
 export const siteUrl = 'https://safetymp.github.io/Asclepius/';
 export const repositoryUrl = 'https://github.com/SafetyMP/Asclepius';
 export const siteDescription =
-  'Explore two synthetic care journeys: a routine follow-up and a referral between care teams. Learn how FHIR records connect. Not for clinical use.';
-export const publicRoutes = ['', 'resources/', 'validate/', 'architecture/'] as const;
+  'Match a specialist report to a fictional referral. Explore two synthetic care journeys and linked FHIR records in the technical workspace. Not for clinical use.';
+export const publicRoutes = [
+  '',
+  'resources/',
+  'validate/',
+  'architecture/',
+  'workspace/',
+  'journeys/',
+] as const;
 
 export function pageMetadata(
   path: string,

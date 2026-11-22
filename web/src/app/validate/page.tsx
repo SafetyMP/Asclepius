@@ -154,7 +154,7 @@ function ValidationLab() {
     <div className="workspace-page">
       <Link
         className="text-link context-return"
-        href={fromJourney ? '/' : '/resources'}
+        href={fromJourney ? '/journeys' : '/resources'}
         onClick={restoreContext}
       >
         <ArrowLeft size={16} />

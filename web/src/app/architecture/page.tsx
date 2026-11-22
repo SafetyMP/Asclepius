@@ -101,7 +101,7 @@ export default function ArchitecturePage() {
           understand the record’s role and context—not to make a care decision.
         </p>
         <div className="flex flex-wrap gap-3 pt-2">
-          <Link href="/" className="button primary">
+          <Link href="/journeys" className="button primary">
             Explore the care journey <ArrowRight size={17} aria-hidden />
           </Link>
           <Link href="/resources" className="button secondary">

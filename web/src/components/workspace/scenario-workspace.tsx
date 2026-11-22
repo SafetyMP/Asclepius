@@ -65,7 +65,7 @@ export function ScenarioWorkspace() {
     <div className="workspace-page">
       <div className="page-title">
         <div>
-          <p className="eyebrow">CONNECTED CARE, EXPLAINED</p>
+          <p className="eyebrow">TECHNICAL WORKSPACE</p>
           <h1>{journey.headline}</h1>
           <p className="page-subtitle">
             Explore how a care journey becomes connected health information.
