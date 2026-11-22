@@ -39,6 +39,10 @@ test('reconcile same-person letters, premature closure and retained follow-up @s
   ).toHaveText('0Open requests without an owner');
   await page.getByRole('button', { name: 'Receive afternoon delivery' }).click();
   await expect(page.getByText('1 unfiled · 3 delivered')).toBeVisible();
+  await page.getByRole('button', { name: /C40/ }).click();
+  await expect(
+    page.getByText(/Maya did not attend the appointment for the cited request/),
+  ).toBeVisible();
   await file(page, 'C40', '0', 'report');
   await check.click();
   await expect(

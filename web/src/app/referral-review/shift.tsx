@@ -38,7 +38,7 @@ export const mail = [
     title: 'Consultation letter',
     kind: 'Consultant report',
     ref: requests[1].ref,
-    text: 'Signed summary from the consultant in response to the cited request. Clinical contents omitted.',
+    text: 'The consultant returned a signed summary of findings for the cited request. Clinical details omitted.',
     consultant: true,
   },
   {
@@ -48,7 +48,7 @@ export const mail = [
     title: 'Consultation letter',
     kind: 'Consultant report',
     ref: requests[0].ref,
-    text: 'The consultant returned a written report about attendance in response to the cited request. Clinical contents omitted.',
+    text: 'The consultant reports that Maya did not attend the appointment for the cited request. Signed by Taylor Brooks and delivered to Willow.',
     consultant: true,
   },
 ] as const;
