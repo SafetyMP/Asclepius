@@ -7,7 +7,8 @@ export const metadata = pageMetadata(
   'Technical reference · Asclepius',
   'Trace the static referral desk, synthetic resource identities, shared validation service and separate local API to their TypeScript sources.',
 );
-const source = 'https://github.com/SafetyMP/Asclepius/blob/main/';
+const source =
+  'https://github.com/SafetyMP/Asclepius/blob/380318989af431eddf8efa01e2234141d73a56c3/';
 const components = [
   [
     'Record identity',
