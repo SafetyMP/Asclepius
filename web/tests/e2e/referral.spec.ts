@@ -20,7 +20,7 @@ for (const route of [
     );
     await page.getByRole('link', { name: 'Return to Maya’s review note' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'Can Willow mark Maya’s report as received?',
+      'Maya is waiting to hear from Willow',
     );
   });
 }

@@ -39,7 +39,7 @@ repository root for local synthetic experiments on port 8787.
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Maya’s referral review, document citation, queue decision, staff-time worksheet and training choice |
+| `/` | Maya’s referral handoff, two letters, queue decision and optional educator worksheet |
 | `/workspace/` | Selected-case trace, four filing replays and the shared validator with intact and missing-status trials |
 | `/referral-review/` | Alternate bookmark for the public case |
 

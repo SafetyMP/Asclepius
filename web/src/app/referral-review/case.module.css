@@ -33,6 +33,99 @@
 .sheetHeader > p {
   max-width: 74ch;
 }
+.sheetHeader p,
+.shiftBrief p {
+  max-width: 75ch;
+  line-height: 1.6;
+}
+.handoff figcaption {
+  margin: 0.35rem auto 0;
+  max-width: 34ch;
+  text-align: center;
+  font-size: 0.875rem;
+}
+.shiftBrief {
+  margin-top: 1.5rem;
+  border-top: 1px solid #bccdc3;
+  padding-top: 1.15rem;
+}
+.shiftBrief p + p,
+.document p + p {
+  margin-top: 0.6rem;
+}
+.sheetHeader .handoff {
+  padding: 1rem;
+  background: #f1f6ee;
+  border-radius: 0.5rem;
+}
+.casePage .document h3 {
+  margin: 0.3rem 0;
+  font:
+    600 1.3rem / 1.25 Georgia,
+    serif;
+}
+.guidance {
+  margin: 1rem 0 0.5rem;
+}
+.guidance p,
+.sourceDetails p {
+  margin: 0.6rem 0;
+}
+.guidance summary,
+.disclosure {
+  width: fit-content;
+  cursor: pointer;
+  color: #245f4e;
+  font-weight: 650;
+}
+.guidance .recordGrid {
+  margin-top: 1rem;
+}
+.disclosure {
+  font:
+    600 1.25rem / 1.4 Georgia,
+    serif;
+}
+.disclosure + p {
+  margin-top: 0.8rem;
+}
+.queueEntry {
+  border: 0;
+  padding: 0;
+}
+.queueEntry legend {
+  font-weight: 650;
+  padding: 0;
+}
+.queueButtons {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.6rem;
+}
+.queueButtons button {
+  border: 1px solid #5b7868;
+  border-radius: 0.3rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+.queueButtons button[aria-pressed="true"] {
+  color: #fff;
+  background: #245f4e;
+}
+.assessment code {
+  overflow-wrap: anywhere;
+}
+.assessment .boundary,
+.comparison {
+  margin-top: 0.7rem;
+  border-top: 1px solid #a9beb3;
+  padding-top: 0.6rem;
+}
+.comparison p {
+  margin: 0.35rem 0;
+}
 .inboxPicker {
   margin: 1.25rem 0 0.9rem;
   padding: 0;

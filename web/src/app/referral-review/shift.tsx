@@ -49,17 +49,25 @@ export const mail = [
 export function receiptSupported(document: (typeof mail)[number], target: string) {
   return document.consultant && document.reference === target;
 }
-export function assessReview(
-  document: (typeof mail)[number],
-  citation: string,
-  entry: Decision | null,
-) {
-  return {
-    referenceMatches: citation.trim() === document.reference,
-    actionMatches: entry === (receiptSupported(document, currentRef) ? 'received' : 'track'),
-  };
-}
 export type Decision = 'track' | 'received';
+
+// The queue records the learner's action, including an unsupported filing.
+// It never changes the underlying FHIR records.
+export function queueOutcome(document: (typeof mail)[number], decision: Decision) {
+  const hasReceipt = receiptSupported(document, currentRef);
+  const received = decision === 'received';
+  const supported = received === hasReceipt;
+  const queue = received ? 'Report received' : 'Still tracking';
+  const next = received
+    ? hasReceipt
+      ? 'Willow’s clinician, Sam Rivera, reviews Cedar’s letter and decides how to follow up with Maya.'
+      : 'Willow’s coordinator needs to reopen this item and ask Cedar for the report tied to this request. Until then, the next shift could miss it.'
+    : hasReceipt
+      ? 'Willow’s coordinator would keep chasing a letter already on file. Record its receipt and pass it to Sam for review.'
+      : 'Willow’s coordinator keeps this request on the next shift’s list and follows up with Cedar. Cedar is responsible for returning its report.';
+  return { supported, queue, next, rationale: document.response };
+}
+
 export type Sponsor = 'mentor' | 'guide' | 'pilot';
 export const sponsors = [
   [
@@ -79,7 +87,7 @@ export const sponsors = [
   ],
 ] as const;
 function useStudyState() {
-  const [inbox, setInbox] = useState<(typeof mail)[number]>(mail[0]);
+  const [inbox, setInbox] = useState<(typeof mail)[number]>(mail[1]);
   const [decision, setDecision] = useState<Decision | null>(null);
   const [inspected, setInspected] = useState(false);
   const [citation, setCitation] = useState('');
@@ -89,7 +97,13 @@ function useStudyState() {
   const [setup, setSetup] = useState(6);
   const [sponsor, setSponsor] = useState<Sponsor | null>(null);
   const [record, setRecord] = useState(currentRef);
+  const [otherReview, setOtherReview] = useState<{
+    document: (typeof mail)[number];
+    decision: Decision;
+  } | null>(null);
   return {
+    otherReview,
+    setOtherReview,
     inbox,
     setInbox,
     decision,
