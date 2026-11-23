@@ -18,6 +18,12 @@ The [fixture guide](docs/JOURNEYS.md) documents the authored records. The [web g
 
 > **NOT_FOR_CLINICAL_USE — NOT FOR CLINICAL USE.** Synthetic examples only. Never use real patient data. The educational subset does not establish full FHIR conformance, clinical correctness, treatment safety, or specialist report delivery in a real clinic. The local drug-interaction knowledge base is intentionally incomplete.
 
+## Follow a referral through the code
+
+1. **Identify Willow’s request.** A FHIR `ServiceRequest` identifies the referral, a `Task` records the coordination handoff and an `Encounter` represents the planned visit. Each has its own identifier and status. [Synthetic referral records](web/src/lib/referral-examples.ts)
+2. **Decide what the next shift sees.** `receiptSupported` checks the document kind and the full request reference on Cedar’s letter. `queueOutcome` records the learner’s choice even when the evidence points elsewhere, then identifies who owns follow-up. This queue exists in the exercise. A clinician still reviews the letter. [Receipt and queue logic](web/src/app/referral-review/shift.tsx) · [Report and queue tests](web/tests/e2e/referral-review.spec.ts)
+3. **Check the record itself.** In the technical guide, change a copy of a fixture and run the structural and profile checks. The browser calls the same TypeScript validation service as the local API. The service checks the teaching record’s shape and rules. The receipt decision above asks which referral the letter answers. [Interactive trace](web/src/app/workspace/evidence.tsx) · [Browser validator binding](web/src/lib/validation.ts) · [Shared validation service](src/service/validation/service.ts)
+
 ## Run the browser demo locally
 
 Use **Node.js 22**, **npm 10.9.2**, and **Python 3** for the web workflow. The root
