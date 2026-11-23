@@ -4,14 +4,16 @@
 [![CodeQL](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml)
 [![License: Apache-2.0](https://img.shields.io/github/license/SafetyMP/Asclepius)](LICENSE)
 
-Maya is waiting to hear back after Willow asked Cedar for a specialist review. As Willow’s coordinator, read the request beside an incoming letter and decide what the next shift should see. [Open the Willow–Cedar case](https://safetymp.github.io/Asclepius/)
+Willow’s referral coordinators track the specialist reports their clinicians are waiting for. Maya has two referrals to Cedar. A letter has arrived, and she is waiting for Willow to tell her what happens next. Filing it under the wrong request could take her off the follow-up list too soon. Overlooking a reply sends the next shift chasing paperwork the clinic already has.
+
+Asclepius gives coordinators a safe place to practice that judgment. It compares the kind of document and the request identifier on the letter, then shows how the learner’s filing choice changes the next shift’s queue and who owns follow-up. Try the other letter for the same patient. A clinician still decides what Maya needs. [Work Maya’s referral](https://safetymp.github.io/Asclepius/) · [Inspect the filing rule](web/src/app/referral-review/shift.tsx)
 
 ![Maya’s story and the referral handoff between Willow and Cedar](docs/assets/referral-study.jpg)
 
 ## Work through the case
 
 1. Compare the open request with one of two letters about Maya. Try marking a report received or keeping it on the work queue. Read the evidence and the next owner, then try the other letter against the same request.
-2. In the optional educator worksheet, compare a mentor walkthrough, a one-page guide and interactive practice. Vary the learner count and staff time, then decide how to test accuracy on an unseen referral a week later.
+2. An education lead can compare this exercise with a mentor walkthrough or one-page guide. Score a new coordinator on both kinds of letter, repeat with an unseen referral a week later, and record mentor and learner minutes. The educator worksheet helps plan that comparison.
 3. Open [technical evidence](https://safetymp.github.io/Asclepius/workspace/) to trace the selected letter, receipt rule and simulated queue entry. Compare filing the same letter against two registers, then run the shared validator on an intact fixture and a copy with its required status removed.
 
 The [fixture guide](docs/JOURNEYS.md) documents the authored records. The [web guide](web/README.md) covers local setup, routes and tests. The public exercise needs no account, API server or token.
