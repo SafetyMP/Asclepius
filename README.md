@@ -4,15 +4,15 @@
 [![CodeQL](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Asclepius/actions/workflows/codeql.yml)
 [![License: Apache-2.0](https://img.shields.io/github/license/SafetyMP/Asclepius)](LICENSE)
 
-**[Can Willow mark Maya’s report as received?](https://safetymp.github.io/Asclepius/)** A referral coordinator chooses the queue entry. An interface analyst cites the exact request in Cedar’s document. An interoperability education lead compares a mentor walkthrough, a one-page guide and a practice exercise for the next intake.
+Maya is waiting to hear back after Willow asked Cedar for a specialist review. As Willow’s coordinator, read the request beside an incoming letter and decide what the next shift should see. [Open the Willow–Cedar case](https://safetymp.github.io/Asclepius/)
 
-![Original review case with Willow’s request and Cedar’s selected document](docs/assets/referral-study.jpg)
+![Maya’s story and the referral handoff between Willow and Cedar](docs/assets/referral-study.jpg)
 
 ## Work through the case
 
-1. Inspect the original coordination note and the two consultant reports. The same person can have two referrals. Check the queue decision and the exact reference separately.
-2. Change annual learners, combined staff minutes saved and preparation hours. Choose the next training approach and decide how the referral lead and interface mentor will test retained accuracy one week later.
-3. Open [technical evidence](https://safetymp.github.io/Asclepius/workspace/) to trace the selected document, note and sponsor assumptions. Compare filing the same letter against two registers, then run the shared validator on an intact fixture and a copy with its required status removed.
+1. Compare the open request with one of two letters about Maya. Try marking a report received or keeping it on the work queue. Read the evidence and the next owner, then try the other letter against the same request.
+2. In the optional educator worksheet, compare a mentor walkthrough, a one-page guide and interactive practice. Vary the learner count and staff time, then decide how to test accuracy on an unseen referral a week later.
+3. Open [technical evidence](https://safetymp.github.io/Asclepius/workspace/) to trace the selected letter, receipt rule and simulated queue entry. Compare filing the same letter against two registers, then run the shared validator on an intact fixture and a copy with its required status removed.
 
 The [fixture guide](docs/JOURNEYS.md) documents the authored records. The [web guide](web/README.md) covers local setup, routes and tests. The public exercise needs no account, API server or token.
 

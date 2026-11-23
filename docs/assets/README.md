@@ -6,8 +6,8 @@ All captures use synthetic examples. **NOT_FOR_CLINICAL_USE.**
 
 | File | Purpose |
 | --- | --- |
-| [referral-study.jpg](referral-study.jpg) | Selected report and original paired referral review |
-| [referral-trace.jpg](referral-trace.jpg) | Technical evidence for the selected case and a corrected filing trial |
+| [referral-study.jpg](referral-study.jpg) | Maya’s opening story and the Willow–Cedar handoff |
+| [referral-trace.jpg](referral-trace.jpg) | Selected letter and the queue entry carried into the technical guide |
 
 The prior desk and journey images are historical captures. These synthetic images document interface state only.
 

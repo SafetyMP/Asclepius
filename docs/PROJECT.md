@@ -11,7 +11,7 @@ Do not enter real patient data or use these examples to make clinical decisions.
 
 ## The experience we are building
 
-The [public study](https://safetymp.github.io/Asclepius/) asks whether Willow can record a returned report for Maya’s referral. The coordinator decides, the analyst cites the exact request, and the education lead compares training approaches using paired accuracy measures, staff time and a delayed retest.
+The [public study](https://safetymp.github.io/Asclepius/) asks whether Willow can record a returned report for Maya’s referral. The coordinator inspects the source reference on Cedar’s letter and chooses a queue entry. The technical guide explains how an interface analyst can trace that decision. The education lead can compare training approaches using paired accuracy measures, staff time and a delayed retest.
 
 The technical route carries the chosen document, queue decision, citation and pilot assumptions. It links the original request, coordination and receiving visit to the underlying fixture and checks a local copy with the shared teaching validator. Earlier public technical bookmarks resolve to that same compact evidence.
 

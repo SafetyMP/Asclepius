@@ -49,16 +49,6 @@ export const mail = [
 export function receiptSupported(document: (typeof mail)[number], target: string) {
   return document.consultant && document.reference === target;
 }
-export function assessReview(
-  document: (typeof mail)[number],
-  citation: string,
-  entry: Decision | null,
-) {
-  return {
-    referenceMatches: citation.trim() === document.reference,
-    actionMatches: entry === (receiptSupported(document, currentRef) ? 'received' : 'track'),
-  };
-}
 export type Decision = 'track' | 'received';
 
 // The queue records the learner's action, including an unsupported filing.
@@ -107,7 +97,10 @@ function useStudyState() {
   const [setup, setSetup] = useState(6);
   const [sponsor, setSponsor] = useState<Sponsor | null>(null);
   const [record, setRecord] = useState(currentRef);
-  const [otherReview, setOtherReview] = useState<{ document: (typeof mail)[number]; decision: Decision } | null>(null);
+  const [otherReview, setOtherReview] = useState<{
+    document: (typeof mail)[number];
+    decision: Decision;
+  } | null>(null);
   return {
     otherReview,
     setOtherReview,

@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { CalendarDays, ClipboardList, FileText, Link2, UserRound } from 'lucide-react';
-import { assessReview, mail as inboxScenarios, sponsors, useStudy } from './shift';
+import { useState } from 'react';
+import { CalendarDays, ClipboardList, FileText } from 'lucide-react';
+import { currentRef, mail, queueOutcome, useStudy, type Decision } from './shift';
+import { EducatorWorksheet } from './educator-worksheet';
 import { recordKey } from '@/lib/journeys';
 import { referralExamples } from '@/lib/referral-examples';
 import styles from './case.module.css';
@@ -55,7 +57,44 @@ function ReferralPath() {
           </text>
         </g>
       </svg>
+      <figcaption>
+        Willow follows the request until Cedar’s written reply is accounted for.
+      </figcaption>
     </figure>
+  );
+}
+
+const reports = [mail[1], mail[2]] as const;
+const actionLabel: Record<Decision, string> = {
+  received: 'Mark report received',
+  track: 'Keep tracking',
+};
+
+function ReportLetter() {
+  const { inbox, inspected, setInspected, setCitation } = useStudy();
+  const [open, setOpen] = useState(inspected);
+  return (
+    <details
+      className={styles.sourceDetails}
+      open={open}
+      onToggle={(event) => {
+        const reading = event.currentTarget.open;
+        setOpen(reading);
+        if (reading) {
+          setInspected(true);
+          setCitation(inbox.reference);
+        }
+      }}
+    >
+      <summary>{inbox.consultant ? 'Read Cedar’s report' : 'Read Cedar’s handoff note'}</summary>
+      <p>{inbox.note}</p>
+      <dl>
+        <dt>Request cited in this document</dt>
+        <dd>
+          <code>{inbox.reference}</code>
+        </dd>
+      </dl>
+    </details>
   );
 }
 
@@ -67,56 +106,72 @@ export default function ReferralReview() {
     setDecision,
     inspected,
     setInspected,
-    citation,
     setCitation,
     graded,
     setGraded,
-    cohort,
-    setCohort,
-    minutes,
-    setMinutes,
-    setup,
-    setSetup,
-    sponsor,
-    setSponsor,
+    otherReview,
+    setOtherReview,
     setRecord,
   } = useStudy();
-  const savedHours = (cohort * minutes) / 60;
-  const netHours = savedHours - setup;
-  const chartMax = Math.max(savedHours, setup, 1);
-  const { referenceMatches, actionMatches } = assessReview(inbox, citation, decision);
-  const canCheck = inspected && citation.trim().length > 0 && decision !== null;
+  const result = decision && graded ? queueOutcome(inbox, decision) : null;
+  function selectReport(next: (typeof mail)[number]) {
+    if (next === inbox) return;
+    if (graded && decision) setOtherReview({ document: inbox, decision });
+    setInbox(next);
+    setInspected(false);
+    setCitation('');
+    setDecision(null);
+    setGraded(false);
+  }
 
   return (
     <article className={`workspace-page ${styles.casePage}`}>
       <section className={styles.sheet} aria-labelledby="decision-title">
         <header className={styles.sheetHeader}>
           <div>
-            <p className={styles.documentLabel}>Willow Teaching Clinic / Fictional case</p>
-            <h1 id="decision-title">Can Willow mark Maya’s report as received?</h1>
+            <p className={styles.documentLabel}>Willow Teaching Clinic · Fictional case</p>
+            <h1 id="decision-title">Maya is waiting to hear from Willow</h1>
             <p>
-              Match the inbox document to the open referral. As the coordinator, choose a queue
-              entry. As the interface analyst, cite the exact request the document names.
+              At her November 13 visit, Maya Chen met with Sam Rivera at Willow. Sam asked Cedar’s
+              specialist team to review Maya and write back. That request is a{' '}
+              <strong>referral</strong>. Maya is waiting for Willow to tell her what happens next.
             </p>
           </div>
           <ReferralPath />
         </header>
+        <section className={styles.shiftBrief} aria-labelledby="why-open">
+          <h2 id="why-open">Why is Maya still on the list?</h2>
+          <p>
+            Cedar has recorded the handoff and put a visit on its calendar. Sam still needs the
+            specialist’s written reply, the <strong>consultant report</strong>. Willow’s coordinator
+            keeps a <strong>work queue</strong>, a list of requests the next shift needs to follow
+            up.
+          </p>
+          <p>
+            Maya has an earlier referral to Cedar, too. If Willow files a letter against the wrong
+            request, the next shift could stop checking before Sam hears back. If staff overlook a
+            reply already here, both clinics spend time chasing it while Maya waits for an update.
+          </p>
+        </section>
+      </section>
+
+      <section className={styles.sheet} aria-labelledby="desk-title">
+        <p className={styles.documentLabel}>Willow’s referral desk</p>
+        <h2 id="desk-title">A letter arrives from Cedar</h2>
+        <p>
+          Read Willow’s request alongside one incoming document. Each version begins with the same
+          open queue entry for Maya.
+        </p>
         <fieldset className={styles.inboxPicker}>
-          <legend>Choose an inbox document</legend>
+          <legend>Choose a report to inspect</legend>
           <div>
-            {inboxScenarios.map((item) => (
-              <label className={styles.receipt} key={item.label}>
+            {reports.map((item) => (
+              <label className={styles.receipt} key={item.id}>
                 <input
                   type="radio"
                   name="inbox"
                   checked={inbox === item}
-                  onChange={() => {
-                    setInbox(item);
-                    setInspected(false);
-                    setCitation('');
-                    setDecision(null);
-                    setGraded(false);
-                  }}
+                  onChange={() => selectReport(item)}
                 />
                 {item.label}
               </label>
@@ -125,300 +180,152 @@ export default function ReferralReview() {
         </fieldset>
         <div className={styles.matchPair}>
           <section className={styles.document} aria-label="Open referral">
-            <p className={styles.documentLabel}>Open referral</p>
-            <h2>Request to Cedar</h2>
-            <p className={styles.patient}>
-              <UserRound size={16} aria-hidden />
-              Maya Chen · Willow Teaching Clinic
-            </p>
+            <p className={styles.documentLabel}>Willow · Outgoing request</p>
+            <h3>Sam’s request to Cedar</h3>
+            <p>Maya Chen · November 13 · Sam Rivera</p>
+            <p>Please review Maya and return your written report to Willow for this request.</p>
             <dl>
-              <dt>
-                <Link2 size={15} aria-hidden />
-                Request identifier
-              </dt>
+              <dt>Open request identifier</dt>
               <dd>
-                <code>{evidence[0][0]}</code>
+                <code>{currentRef}</code>
               </dd>
             </dl>
-            <p>Willow requested a review from Cedar. The referral remains active.</p>
           </section>
-          <section
-            className={styles.document}
-            aria-label="Selected inbox document"
-            aria-live="polite"
-          >
-            <p className={styles.documentLabel}>Willow’s inbox / {inbox.label}</p>
-            <h2>{inbox.document}</h2>
-            <p className={styles.patient}>
-              <UserRound size={16} aria-hidden />
-              Maya Chen · {inbox.sender}
+          <section className={styles.document} aria-label="Selected inbox document">
+            <p className={styles.documentLabel}>
+              Cedar · {inbox.label} · {inbox.id}
             </p>
-            <details
-              className={styles.sourceDetails}
-              key={inbox.label}
-              open={inspected}
-              onToggle={(event) => {
-                setInspected(event.currentTarget.open);
-              }}
-            >
-              <summary>Inspect document details</summary>
-              <dl>
-                <dt>
-                  <Link2 size={15} aria-hidden />
-                  Referral reference
-                </dt>
-                <dd>
-                  <code>{inbox.reference}</code>
-                </dd>
-              </dl>
-              <p>{inbox.note}</p>
-            </details>
+            <h3>{inbox.document}</h3>
+            <p>
+              Maya Chen · {inbox.sender} · {inbox.time}
+            </p>
+            <ReportLetter key={inbox.id} />
           </section>
         </div>
-        <form
-          className={styles.queueEntry}
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (canCheck) setGraded(true);
-          }}
-        >
-          <h2>Your review note</h2>
-          <p id="citation-help">
-            Open the inbox document, then copy its full referral reference into your note.
+        <details className={styles.guidance}>
+          <summary>Where should I look?</summary>
+          <p>
+            Read the line naming the request in each document. Do both identify the same piece of
+            work? Then ask what the writer actually documented.
           </p>
-          <label className={styles.citation}>
-            Request cited by the inbox document
-            <input
-              type="text"
-              maxLength={160}
-              value={citation}
-              disabled={!inspected}
-              aria-describedby="citation-help"
-              autoComplete="off"
-              autoCapitalize="none"
-              spellCheck={false}
-              onChange={(event) => {
-                setCitation(event.target.value);
-                setGraded(false);
-              }}
-            />
-          </label>
-          <fieldset
-            className={styles.choices}
-            disabled={!inspected || citation.trim().length === 0}
-          >
-            <legend>Which queue entry does the evidence support?</legend>
-            {(
-              [
-                ['track', 'Continue tracking the report'],
-                ['received', 'Mark report received'],
-              ] as const
-            ).map(([value, text]) => (
-              <label className={styles.actionChoice} key={value}>
-                <input
-                  type="radio"
-                  name="queue"
-                  checked={decision === value}
-                  onChange={() => {
-                    setDecision(value);
-                    setGraded(false);
-                  }}
-                />
-                {text}
-              </label>
-            ))}
-          </fieldset>
-          <button className="button primary" disabled={!canCheck} type="submit">
-            Check my review note
-          </button>
-          <div aria-live="polite">
-            {graded && (
-              <div className={styles.assessment}>
-                <h3>
-                  {referenceMatches && actionMatches
-                    ? 'Both parts of your note are supported.'
-                    : 'Review your note.'}
-                </h3>
-                <dl>
-                  <dt>Request reference</dt>
-                  <dd>
-                    {referenceMatches
-                      ? 'Matches the inbox document.'
-                      : 'Reopen the inbox document and copy its full referral reference. The open request and the cited request can differ.'}
-                  </dd>
-                  <dt>Queue decision</dt>
-                  <dd>
-                    <strong>{actionMatches ? 'Supported. ' : 'Recheck the action. '}</strong>
-                    {inbox.response}
-                  </dd>
-                </dl>
-              </div>
-            )}
-          </div>
-        </form>
-      </section>
-
-      <section className={styles.section} aria-labelledby="evidence-title">
-        <h2 id="evidence-title">What each record establishes</h2>
-        <div className={styles.recordGrid}>
-          {evidence.map(([key, label, Icon]) => {
-            const record = referralExamples.find((item) => recordKey(item) === key);
-            if (!record) return null;
-            return (
-              <div className={styles.record} key={key}>
-                <span className={styles.trailIcon}>
-                  <Icon size={23} aria-hidden />
-                </span>
-                <span>
-                  {record.type} · {String(record.resource.status)}
-                </span>
-                <h3>{label}</h3>
-                <Link className="text-link" href="/workspace#record" onClick={() => setRecord(key)}>
-                  Inspect {record.type}
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className={styles.section} aria-labelledby="pilot-title">
-        <h2 id="pilot-title">Is the exercise worth adding to onboarding?</h2>
-        <p>
-          The interoperability education lead must decide how to train the next intake. The
-          practice’s referral lead can score whether a coordinator keeps the right case open. The
-          interface mentor can ask an analyst to show which request the report belongs to. A correct
-          guess alone earns no credit for tracing the record.
-        </p>
-        <div className={styles.worksheet}>
-          <div>
-            <h3>First-year staff time</h3>
-            <p>
-              Illustrative assumptions. Enter total staff minutes saved per learner versus your
-              current training, counting both learner and mentor time.
-            </p>
-            {[
-              { label: 'Learners per year', value: cohort, change: setCohort, max: 120 },
-              { label: 'Minutes saved per learner', value: minutes, change: setMinutes, max: 60 },
-              { label: 'Preparation and upkeep hours', value: setup, change: setSetup, max: 40 },
-            ].map(({ label, value, change, max }) => (
-              <label className={styles.slider} key={label}>
-                <span>
-                  {label}
-                  <strong>{value}</strong>
-                </span>
-                <input
-                  type="range"
-                  min="0"
-                  max={max}
-                  value={value}
-                  aria-label={label}
-                  onChange={(event) => change(Number(event.target.value))}
-                />
-              </label>
+        </details>
+        <fieldset className={styles.queueEntry} disabled={!inspected}>
+          <legend>Does Willow have enough evidence to mark this report received?</legend>
+          {!inspected && <p>Open Cedar’s document first.</p>}
+          <div className={styles.queueButtons}>
+            {(['received', 'track'] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={decision === value}
+                onClick={() => {
+                  setDecision(value);
+                  setGraded(true);
+                }}
+              >
+                {actionLabel[value]}
+              </button>
             ))}
           </div>
-          <div className={styles.result} aria-live="polite">
-            <strong>
-              {Math.abs(netHours).toLocaleString('en-US', { maximumFractionDigits: 2 })} staff hours
-            </strong>
-            <span>
-              {netHours < 0
-                ? 'of additional time in year one'
-                : netHours > 0
-                  ? 'released in year one'
-                  : 'net change in year one'}
-            </span>
-            <p>
-              {minutes > 0
-                ? `Break-even at ${Math.ceil((setup * 60) / minutes)} learners.`
-                : setup > 0
-                  ? 'With zero minutes saved, learner volume cannot recover the setup time.'
-                  : 'Both preparation time and time saved are zero.'}
-            </p>
-            <figure className={styles.timeChart}>
-              <figcaption>First-year comparison</figcaption>
-              {[
-                { label: 'Learner and mentor time freed', hours: savedHours },
-                { label: 'Preparation and upkeep', hours: setup },
-              ].map(({ label, hours }) => (
-                <div key={label}>
-                  <span>
-                    {label} <b>{hours.toLocaleString('en-US', { maximumFractionDigits: 2 })} h</b>
-                  </span>
-                  <div className={styles.barTrack} aria-hidden="true">
-                    <i style={{ width: `${(100 * hours) / chartMax}%` }} />
-                  </div>
-                </div>
-              ))}
-            </figure>
-            <small>Annual learners × minutes saved ÷ 60, less preparation and upkeep.</small>
-          </div>
-        </div>
-        <p>
-          <strong>Evidence for the education lead.</strong> Compare the current mentor walkthrough,
-          a one-page status guide and this exercise. Give each group the same fresh synthetic cases
-          with matching and unrelated receipts. Record correct queue decisions and correct request
-          references separately, along with learner and mentor minutes. Keep the quickest option
-          that matches or improves both scores against the walkthrough. Repeat on a fresh case one
-          week later before committing the next cohort.
-        </p>
-        <fieldset className={styles.sponsor}>
-          <legend>What should the education lead fund next?</legend>
-          {sponsors.map(([id, label]) => (
-            <label key={id}>
-              <input
-                type="radio"
-                name="sponsor"
-                checked={sponsor === id}
-                onChange={() => setSponsor(id)}
-              />{' '}
-              {label}
-            </label>
-          ))}
         </fieldset>
-        {sponsor && (
-          <div className={styles.assessment} aria-live="polite">
-            <h3>{sponsors.find(([id]) => id === sponsor)?.[1]}</h3>
-            <p>{sponsors.find(([id]) => id === sponsor)?.[2]}</p>
-            <p>
-              {netHours < 0
-                ? `At these assumptions the exercise needs ${(-netHours).toLocaleString('en-US', { maximumFractionDigits: 2 })} additional staff hours in year one.`
-                : netHours > 0
-                  ? `At these assumptions the exercise releases ${netHours.toLocaleString('en-US', { maximumFractionDigits: 2 })} staff hours in year one.`
-                  : 'At these assumptions the exercise breaks even on staff time.'}{' '}
-              The paired scores and delayed retest still need to be measured.
-            </p>
-            <Link href="/workspace">Trace this case and sponsor choice</Link>
-          </div>
-        )}
+        <div aria-live="polite">
+          {result && (
+            <section className={styles.assessment} aria-labelledby="queue-result">
+              <h3 id="queue-result">What Willow’s queue would show</h3>
+              <dl>
+                <dt>Queue entry</dt>
+                <dd>
+                  <strong>{result.queue}</strong> ·{' '}
+                  {result.supported ? 'Supported by this document' : 'Needs correction'}
+                </dd>
+                <dt>Evidence</dt>
+                <dd>
+                  {inbox.id} cites <code>{inbox.reference}</code>. {result.rationale}
+                </dd>
+                <dt>Next owner</dt>
+                <dd>{result.next}</dd>
+              </dl>
+              <p className={styles.boundary}>
+                This entry tracks correspondence. Sam still owns clinical review and communication
+                with Maya.
+              </p>
+              {otherReview && otherReview.document !== inbox && decision ? (
+                <div className={styles.comparison}>
+                  <h4>Both letters against the same request</h4>
+                  {[otherReview, { document: inbox, decision }].map((item) => (
+                    <p key={item.document.id}>
+                      <strong>{item.document.label}</strong> ·{' '}
+                      <code>{item.document.reference}</code> · You chose “
+                      {actionLabel[item.decision]}”.
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <p>Try the other report above. Only Cedar’s letter changes.</p>
+              )}
+            </section>
+          )}
+        </div>
       </section>
 
-      <section className={styles.sources} aria-labelledby="sources-title">
-        <h2 id="sources-title">What shaped the exercise</h2>
+      <section className={styles.section} aria-labelledby="framework">
+        <h2 id="framework">How Asclepius follows this handoff</h2>
         <p>
-          HL7 distinguishes the service requested from the task that tracks work. CMS’s referral
-          measure asks whether the referring clinician received the consultant’s report. This
-          synthetic exercise practices that distinction and does not calculate the measure.
+          FHIR (Fast Healthcare Interoperability Resources) gives teams a way to identify and link
+          records. Here the request, Cedar’s coordination task and the planned visit each have their
+          own identity. Asclepius checks the kind of document Willow received and the exact request
+          it names. A clinician still needs to interpret the letter and decide what Maya needs next.
         </p>
+        <Link className="text-link" href="/workspace">
+          Trace this report and decision
+        </Link>
+        <details className={styles.guidance}>
+          <summary>Inspect the three source records</summary>
+          <div className={styles.recordGrid}>
+            {evidence.map(([key, label, Icon]) => {
+              const record = referralExamples.find((item) => recordKey(item) === key);
+              if (!record) return null;
+              return (
+                <div className={styles.record} key={key}>
+                  <span className={styles.trailIcon}>
+                    <Icon size={23} aria-hidden />
+                  </span>
+                  <span>
+                    {record.type} · {String(record.resource.status)}
+                  </span>
+                  <h3>{label}</h3>
+                  <Link
+                    className="text-link"
+                    href="/workspace#record"
+                    onClick={() => setRecord(key)}
+                  >
+                    Inspect {record.type}
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </details>
+      </section>
+      <EducatorWorksheet />
+      <details className={styles.sources}>
+        <summary className={styles.disclosure}>What shaped the exercise</summary>
         <p>
-          IHI’s referral guide identifies unclear responsibility and information transfer as
-          problems across care teams. HL7’s FHIR Fundamentals course identifies interface
-          implementers and project leads as audiences. This exercise brings those two perspectives
-          to one handoff.
+          CMS describes receipt of a consultant’s written response for the particular referral.
+          IHI’s referral guide describes how teams share responsibility for follow-up. HL7 defines
+          the request, task and references used in the teaching records. This exercise uses
+          fictional correspondence and does not calculate a quality measure.
         </p>
-        <a href="https://www.ihi.org/library/publications/closing-loop-guide-safer-ambulatory-referrals-ehr-era">
-          IHI · Referral workflow and responsibilities
+        <a href="https://qpp.cms.gov/docs/QPP_quality_measure_specifications/CQM-Measures/2026_Measure_374_MIPSCQM.pdf">
+          CMS · Receipt of specialist report (page 2)
         </a>
-        <a href="https://info.hl7.org/hubfs/Education/Brochures/FHIRFundamentals_2024.pdf">
-          HL7 · FHIR Fundamentals audiences
+        <a href="https://www.ihi.org/library/publications/closing-loop-guide-safer-ambulatory-referrals-ehr-era">
+          IHI · Referral follow-up
         </a>
         <a href="https://hl7.org/fhir/R4/servicerequest.html">HL7 R4 · ServiceRequest</a>
         <a href="https://hl7.org/fhir/R4/task.html">HL7 R4 · Task</a>
-        <a href="https://ecqi.healthit.gov/ecqm/ec/2026/cms0050v14">
-          CMS50v14 · Receipt of specialist report
-        </a>
-      </section>
+        <a href="https://hl7.org/fhir/R4/references.html">HL7 R4 · Resource references</a>
+      </details>
     </article>
   );
 }

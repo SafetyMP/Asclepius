@@ -8,7 +8,7 @@ Two cases, each with nine records: Alex Morgan's routine follow-up and Maya Chen
 
 ## Explore
 
-- [Review Maya’s referral](https://safetymp.github.io/Asclepius/): inspect Cedar’s evidence, cite the request, and compare onboarding approaches.
+- [Review Maya’s referral](https://safetymp.github.io/Asclepius/): compare Cedar’s letters against Willow’s request, decide what the next shift should see, and explore the educator worksheet.
 - [Technical evidence](https://safetymp.github.io/Asclepius/workspace/): trace the selected case, replay filing and correction, and test the shared validator.
 - [Sitemap](https://safetymp.github.io/Asclepius/sitemap.xml): canonical public routes.
 

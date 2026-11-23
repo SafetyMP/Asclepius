@@ -45,4 +45,4 @@ The source records are in [`web/src/lib/referral-examples.ts`](../web/src/lib/re
 
 ## Trace the evidence
 
-Choose **Inspect Task** in the study to carry the selected record into the technical evidence page. Replay the same consultant letter filed to the current or prior request, then check the structure of a copy of the fixture. A structural pass cannot establish clinical correctness, real-world receipt or full FHIR conformance. [Technical evidence](https://safetymp.github.io/Asclepius/workspace/)
+In the case, open **Inspect the three source records** and choose **Inspect Task** to carry Cedar’s coordination record into the guide. **Trace this report and decision** follows the selected letter, receipt rule and queue entry. Replay the same consultant letter filed to the current or prior request, then check the structure of a copy of the fixture. A structural pass cannot establish clinical correctness, real-world receipt or full FHIR conformance. [Technical evidence](https://safetymp.github.io/Asclepius/workspace/)
